@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "@angular/fire": "^18.0.1",
+    "@angular/router": "^18.2.4",
+    "firebase": "^10.13.1"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^5.1.4",
+    "@types/jest": "^29.5.12",
+    "@types/mocha": "^10.0.7",
+    "jasmine": "^5.3.0",
+    "jasmine-core": "^5.3.0",
+    "karma-jasmine": "^5.1.0"
+  }
+}
