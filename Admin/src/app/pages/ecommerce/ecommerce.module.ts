@@ -13,7 +13,6 @@ import { DropzoneModule } from 'ngx-dropzone-wrapper';
 import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
 import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
 import { NgSelectModule } from '@ng-select/ng-select';
-
 import { ProductsComponent } from './products/products.component';
 import { ProductdetailComponent } from './productdetail/productdetail.component';
 import { ShopsComponent } from './shops/shops.component';
@@ -22,6 +21,7 @@ import { CartComponent } from './cart/cart.component';
 import { AddproductComponent } from './addproduct/addproduct.component';
 import { CustomersComponent } from './customers/customers.component';
 import { OrdersComponent } from './orders/orders.component';
+import { AddDriverComponent } from './drivers/driver.component';
 
 const config: DropzoneConfigInterface = {
   // Change this to your upload POST address:
@@ -31,7 +31,9 @@ const config: DropzoneConfigInterface = {
 
 @NgModule({
   // tslint:disable-next-line: max-line-length
-  declarations: [ProductsComponent, ProductdetailComponent, ShopsComponent, CheckoutComponent, CartComponent, AddproductComponent, CustomersComponent, OrdersComponent],
+  declarations: [ProductsComponent , AddDriverComponent,
+    AddproductComponent,ProductdetailComponent,
+     ShopsComponent, CheckoutComponent, CartComponent, CustomersComponent, OrdersComponent],
   imports: [
     CommonModule,
     EcommerceRoutingModule,

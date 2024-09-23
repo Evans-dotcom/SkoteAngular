@@ -103,6 +103,12 @@ export const MENU: MenuItem[] = [
                 parentId: 12
             },
             {
+                id: 16,
+                label: 'Drivers',
+                link: '/ecommerce/drivers',
+                parentId: 12
+            },
+            {
                 id: 17,
                 label: 'MENUITEMS.ECOMMERCE.LIST.CART',
                 link: '/ecommerce/cart',
@@ -381,6 +387,12 @@ export const MENU: MenuItem[] = [
                 parentId: 57
             },
             {
+                id: 59,
+                label: 'Login 3',
+                link: '/account/login3',
+                parentId: 57
+            },
+            {
                 id: 60,
                 label: 'MENUITEMS.AUTHENTICATION.LIST.REGISTER',
                 link: '/account/signup',
@@ -390,6 +402,12 @@ export const MENU: MenuItem[] = [
                 id: 61,
                 label: 'MENUITEMS.AUTHENTICATION.LIST.REGISTER2',
                 link: '/account/signup-2',
+                parentId: 57
+            },
+            {
+                id: 61,
+                label: 'Register 3',
+                link: '/account/Register3',
                 parentId: 57
             },
             {

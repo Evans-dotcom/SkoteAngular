@@ -68,7 +68,7 @@ export class AddproductComponent implements OnInit {
     formData.append('manufacture_name', this.productForm.get('manufacture_name').value);
     formData.append('manufacture_brand', this.productForm.get('manufacture_brand').value);
     formData.append('price', this.productForm.get('price').value);
-    formData.append('image', this.file, this.image);
+    formData.append('image', this.file);
 
     this.http.post<any>(`http://localhost:8000/api/products`, formData)
       .subscribe((data) => {

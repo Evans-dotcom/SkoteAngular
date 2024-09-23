@@ -1,0 +1,189 @@
+<div class="container mt-5">
+  <h2 class="mb-4">{{ selectedDriverId ? 'Edit' : 'Add' }} Driver</h2>
+  
+  <!-- Success message -->
+  <div *ngIf="successMessage" class="alert alert-success" role="alert">
+    {{ successMessage }}
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    {{ errorMessage }}
+  </div>
+
+  <form [formGroup]="driverForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="driverName" class="form-label">Driver Name</label>
+        <input type="text" class="form-control" id="driverName" formControlName="driverName" required>
+        <div *ngIf="isFieldInvalid('driverName')" class="text-danger">
+          {{ getErrorMessage('driverName') }}
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="phoneNumber" class="form-label">Phone Number</label>
+        <input type="tel" class="form-control" id="phoneNumber" formControlName="phoneNumber" required>
+        <div *ngIf="isFieldInvalid('phoneNumber')" class="text-danger">
+          {{ getErrorMessage('phoneNumber') }}
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" formControlName="email" required>
+        <div *ngIf="isFieldInvalid('email')" class="text-danger">
+          {{ getErrorMessage('email') }}
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="idNo" class="form-label">ID Number</label>
+        <input type="text" class="form-control" id="idNo" formControlName="idNo" required>
+        <div *ngIf="isFieldInvalid('idNo')" class="text-danger">
+          {{ getErrorMessage('idNo') }}
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="dob" class="form-label">Date of Birth</label>
+        <input type="date" class="form-control" id="dob" formControlName="dob" required>
+        <div *ngIf="isFieldInvalid('dob')" class="text-danger">
+          {{ getErrorMessage('dob') }}
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="carModel" class="form-label">Car Model</label>
+        <input type="text" class="form-control" id="carModel" formControlName="carModel" required>
+        <div *ngIf="isFieldInvalid('carModel')" class="text-danger">
+          {{ getErrorMessage('carModel') }}
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="licenseNumber" class="form-label">License Number</label>
+        <input type="text" class="form-control" id="licenseNumber" formControlName="licenseNumber" required>
+        <div *ngIf="isFieldInvalid('licenseNumber')" class="text-danger">
+          {{ getErrorMessage('licenseNumber') }}
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="carPlateNumber" class="form-label">Car Plate Number</label>
+        <input type="text" class="form-control" id="carPlateNumber" formControlName="carPlateNumber" required>
+        <div *ngIf="isFieldInvalid('carPlateNumber')" class="text-danger">
+          {{ getErrorMessage('carPlateNumber') }}
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="carColour" class="form-label">Car Color</label>
+        <input type="text" class="form-control" id="carColour" formControlName="carColour" required>
+        <div *ngIf="isFieldInvalid('carColour')" class="text-danger">
+          {{ getErrorMessage('carColour') }}
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="carSeats" class="form-label">Car Seats</label>
+        <input type="number" class="form-control" id="carSeats" formControlName="carSeats" required>
+        <div *ngIf="isFieldInvalid('carSeats')" class="text-danger">
+          {{ getErrorMessage('carSeats') }}
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="currentLongitude" class="form-label">Current Longitude</label>
+        <input type="number" class="form-control" id="currentLongitude" formControlName="currentLongitude">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="currentLatitude" class="form-label">Current Latitude</label>
+        <input type="number" class="form-control" id="currentLatitude" formControlName="currentLatitude">
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="userPassword" class="form-label">Password</label>
+      <input type="password" class="form-control" id="userPassword" formControlName="userPassword" required>
+      <div *ngIf="isFieldInvalid('userPassword')" class="text-danger">
+        {{ getErrorMessage('userPassword') }}
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="securityQuestionOne" class="form-label">Security Question One</label>
+      <select class="form-select" id="securityQuestionOne" formControlName="securityQuestionOne">
+        <option value="" disabled selected>Select a question</option>
+        <option value="pet">What is your pet's name?</option>
+        <option value="motherMaiden">What is your mother's maiden name?</option>
+        <option value="birthCity">What city were you born in?</option>
+        <option value="favoriteColor">What is your favorite color?</option>
+        <!-- Add more questions as needed -->
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="answerOne" class="form-label">Answer One</label>
+      <input type="text" class="form-control" id="answerOne" formControlName="answerOne">
+    </div>
+
+    <div class="mb-3">
+      <label for="securityQuestionTwo" class="form-label">Security Question Two</label>
+      <select class="form-select" id="securityQuestionTwo" formControlName="securityQuestionTwo">
+        <option value="" disabled selected>Select a question</option>
+        <option value="firstSchool">What was the name of your first school?</option>
+        <option value="bestFriend">Who was your best friend in high school?</option>
+        <option value="favoriteBook">What is your favorite book?</option>
+        <option value="favoriteSport">What is your favorite sport?</option>
+        <!-- Add more questions as needed -->
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="answerTwo" class="form-label">Answer Two</label>
+      <input type="text" class="form-control" id="answerTwo" formControlName="answerTwo">
+    </div>
+
+    <div class="mb-3">
+      <label for="createdBy" class="form-label">Created By</label>
+      <input type="text" class="form-control" id="createdBy" formControlName="createdBy" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="driverForm.invalid || isLoading">
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+      {{ isLoading ? 'Submitting...' : (selectedDriverId ? 'Update' : 'Add') }} Driver
+    </button>
+  </form>
+
+  <!-- Driver List -->
+  <div *ngIf="drivers.length > 0" class="mt-5">
+    <h3>Drivers List</h3>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let driver of drivers">
+          <td>{{ driver.driverName }}</td>
+          <td>{{ driver.phoneNumber }}</td>
+          <td>{{ driver.email }}</td>
+          <td>
+            <button class="btn btn-sm btn-info me-2" (click)="editDriver(driver)">Edit</button>
+            <button class="btn btn-sm btn-danger" (click)="deleteDriver(driver.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -6,9 +6,9 @@ import { ProductdetailComponent } from './productdetail/productdetail.component'
 import { ShopsComponent } from './shops/shops.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { CartComponent } from './cart/cart.component';
-import { AddproductComponent } from './addproduct/addproduct.component';
 import { CustomersComponent } from './customers/customers.component';
 import { OrdersComponent } from './orders/orders.component';
+import { AddDriverComponent } from './drivers/driver.component';
 
 const routes: Routes = [
     {
@@ -31,13 +31,14 @@ const routes: Routes = [
         path: 'cart',
         component: CartComponent
     },
-    {
-        path: 'add-product',
-        component: AddproductComponent
-    },
+
     {
         path: 'customers',
         component: CustomersComponent
+    },
+    {
+        path: 'drivers',
+        component: AddDriverComponent
     },
     {
         path: 'orders',

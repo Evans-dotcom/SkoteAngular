@@ -14,9 +14,12 @@ import { Recoverpwd2Component } from './recoverpwd2/recoverpwd2.component';
 
 import { AuthRoutingModule } from './auth-routing';
 import { PasswordresetComponent } from './passwordreset/passwordreset.component';
+import { Register3Component } from './register3/register3.component';
+import { Login3Component } from './login3/login3.component';
+
 
 @NgModule({
-  declarations: [LoginComponent, Login2Component, SignupComponent, PasswordresetComponent, Register2Component, Recoverpwd2Component],
+  declarations: [LoginComponent, Login2Component, SignupComponent, PasswordresetComponent, Register2Component, Recoverpwd2Component, Register3Component, Login3Component],
   imports: [
     CommonModule,
     ReactiveFormsModule,

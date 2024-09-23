@@ -1,13 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
-import { AuthenticationService } from '../../../core/services/auth.service';
-import { AuthfakeauthenticationService } from '../../../core/services/authfake.service';
-
 import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { first } from 'rxjs/operators';
-
-import { environment } from '../../../../environments/environment';
+import Swal from 'sweetalert2'; // For displaying success/error messages
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -24,29 +22,31 @@ export class LoginComponent implements OnInit {
   submitted = false;
   error = '';
   returnUrl: string;
-
-  // set the currenr year
+  
+  // Set the current year
   year: number = new Date().getFullYear();
 
-  // tslint:disable-next-line: max-line-length
-  constructor(private formBuilder: FormBuilder, private route: ActivatedRoute, private router: Router,
-     private authenticationService: AuthenticationService,
-    private authFackservice: AuthfakeauthenticationService) { }
+  // Define the API endpoint
+  private apiUrl = 'https://localhost/44303/api/users/login'; // Replace with your actual login API endpoint
+
+  constructor(
+    private formBuilder: FormBuilder, 
+    private route: ActivatedRoute, 
+    private router: Router, 
+    private http: HttpClient // Use HttpClient to make the API call
+  ) { }
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
-      email: ['admin@themesbrand.com', [Validators.required, Validators.email]],
-      password: ['123456', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]]
     });
 
-    // reset login status
-    // this.authenticationService.logout();
-    // get return url from route parameters or default to '/'
-    // tslint:disable-next-line: no-string-literal
+    // Get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
-  // convenience getter for easy access to form fields
+  // Convenience getter for easy access to form fields
   get f() { return this.loginForm.controls; }
 
   /**
@@ -55,28 +55,62 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
 
-    // stop here if form is invalid
+    // Stop if the form is invalid
     if (this.loginForm.invalid) {
       return;
-    } else {
-      if (environment.defaultauth === 'firebase') {
-        this.authenticationService.login(this.f.email.value, this.f.password.value).then((res: any) => {
-          this.router.navigate(['/dashboard']);
-        })
-          .catch(error => {
-            this.error = error ? error : '';
-          });
-      } else {
-        this.authFackservice.login(this.f.email.value, this.f.password.value)
-          .pipe(first())
-          .subscribe(
-            data => {
-              this.router.navigate(['/dashboard']);
-            },
-            error => {
-              this.error = error ? error : '';
-            });
-      }
     }
+
+    const loginData = {
+      email: this.f.email.value,
+      password: this.f.password.value
+    };
+
+    // Use HttpClient to make the login API request
+    this.login(loginData).pipe(first()).subscribe(
+      data => {
+        // Navigate to the return URL on successful login
+        Swal.fire({
+          icon: 'success',
+          title: 'Login Successful',
+          showConfirmButton: false,
+          timer: 1500
+        });
+        this.router.navigate([this.returnUrl]);
+      },
+      error => {
+        // Handle login errors
+        this.error = error;
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed',
+          text: this.error || 'An error occurred during login',
+        });
+      }
+    );
+  }
+
+  /**
+   * Method to make HTTP POST request to the login API
+   */
+  private login(data: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, data)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Error handling method
+   */
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'Unknown error!';
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Server-side error
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+    return throwError(errorMessage);
   }
 }

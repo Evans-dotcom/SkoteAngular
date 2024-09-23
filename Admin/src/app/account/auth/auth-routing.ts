@@ -8,11 +8,23 @@ import { SignupComponent } from './signup/signup.component';
 import { PasswordresetComponent } from './passwordreset/passwordreset.component';
 import { Register2Component } from './register2/register2.component';
 import { Recoverpwd2Component } from './recoverpwd2/recoverpwd2.component';
+import { Register3Component } from './register3/register3.component';
+import { Login3Component } from './login3/login3.component';
+
+
 
 const routes: Routes = [
     {
         path: 'login',
         component: LoginComponent
+    },
+    {
+        path: 'login3',
+        component: Login3Component      
+    },
+    {
+        path: 'Register3',
+        component: Register3Component
     },
     {
         path: 'signup',
