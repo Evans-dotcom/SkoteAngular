@@ -27,25 +27,20 @@ export class DriverService {
     return throwError(errorMessage);
   }
 
+  // Commenting out unused methods
   addDriver(driverData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/Driver`, driverData).pipe(
-      tap(response => console.log('Add driver response:', response)),
-      catchError(this.handleError)
-    );
+    // return this.http.post(`${this.apiUrl}/Driver`, driverData).pipe(...);
+    return; // Placeholder for addDriver method
   }
 
   updateDriver(driverId: string, driverData: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/Driver/${driverId}`, driverData).pipe(
-      tap(response => console.log('Update driver response:', response)),
-      catchError(this.handleError)
-    );
+    // return this.http.put(`${this.apiUrl}/Driver/${driverId}`, driverData).pipe(...);
+    return; // Placeholder for updateDriver method
   }
 
   deleteDriver(driverId: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/Driver/${driverId}`).pipe(
-      tap(response => console.log('Delete driver response:', response)),
-      catchError(this.handleError)
-    );
+    // return this.http.delete(`${this.apiUrl}/Driver/${driverId}`).pipe(...);
+    return; // Placeholder for deleteDriver method
   }
 
   getDrivers(): Observable<any[]> {
@@ -55,10 +50,8 @@ export class DriverService {
     );
   }
 
-  getDriverById(driverId: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/Driver/${driverId}`).pipe(
-      tap(response => console.log('Get driver by ID response:', response)),
-      catchError(this.handleError)
-    );
-  }
+  // Uncomment if you need to fetch driver by ID
+  // getDriverById(driverId: string): Observable<any> {
+  //   return this.http.get<any>(`${this.apiUrl}/Driver/${driverId}`).pipe(...);
+  // }
 }

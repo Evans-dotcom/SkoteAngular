@@ -104,6 +104,12 @@ export const MENU: MenuItem[] = [
             },
             {
                 id: 16,
+                label: 'Customers1',
+                link: '/ecommerce/Customers1',
+                parentId: 12
+            },
+            {
+                id: 16,
                 label: 'Drivers',
                 link: '/ecommerce/drivers',
                 parentId: 12
