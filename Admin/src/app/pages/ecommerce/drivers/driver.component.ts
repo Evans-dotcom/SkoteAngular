@@ -12,7 +12,7 @@ export class AddDriverComponent implements OnInit {
   drivers: any[] = [];
   pagedDrivers: any[] = [];
   currentPage: number = 0;
-  pageSize: number = 10; // Number of drivers per page
+  pageSize: number = 30; // Number of drivers per page
   totalDrivers: number = 0;
   successMessage: string | null = null;
   errorMessage: string | null = null;

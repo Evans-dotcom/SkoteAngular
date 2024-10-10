@@ -12,7 +12,7 @@ export class AddCustomerComponent implements OnInit {
   customers: any[] = [];
   pagedCustomers: any[] = [];
   currentPage: number = 0;
-  pageSize: number = 10; // Display 10 customers per page
+  pageSize: number = 30; // Display 10 customers per page
   totalCustomers: number = 0;
   successMessage: string | null = null;
   errorMessage: string | null = null;

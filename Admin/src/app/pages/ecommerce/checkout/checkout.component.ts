@@ -15,7 +15,7 @@ export class CheckoutComponent implements OnInit {
   breadCrumbItems: Array<{}>;
   selectValue = [];
   stateValue = [];
-
+  
   constructor() { }
 
   ngOnInit() {

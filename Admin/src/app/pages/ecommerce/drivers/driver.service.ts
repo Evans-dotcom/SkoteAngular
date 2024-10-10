@@ -7,7 +7,7 @@ import { catchError, tap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class DriverService {
-  private apiUrl = 'https://localhost:44303/api'; // Replace with your actual API URL
+  private apiUrl = 'http://localhost:4040/api'; // Replace with your actual API URL
 
   constructor(private http: HttpClient) { }
 

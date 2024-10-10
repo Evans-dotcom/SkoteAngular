@@ -7,7 +7,7 @@ import { catchError, tap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class CustomerService {
-  private apiUrl = 'https://localhost:44303/api/Customer';
+  private apiUrl = 'http://localhost:4040/api/Customer';
 
   constructor(private http: HttpClient) { }
 
