@@ -13,7 +13,8 @@ export class Register3Component implements OnInit {
     Username: '',
     Email: '',
     Password: '',
-    ConfirmPassword: ''
+    ConfirmPassword: '',
+    Role: ''
   };
 
   // Add the year property

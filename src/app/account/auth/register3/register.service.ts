@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class UserService {
   //private apiUrl = 'https://localhost:44303/api/Auth'; // Replace with your actual API URL
-  private apiUrl = 'https://micropointlive.com/t-TestOneApi/api/Auth';
+  private apiUrl = 'http://localhost:5245/api/Users';
 
   constructor(private http: HttpClient) { }
 

@@ -15,7 +15,7 @@ class FirebaseAuthBackend {
                     sessionStorage.removeItem('authUser');
                 }
             });
-        }
+        } 
     }
 
     /**

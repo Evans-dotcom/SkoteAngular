@@ -37,19 +37,18 @@ export class LoginComponent implements OnInit {
   year: number = new Date().getFullYear();
 
   // Define the API endpoint
- // private apiUrl = 'https://localhost/44303/api/users/login'; // Replace with your actual login
- private apiUrl = 'https://micropointlive.com/t-TestOneApi/api/Auth/login';
+ private apiUrl = 'http://localhost:5245/api/Users/login';
  
   constructor(
     private formBuilder: FormBuilder, 
     private route: ActivatedRoute, 
     private router: Router, private authenticationService:AuthenticationService,
-    private http: HttpClient // Use HttpClient to make the API call
+    private http: HttpClient 
   ) { }
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
-      UserName: ['', Validators.required],
+      Email: ['', Validators.required],
       Password: ['', Validators.required]
     });
 
@@ -75,7 +74,7 @@ export class LoginComponent implements OnInit {
     }
   
     const loginData = {
-      Username: this.f.UserName.value,
+      Email: this.f.Email.value,
       password: this.f.Password.value
     };
   
@@ -89,7 +88,7 @@ export class LoginComponent implements OnInit {
         const user: User = {
           id: 0,  // Since the response does not provide an id, you can set a default value or handle it differently
           token: response.token ,  // Use the token from the response
-          username: this.f.UserName.value,  // Get the username from the form control
+          email: this.f.Email.value,  // Get the Email from the form control
           // Include other properties as needed from the response or form
         };
         
@@ -114,7 +113,7 @@ export class LoginComponent implements OnInit {
         this.loading = false;
         this.error = error ? error : 'An error occurred during login.';
         if (error.status === 404) {
-          window.alert('Invalid username or password');
+          window.alert('Invalid Email or password');
         }
         console.log(error); // Log the error for debugging purposes
       }

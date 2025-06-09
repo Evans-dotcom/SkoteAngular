@@ -1,0 +1,73 @@
+<div class="container mt-4">
+  <div class="card shadow p-4 border-start border-success border-4">
+    <h4 class="text-success mb-4">{{ isEdit ? 'Edit Imprest Record' : 'Add Imprest Record' }}</h4>
+
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.officer" name="officer" placeholder="Officer Name" required>
+      </div>
+      <div class="col-md-2">
+        <input type="number" class="form-control" [(ngModel)]="selected.amount" name="amount" placeholder="Amount" required>
+      </div>
+      <div class="col-md-3">
+        <input type="date" class="form-control" [(ngModel)]="selected.dateIssued" name="dateIssued" required>
+      </div>
+      <div class="col-md-3">
+        <input type="text" class="form-control" [(ngModel)]="selected.status" name="status" placeholder="Status" required>
+      </div>
+      <div class="col-md-6">
+        <input type="text" class="form-control" [(ngModel)]="selected.purpose" name="purpose" placeholder="Purpose" required>
+      </div>
+      <div class="col-md-6">
+        <input type="text" class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks">
+      </div>
+      <div class="col-md-12 text-end">
+        <button type="submit" class="btn btn-success me-2">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Create' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card mt-4 shadow p-4 border-start border-info border-4">
+    <h5 class="mb-3">Imprest Records</h5>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle text-center">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Officer</th>
+            <th>Amount</th>
+            <th>Date Issued</th>
+            <th>Status</th>
+            <th>Purpose</th>
+            <th>Remarks</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of imprests">
+            <td>{{ entry.id }}</td>
+            <td>{{ entry.officer }}</td>
+            <td>{{ entry.amount | currency }}</td>
+            <td>{{ entry.dateIssued | date:'shortDate' }}</td>
+            <td><span class="badge bg-primary">{{ entry.status }}</span></td>
+            <td>{{ entry.purpose }}</td>
+            <td>{{ entry.remarks }}</td>
+            <td>
+              <button class="btn btn-sm btn-info me-1" (click)="edit(entry)">
+                <i class="fa fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-danger" (click)="delete(entry.id)">
+                <i class="fa fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

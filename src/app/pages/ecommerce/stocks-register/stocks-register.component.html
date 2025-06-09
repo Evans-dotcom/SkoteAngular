@@ -1,0 +1,81 @@
+<div class="container mt-4">
+  <div class="card shadow p-4">
+    <h4 class="mb-4 text-info">
+      {{ isEdit ? 'Edit Stock Record' : 'Add Stock Item' }}
+    </h4>
+
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selectedItem.itemName" name="itemName" class="form-control" placeholder="Item Name" required>
+      </div>
+      <div class="col-md-2">
+        <input type="text" [(ngModel)]="selectedItem.unit" name="unit" class="form-control" placeholder="Unit" required>
+      </div>
+      <div class="col-md-2">
+        <input type="number" [(ngModel)]="selectedItem.quantity" name="quantity" class="form-control" placeholder="Qty" required>
+      </div>
+      <div class="col-md-2">
+        <input type="number" [(ngModel)]="selectedItem.unitCost" name="unitCost" class="form-control" placeholder="Unit Cost" required>
+      </div>
+      <div class="col-md-2">
+        <input type="number" [(ngModel)]="selectedItem.totalValue" name="totalValue" class="form-control" placeholder="Total Value" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selectedItem.location" name="location" class="form-control" placeholder="Location" required>
+      </div>
+      <div class="col-md-4">
+        <input type="date" [(ngModel)]="selectedItem.lastRestocked" name="lastRestocked" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selectedItem.remarks" name="remarks" class="form-control" placeholder="Remarks">
+      </div>
+      <div class="col-md-12 text-end">
+        <button class="btn btn-primary me-2" type="submit">
+          {{ isEdit ? 'Update' : 'Create' }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="resetForm()">Clear</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card mt-4 shadow p-4">
+    <h5>Stock Register</h5>
+    <table class="table table-bordered table-striped mt-2">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Item</th>
+          <th>Unit</th>
+          <th>Qty</th>
+          <th>Unit Cost</th>
+          <th>Total Value</th>
+          <th>Location</th>
+          <th>Restocked</th>
+          <th>Remarks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of stockItems">
+          <td>{{ item.id }}</td>
+          <td>{{ item.itemName }}</td>
+          <td>{{ item.unit }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.unitCost }}</td>
+          <td>{{ item.totalValue }}</td>
+          <td>{{ item.location }}</td>
+          <td>{{ item.lastRestocked | date:'yyyy-MM-dd' }}</td>
+          <td>{{ item.remarks }}</td>
+          <td>
+            <button class="btn btn-sm btn-info me-1" (click)="edit(item)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(item.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

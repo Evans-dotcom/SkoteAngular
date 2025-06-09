@@ -1,0 +1,71 @@
+<div class="container mt-4">
+  <div class="card shadow p-4">
+    <h4 class="text-success mb-4">
+      {{ isEdit ? 'Edit Road Infrastructure' : 'Add Road Infrastructure' }}
+    </h4>
+
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selectedRoad.roadName" name="roadName" class="form-control" placeholder="Road Name" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selectedRoad.location" name="location" class="form-control" placeholder="Location" required>
+      </div>
+      <div class="col-md-2">
+        <input type="number" [(ngModel)]="selectedRoad.lengthKm" name="lengthKm" class="form-control" placeholder="Length (Km)" required>
+      </div>
+      <div class="col-md-2">
+        <input type="number" [(ngModel)]="selectedRoad.constructionCost" name="constructionCost" class="form-control" placeholder="Cost" required>
+      </div>
+      <div class="col-md-2">
+        <input type="number" [(ngModel)]="selectedRoad.yearConstructed" name="yearConstructed" class="form-control" placeholder="Year Built" required>
+      </div>
+      <div class="col-md-10">
+        <input type="text" [(ngModel)]="selectedRoad.remarks" name="remarks" class="form-control" placeholder="Remarks">
+      </div>
+      <div class="col-md-12 text-end">
+        <button class="btn btn-primary me-2" type="submit">
+          {{ isEdit ? 'Update' : 'Create' }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="resetForm()">Clear</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card mt-4 shadow p-4">
+    <h5>Road Infrastructure Records</h5>
+    <table class="table table-bordered table-striped mt-2">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Road Name</th>
+          <th>Location</th>
+          <th>Length (Km)</th>
+          <th>Cost</th>
+          <th>Year</th>
+          <th>Remarks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let road of roads">
+          <td>{{ road.id }}</td>
+          <td>{{ road.roadName }}</td>
+          <td>{{ road.location }}</td>
+          <td>{{ road.lengthKm }}</td>
+          <td>{{ road.constructionCost }}</td>
+          <td>{{ road.yearConstructed }}</td>
+          <td>{{ road.remarks }}</td>
+          <td>
+            <button class="btn btn-sm btn-info me-1" (click)="edit(road)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(road.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

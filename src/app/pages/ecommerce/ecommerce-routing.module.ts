@@ -10,6 +10,13 @@ import { CustomersComponent } from './customers/customers.component';
 import { OrdersComponent } from './orders/orders.component';
 import { AddDriverComponent } from './drivers/driver.component';
 import { AddCustomerComponent } from './Customers1/customers1.component';
+import { BankAccountComponent } from './bank-account/bank-account.component';
+import { StandardAssetComponent } from './standard-assets/standard-assets.component';
+import { PlantMachineryComponent } from './plant-machinery/plant-machinery.component';
+import { ImprestComponent } from './imprests/imprests.component';
+import { MotorVehicleComponent } from './motor-vehicles/motor-vehicles.component';
+import { RoadsInfrastructureComponent } from './roads-infrastructure/roads-infrastructure.component';
+import { StocksRegisterComponent } from './stocks-register/stocks-register.component';
 
 const routes: Routes = [
     {
@@ -49,7 +56,45 @@ const routes: Routes = [
     {
         path: 'orders',
         component: OrdersComponent
-    }
+    },
+    {
+        path: 'bankaccount',
+        component: BankAccountComponent
+    },
+     {
+        path: 'banklist',
+        component: BankAccountComponent
+    },
+    {
+        path: 'standardassets',
+        component: StandardAssetComponent
+    },
+    {
+        path: 'vehicles',
+        component: MotorVehicleComponent
+    },
+    {
+        path: 'plantMachinery',
+        component: PlantMachineryComponent
+    },
+    {
+        path: 'imprest',
+        component: ImprestComponent
+    },
+     {
+        path: 'roadsInfrastructure',
+        component: RoadsInfrastructureComponent
+    },
+     {
+        path: 'stockregister',
+        component: StocksRegisterComponent
+    },
+
+    
+
+
+
+
 ];
 
 @NgModule({

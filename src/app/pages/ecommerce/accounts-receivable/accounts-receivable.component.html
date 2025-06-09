@@ -1,0 +1,66 @@
+<div class="container mt-4">
+  <div class="card shadow p-4">
+    <h4 class="text-success mb-4">
+      {{ isEdit ? 'Edit Accounts Receivable' : 'Add Accounts Receivable' }}
+    </h4>
+
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.debtorName" name="debtorName" class="form-control" placeholder="Debtor Name" required>
+      </div>
+      <div class="col-md-2">
+        <input type="number" [(ngModel)]="selected.amountDue" name="amountDue" class="form-control" placeholder="Amount Due" required>
+      </div>
+      <div class="col-md-3">
+        <input type="date" [(ngModel)]="selected.dueDate" name="dueDate" class="form-control" required>
+      </div>
+      <div class="col-md-3">
+        <input type="text" [(ngModel)]="selected.reason" name="reason" class="form-control" placeholder="Reason" required>
+      </div>
+      <div class="col-md-12">
+        <input type="text" [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks">
+      </div>
+      <div class="col-md-12 text-end">
+        <button class="btn btn-primary me-2" type="submit">
+          {{ isEdit ? 'Update' : 'Create' }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="resetForm()">Clear</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card mt-4 shadow p-4">
+    <h5>Accounts Receivable Records</h5>
+    <table class="table table-bordered table-striped mt-2">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Debtor</th>
+          <th>Amount</th>
+          <th>Due Date</th>
+          <th>Reason</th>
+          <th>Remarks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entry of receivables">
+          <td>{{ entry.id }}</td>
+          <td>{{ entry.debtorName }}</td>
+          <td>{{ entry.amountDue }}</td>
+          <td>{{ entry.dueDate | date: 'shortDate' }}</td>
+          <td>{{ entry.reason }}</td>
+          <td>{{ entry.remarks }}</td>
+          <td>
+            <button class="btn btn-sm btn-info me-1" (click)="edit(entry)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(entry.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

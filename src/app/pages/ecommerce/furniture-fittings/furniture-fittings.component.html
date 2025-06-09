@@ -1,0 +1,85 @@
+<div class="container mt-4">
+  <div class="card p-4 shadow border-start border-info border-4">
+    <h4 class="mb-3 text-info">{{ isEdit ? 'Edit Furniture' : 'Add Furniture/Fitting' }}</h4>
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.itemDescription" name="itemDescription" placeholder="Item Description" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.serialNumber" name="serialNumber" placeholder="Serial Number">
+      </div>
+      <div class="col-md-2">
+        <input type="number" class="form-control" [(ngModel)]="selected.quantity" name="quantity" placeholder="Quantity" required>
+      </div>
+      <div class="col-md-2">
+        <input type="number" class="form-control" [(ngModel)]="selected.purchaseCost" name="purchaseCost" placeholder="Cost" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.location" name="location" placeholder="Location" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.department" name="department" placeholder="Department" required>
+      </div>
+      <div class="col-md-4">
+        <input type="date" class="form-control" [(ngModel)]="selected.purchaseDate" name="purchaseDate" required>
+      </div>
+      <div class="col-md-6">
+        <input type="text" class="form-control" [(ngModel)]="selected.responsibleOfficer" name="responsibleOfficer" placeholder="Responsible Officer" required>
+      </div>
+      <div class="col-md-6">
+        <input type="text" class="form-control" [(ngModel)]="selected.condition" name="condition" placeholder="Condition" required>
+      </div>
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-info me-2">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Save' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card mt-4 shadow p-3 border-start border-dark border-4">
+    <h5 class="mb-3">Furniture/Fittings Records</h5>
+    <table class="table table-bordered table-hover table-striped text-center">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Item</th>
+          <th>Serial</th>
+          <th>Qty</th>
+          <th>Cost</th>
+          <th>Location</th>
+          <th>Dept</th>
+          <th>Date</th>
+          <th>Officer</th>
+          <th>Condition</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of fittings">
+          <td>{{ item.id }}</td>
+          <td>{{ item.itemDescription }}</td>
+          <td>{{ item.serialNumber }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.purchaseCost | currency }}</td>
+          <td>{{ item.location }}</td>
+          <td>{{ item.department }}</td>
+          <td>{{ item.purchaseDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ item.responsibleOfficer }}</td>
+          <td>{{ item.condition }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-1" (click)="edit(item)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(item.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

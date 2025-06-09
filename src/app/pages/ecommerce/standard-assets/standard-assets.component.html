@@ -1,0 +1,93 @@
+<div class="container mt-4">
+  <div class="card shadow p-4">
+    <h4 class="mb-4 text-primary">
+      <i class="fa fa-cubes"></i> {{ isEdit ? 'Edit Asset' : 'Add New Asset' }}
+    </h4>
+
+    <form (submit)="saveAsset()" class="row g-3">
+      <div class="col-md-6" *ngFor="let field of [
+        'assetDescription', 'serialNumber', 'makeModel', 'tagNumber',
+        'pvNumber', 'responsibleOfficer', 'location', 'assetCondition'
+      ]">
+        <input [(ngModel)]="selectedAsset[field]" [name]="field" class="form-control" [placeholder]="field | titlecase" required>
+      </div>
+
+      <div class="col-md-3">
+        <input type="date" [(ngModel)]="selectedAsset.deliveryDate" name="deliveryDate" class="form-control" placeholder="Delivery Date" required>
+      </div>
+
+      <div class="col-md-3" *ngFor="let numberField of [
+        'purchaseAmount', 'depreciationRate', 'annualDepreciation',
+        'accumulatedDepreciation', 'netBookValue'
+      ]">
+        <input type="number" [(ngModel)]="selectedAsset[numberField]" [name]="numberField" class="form-control" [placeholder]="numberField | titlecase" required>
+      </div>
+
+      <div class="col-md-12">
+        <textarea [(ngModel)]="selectedAsset.notes" name="notes" class="form-control" placeholder="Notes"></textarea>
+      </div>
+
+      <div class="col-12 text-end">
+        <button class="btn btn-success me-2" type="submit">
+          {{ isEdit ? 'Update' : 'Create' }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="resetForm()">Clear</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card mt-4 shadow p-4">
+    <h5>Standard Assets</h5>
+    <table class="table table-bordered table-hover mt-2">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Description</th>
+          <th>Serial</th>
+          <th>Model</th>
+          <th>Tag</th>
+          <th>Delivery</th>
+          <th>PV#</th>
+          <th>Purchase</th>
+          <th>Dep %</th>
+          <th>Annual Dep</th>
+          <th>Accum Dep</th>
+          <th>NBV</th>
+          <th>Officer</th>
+          <th>Location</th>
+          <th>Condition</th>
+          <th>Notes</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let asset of standardAssets">
+          <td>{{ asset.id }}</td>
+          <td>{{ asset.assetDescription }}</td>
+          <td>{{ asset.serialNumber }}</td>
+          <td>{{ asset.makeModel }}</td>
+          <td>{{ asset.tagNumber }}</td>
+          <td>{{ asset.deliveryDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ asset.pvNumber }}</td>
+          <td>{{ asset.purchaseAmount }}</td>
+          <td>{{ asset.depreciationRate }}%</td>
+          <td>{{ asset.annualDepreciation }}</td>
+          <td>{{ asset.accumulatedDepreciation }}</td>
+          <td>{{ asset.netBookValue }}</td>
+          <td>{{ asset.responsibleOfficer }}</td>
+          <td>{{ asset.location }}</td>
+          <td>{{ asset.assetCondition }}</td>
+          <td>{{ asset.notes }}</td>
+          <td>
+            <button class="btn btn-sm btn-primary me-1" (click)="edit(asset)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(asset.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

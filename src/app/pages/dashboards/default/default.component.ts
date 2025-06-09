@@ -52,17 +52,17 @@ export class DefaultComponent implements OnInit {
     this.fetchData();
   }
 
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this.openModal();
-    }, 2000);
-  }
+  // ngAfterViewInit() {
+  //   setTimeout(() => {
+  //     this.openModal();
+  //   }, 2000);
+  // }
 
   /**
    * Fetches the data
    */
   private fetchData() {
-    this.emailSentBarChart = emailSentBarChart;
+    // this.emailSentBarChart = emailSentBarChart;
     this.monthlyEarningChart = monthlyEarningChart;
 
     this.isActive = 'year';

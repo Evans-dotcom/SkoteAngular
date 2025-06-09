@@ -6,41 +6,162 @@ export const MENU: MenuItem[] = [
     //     label: 'MENUITEMS.MENU.TEXT',
     //     isTitle: true
     // },
-    // {
-    //     id: 2,
-    //     label: 'MENUITEMS.DASHBOARDS.TEXT',
-    //     icon: 'bx-home-circle',
-    //     badge: {
-    //         variant: 'info',
-    //         text: 'MENUITEMS.DASHBOARDS.BADGE',
-    //     },
-    //     subItems: [
-    //         {
-    //             id: 3,
-    //             label: 'MENUITEMS.DASHBOARDS.LIST.DEFAULT',
-    //             link: '/dashboard',
-    //             parentId: 2
-    //         },
-    //         {
-    //             id: 4,
-    //             label: 'MENUITEMS.DASHBOARDS.LIST.SAAS',
-    //             link: '/dashboards/saas',
-    //             parentId: 2
-    //         },
-    //         {
-    //             id: 5,
-    //             label: 'MENUITEMS.DASHBOARDS.LIST.CRYPTO',
-    //             link: '/dashboards/crypto',
-    //             parentId: 2
-    //         },
-    //         {
-    //             id: 6,
-    //             label: 'MENUITEMS.DASHBOARDS.LIST.BLOG',
-    //             link: '/dashboards/blog',
-    //             parentId: 2
-    //         },
-    //     ]
-    // },
+    {
+        id: 2,
+        label: 'MENUITEMS.DASHBOARDS.TEXT',
+        icon: 'bx-home-circle',
+        badge: {
+            variant: 'info',
+            text: 'MENUITEMS.DASHBOARDS.BADGE',
+        },
+        subItems: [
+            {
+                id: 3,
+                label: 'MENUITEMS.DASHBOARDS.LIST.DEFAULT',
+                link: '/dashboard',
+                parentId: 2
+            }
+            // {
+            //     id: 4,
+            //     label: 'MENUITEMS.DASHBOARDS.LIST.SAAS',
+            //     link: '/dashboards/saas',
+            //     parentId: 2
+            // },
+            // {
+            //     id: 5,
+            //     label: 'MENUITEMS.DASHBOARDS.LIST.CRYPTO',
+            //     link: '/dashboards/crypto',
+            //     parentId: 2
+            // },
+            // {
+            //     id: 6,
+            //     label: 'MENUITEMS.DASHBOARDS.LIST.BLOG',
+            //     link: '/dashboards/blog',
+            //     parentId: 2
+            // },
+        ]
+    },
+    {
+        id: 2,
+        label: 'ASSETS',
+        icon: 'bx-home-circle',
+        badge: {
+            variant: 'info',
+            //text: 'MENUITEMS.ASSETS.BADGE',
+        },
+        subItems: [
+            {
+                id: 3,
+                label: 'Bank Accounts',
+                link: '/banklist',
+                parentId: 2
+            },
+            {
+                id: 3,
+                label: 'Standard Assets',
+                link: '/standardassets',
+                parentId: 2
+            },
+            {
+                id: 4,
+                label: 'PlantMachinery',
+                link: '/plantMachinery',
+                parentId: 2
+            },
+            {
+                id: 5,
+                label: 'MotorVehicles',
+                link: '/vehicles',
+                parentId: 2
+            },
+            {
+                id: 6,
+                label: 'Land Register',
+                link: '/cards',
+                parentId: 2
+            },
+            {
+                id: 7,
+                label: 'Investments',
+                link: '/investments',
+                parentId: 2
+            },
+            {
+                id: 8,
+                label: 'Land Properties',
+                link: '/landsproperties',
+                parentId: 2
+            },
+            {
+                id: 9,
+                label: 'OfficeEquipment',
+                link: '/officeequipment',
+                parentId: 2
+            },
+            {
+                id: 10,
+                label: 'FurnitureFittings',
+                link: '/furniturefittings',
+                parentId: 2
+            },
+            {
+                id: 11,
+                label: 'Lease',
+                link: '/lease',
+                parentId: 2
+            },
+            {
+                id: 12,
+                label: 'Roads Infrastructure',
+                link: '/roadsinfrastructure',
+                parentId: 2
+            },
+            {
+                id: 13,
+                label: 'Buildings Structure',
+                link: '/buildingsstructure',
+                parentId: 2
+            },
+            {
+                id: 14,
+                label: 'ICT Equipment',
+                link: '/ictequipment',
+                parentId: 2
+            },
+            {
+                id: 15,
+                label: 'Work-In Progress',
+                link: '/workinprogress',
+                parentId: 2
+            },
+            {
+                id: 16,
+                label: 'Stock Register',
+                link: '/stockregister',
+                parentId: 2
+            }
+
+
+            // {
+            //     id: 4,
+            //     label: 'MENUITEMS.DASHBOARDS.LIST.SAAS',
+            //     link: '/dashboards/saas',
+            //     parentId: 2
+            // },
+            // {
+            //     id: 5,
+            //     label: 'MENUITEMS.DASHBOARDS.LIST.CRYPTO',
+            //     link: '/dashboards/crypto',
+            //     parentId: 2
+            // },
+            // {
+            //     id: 6,
+            //     label: 'MENUITEMS.DASHBOARDS.LIST.BLOG',
+            //     link: '/dashboards/blog',
+            //     parentId: 2
+            // },
+        ]
+    },
     // {
     //     id: 7,
     //     isLayout: true

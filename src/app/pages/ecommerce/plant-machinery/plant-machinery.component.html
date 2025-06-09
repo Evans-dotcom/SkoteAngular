@@ -1,0 +1,76 @@
+<div class="container mt-4">
+  <div class="card shadow p-4">
+    <h4 class="mb-4 text-info">
+      {{ isEdit ? 'Edit Equipment' : 'Add Plant/Machinery' }}
+    </h4>
+
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selectedItem.equipmentName" name="equipmentName" class="form-control" placeholder="Equipment Name" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selectedItem.serialNumber" name="serialNumber" class="form-control" placeholder="Serial Number" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selectedItem.makeModel" name="makeModel" class="form-control" placeholder="Make/Model" required>
+      </div>
+      <div class="col-md-4">
+        <input type="date" [(ngModel)]="selectedItem.purchaseDate" name="purchaseDate" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <input type="number" [(ngModel)]="selectedItem.value" name="value" class="form-control" placeholder="Value" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selectedItem.location" name="location" class="form-control" placeholder="Location" required>
+      </div>
+      <div class="col-md-6">
+        <input type="text" [(ngModel)]="selectedItem.operationalStatus" name="operationalStatus" class="form-control" placeholder="Operational Status" required>
+      </div>
+      <div class="col-md-6 text-end">
+        <button class="btn btn-primary me-2" type="submit">
+          {{ isEdit ? 'Update' : 'Create' }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="resetForm()">Clear</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card mt-4 shadow p-4">
+    <h5>Plant & Machinery List</h5>
+    <table class="table table-bordered table-striped mt-2">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Serial</th>
+          <th>Model</th>
+          <th>Date</th>
+          <th>Value</th>
+          <th>Location</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of plantItems">
+          <td>{{ item.id }}</td>
+          <td>{{ item.equipmentName }}</td>
+          <td>{{ item.serialNumber }}</td>
+          <td>{{ item.makeModel }}</td>
+          <td>{{ item.purchaseDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ item.value }}</td>
+          <td>{{ item.location }}</td>
+          <td>{{ item.operationalStatus }}</td>
+          <td>
+            <button class="btn btn-sm btn-info me-1" (click)="edit(item)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(item.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

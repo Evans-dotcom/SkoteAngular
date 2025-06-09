@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +9,9 @@ import { Observable } from 'rxjs';
 export class LoginService {
   //private apiUrl = 'https://localhost:44303/api/Auth'; // Adjust the URL as needed
   private apiUrl = 'https://micropointlive.com/t-TestOneApi/api/Auth';
+
+  private apiUrls = `${environment.apiUrl}`;
+
   
 
 
@@ -15,6 +19,6 @@ export class LoginService {
 
   login(Username: string, Password: string): Observable<any> {
   //  return this.http.post<any>(this.apiUrl + '/login', { Username, Password });
-    return this.http.post(`${this.apiUrl}/login`, { Username, Password });
+    return this.http.post(`${this.apiUrls}/login`, { Username, Password });
   }
 }

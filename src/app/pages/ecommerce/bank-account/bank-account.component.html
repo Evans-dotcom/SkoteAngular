@@ -1,0 +1,71 @@
+<div class="container mt-4">
+  <div class="card shadow p-4">
+    <h4 class="mb-4 text-primary">
+      <i class="fa fa-bank"></i> {{ isEdit ? 'Edit Bank Account' : 'Create Bank Account' }}
+    </h4>
+
+    <form (submit)="saveAccount()" class="row g-3">
+      <div class="col-md-6">
+        <input [(ngModel)]="selectedAccount.bankName" name="bankName" class="form-control" placeholder="Bank Name" required>
+      </div>
+      <div class="col-md-6">
+        <input [(ngModel)]="selectedAccount.accountNumber" name="accountNumber" class="form-control" placeholder="Account Number" required>
+      </div>
+      <div class="col-md-6">
+        <input [(ngModel)]="selectedAccount.accountType" name="accountType" class="form-control" placeholder="Account Type" required>
+      </div>
+      <div class="col-md-3">
+        <input type="number" [(ngModel)]="selectedAccount.openingBalance" name="openingBalance" class="form-control" placeholder="Opening Balance" required>
+      </div>
+      <div class="col-md-3">
+        <input type="number" [(ngModel)]="selectedAccount.currentBalance" name="currentBalance" class="form-control" placeholder="Current Balance" required>
+      </div>
+      <div class="col-md-12">
+        <textarea [(ngModel)]="selectedAccount.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
+      </div>
+      <div class="col-12 text-end">
+        <button class="btn btn-success me-2" type="submit">
+          {{ isEdit ? 'Update' : 'Create' }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="resetForm()">Clear</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card mt-4 shadow p-4">
+    <h5>Bank Accounts</h5>
+    <table class="table table-bordered table-hover mt-2">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Bank</th>
+          <th>Acc #</th>
+          <th>Type</th>
+          <th>Opening</th>
+          <th>Current</th>
+          <th>Remarks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let account of bankAccounts">
+          <td>{{ account.id }}</td>
+          <td>{{ account.bankName }}</td>
+          <td>{{ account.accountNumber }}</td>
+          <td>{{ account.accountType }}</td>
+          <td>{{ account.openingBalance }}</td>
+          <td>{{ account.currentBalance }}</td>
+          <td>{{ account.remarks }}</td>
+          <td>
+            <button class="btn btn-sm btn-primary me-1" (click)="edit(account)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(account.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
