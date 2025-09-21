@@ -1,8 +1,6 @@
 <div class="container mt-4">
-  <div class="card shadow p-4">
-    <h4 class="text-success mb-4">
-      {{ isEdit ? 'Edit Road Infrastructure' : 'Add Road Infrastructure' }}
-    </h4>
+  <div class="card shadow p-4 border-start border-success border-4">
+    <h4 class="text-success mb-4">{{ isEdit ? 'Edit Road Infrastructure' : 'Add Road Infrastructure' }}</h4>
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
@@ -20,21 +18,33 @@
       <div class="col-md-2">
         <input type="number" [(ngModel)]="selectedRoad.yearConstructed" name="yearConstructed" class="form-control" placeholder="Year Built" required>
       </div>
-      <div class="col-md-10">
-        <input type="text" [(ngModel)]="selectedRoad.remarks" name="remarks" class="form-control" placeholder="Remarks">
+      <div class="col-md-4">
+        <select class="form-select" [(ngModel)]="selectedRoad.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-select" [(ngModel)]="selectedRoad.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+      <div class="col-md-12">
+        <textarea [(ngModel)]="selectedRoad.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
       </div>
       <div class="col-md-12 text-end">
         <button class="btn btn-primary me-2" type="submit">
-          {{ isEdit ? 'Update' : 'Create' }}
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Create' }}
         </button>
         <button class="btn btn-secondary" type="button" (click)="resetForm()">Clear</button>
       </div>
     </form>
   </div>
 
-  <div class="card mt-4 shadow p-4">
+  <div class="card mt-4 shadow p-4 border-start border-warning border-4">
     <h5>Road Infrastructure Records</h5>
-    <table class="table table-bordered table-striped mt-2">
+    <table class="table table-bordered table-striped mt-2 text-center align-middle">
       <thead class="table-light">
         <tr>
           <th>ID</th>
@@ -43,6 +53,9 @@
           <th>Length (Km)</th>
           <th>Cost</th>
           <th>Year</th>
+          <th>Department</th>
+          <th>Unit</th>
+          <th>Contract Date</th>
           <th>Remarks</th>
           <th>Actions</th>
         </tr>
@@ -53,8 +66,11 @@
           <td>{{ road.roadName }}</td>
           <td>{{ road.location }}</td>
           <td>{{ road.lengthKm }}</td>
-          <td>{{ road.constructionCost }}</td>
+          <td>{{ road.constructionCost | currency }}</td>
           <td>{{ road.yearConstructed }}</td>
+          <td>{{ road.department }}</td>
+          <td>{{ road.departmentUnit }}</td>
+          <td>{{ road.contractDate | date:'yyyy-MM-dd' }}</td>
           <td>{{ road.remarks }}</td>
           <td>
             <button class="btn btn-sm btn-info me-1" (click)="edit(road)">

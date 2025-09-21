@@ -8,8 +8,58 @@ import { AccountsReceivable, AccountsReceivableService } from './accounts-receiv
 })
 export class AccountsReceivableComponent implements OnInit {
   receivables: AccountsReceivable[] = [];
-  selected: AccountsReceivable = this.emptyEntry();
+  selected: AccountsReceivable = this.emptyForm();
   isEdit = false;
+
+  // ✅ Standardized Departments
+  departments: string[] = [
+    'Agriculture, Livestock and Co-operative Management',
+    'Health Services',
+    'Water, Environment, Energy and natural resources',
+    'Information, Communication, E-Government, Youth Affairs, Gender and Sports',
+    'Public Works, Roads and Transport',
+    'Public Service Management',
+    'Trade, Industrialization, Tourism and wildlife',
+    'Finance and Economic Planning',
+    'Education, Culture and Social Services',
+    'Lands, Housing and Physical Planning'
+  ];
+
+  // ✅ Units per department
+  unitsMap: { [key: string]: string[] } = {
+    'Agriculture, Livestock and Co-operative Management': [
+      'Crop Management', 'Livestock', 'Fisheries', 'Co-operatives'
+    ],
+    'Health Services': [
+      'Clinical Services', 'Nursing', 'Pharmacy', 'Public Health'
+    ],
+    'Water, Environment, Energy and natural resources': [
+      'Water Supply', 'Sanitation', 'Forestry', 'Energy'
+    ],
+    'Information, Communication, E-Government, Youth Affairs, Gender and Sports': [
+      'ICT Infrastructure', 'E-Government', 'Youth Affairs', 'Sports'
+    ],
+    'Public Works, Roads and Transport': [
+      'Roads Maintenance', 'Transport', 'Mechanical'
+    ],
+    'Public Service Management': [
+      'HRM', 'Administration', 'Procurement'
+    ],
+    'Trade, Industrialization, Tourism and wildlife': [
+      'Trade Development', 'Industrialization', 'Tourism', 'Wildlife'
+    ],
+    'Finance and Economic Planning': [
+      'Accounts', 'Audit', 'Procurement', 'Planning'
+    ],
+    'Education, Culture and Social Services': [
+      'Early Childhood Education', 'Culture', 'Social Services'
+    ],
+    'Lands, Housing and Physical Planning': [
+      'Survey', 'Physical Planning', 'Housing'
+    ]
+  };
+
+  units: string[] = [];
 
   constructor(private service: AccountsReceivableService) {}
 
@@ -17,11 +67,11 @@ export class AccountsReceivableComponent implements OnInit {
     this.loadData();
   }
 
-  loadData() {
+  loadData(): void {
     this.service.getAll().subscribe(data => this.receivables = data);
   }
 
-  save() {
+  save(): void {
     if (this.isEdit && this.selected.id) {
       this.service.update(this.selected.id, this.selected).subscribe(() => {
         this.resetForm();
@@ -35,29 +85,38 @@ export class AccountsReceivableComponent implements OnInit {
     }
   }
 
-  edit(entry: AccountsReceivable) {
-    this.selected = { ...entry };
+  edit(item: AccountsReceivable): void {
+    this.selected = { ...item };
     this.isEdit = true;
+    this.onDepartmentChange();
   }
 
-  delete(id?: number) {
-    if (id && confirm('Are you sure you want to delete this entry?')) {
+  delete(id?: number): void {
+    if (id && confirm('Delete this Accounts Receivable?')) {
       this.service.delete(id).subscribe(() => this.loadData());
     }
   }
 
-  resetForm() {
-    this.selected = this.emptyEntry();
+  resetForm(): void {
+    this.selected = this.emptyForm();
     this.isEdit = false;
+    this.units = [];
   }
 
-  emptyEntry(): AccountsReceivable {
+  emptyForm(): AccountsReceivable {
     return {
       debtorName: '',
       amountDue: 0,
-      dueDate: new Date(),
+      //dueDate: new Date(),
       reason: '',
-      remarks: ''
+      remarks: '',
+      department: '',
+      departmentUnit: ''
     };
+  }
+
+  onDepartmentChange(): void {
+    this.units = this.unitsMap[this.selected.department] || [];
+    this.selected.departmentUnit = '';
   }
 }

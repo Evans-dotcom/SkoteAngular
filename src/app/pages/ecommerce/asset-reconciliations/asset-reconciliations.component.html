@@ -1,1 +1,105 @@
-<p>asset-reconciliations works!</p>
+<div class="container mt-4">
+  <div class="card shadow p-4 border-start border-primary border-4">
+    <h4 class="mb-3 text-primary">{{ isEdit ? 'Edit Asset Reconciliation' : 'Add Asset Reconciliation' }}</h4>
+
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-3">
+        <input type="number" class="form-control" [(ngModel)]="selected.assetId" name="assetId" placeholder="Asset ID" required>
+      </div>
+      <div class="col-md-3">
+        <input type="number" class="form-control" [(ngModel)]="selected.physicalCount" name="physicalCount" placeholder="Physical Count" required>
+      </div>
+      <div class="col-md-3">
+        <input type="number" class="form-control" [(ngModel)]="selected.systemCount" name="systemCount" placeholder="System Count" required>
+      </div>
+      <div class="col-md-3">
+        <input type="text" class="form-control" [(ngModel)]="selected.reconciledBy" name="reconciledBy" placeholder="Reconciled By">
+      </div>
+
+      <!-- Department -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+
+      <!-- Department Unit -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+
+      <!-- <div class="col-md-4">
+        <input type="date" class="form-control" [(ngModel)]="selected.dateReconciled" name="dateReconciled">
+      </div> -->
+      <!-- <div class="col-md-4">
+        <input type="date" class="form-control" [(ngModel)]="selected.contractDate" name="contractDate">
+      </div> -->
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.discrepancy" name="discrepancy" placeholder="Discrepancy">
+      </div>
+
+      <div class="col-md-12">
+        <textarea class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks"></textarea>
+      </div>
+
+      <div class="col-md-12 text-end">
+        <button class="btn btn-success me-2" type="submit">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Save' }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table -->
+  <div class="card mt-4 shadow p-4 border-start border-dark border-4">
+    <h5 class="mb-3">Asset Reconciliation Records</h5>
+    <table class="table table-bordered table-striped text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Asset ID</th>
+          <th>Date Reconciled</th>
+          <th>Physical Count</th>
+          <th>System Count</th>
+          <th>Reconciled By</th>
+          <th>Discrepancy</th>
+          <th>Department</th>
+          <th>Unit</th>
+        //  <th>Contract Date</th>
+          <th>Remarks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of reconciliations">
+          <td>{{ r.id }}</td>
+          <td>{{ r.assetId }}</td>
+          <td>{{ r.dateReconciled | date:'yyyy-MM-dd' }}</td>
+          <td>{{ r.physicalCount }}</td>
+          <td>{{ r.systemCount }}</td>
+          <td>{{ r.reconciledBy }}</td>
+          <td>{{ r.discrepancy }}</td>
+          <td>{{ r.department }}</td>
+          <td>{{ r.departmentUnit }}</td>
+          <td>{{ r.contractDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ r.remarks }}</td>
+          <td>
+            <button class="btn btn-sm btn-info me-1" (click)="edit(r)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(r.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

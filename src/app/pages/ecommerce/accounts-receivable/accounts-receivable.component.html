@@ -1,61 +1,83 @@
 <div class="container mt-4">
-  <div class="card shadow p-4">
-    <h4 class="text-success mb-4">
-      {{ isEdit ? 'Edit Accounts Receivable' : 'Add Accounts Receivable' }}
-    </h4>
+  <div class="card shadow p-4 border-start border-success border-4">
+    <h4 class="mb-3 text-success">{{ isEdit ? 'Edit Accounts Receivable' : 'Add Accounts Receivable' }}</h4>
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
-        <input type="text" [(ngModel)]="selected.debtorName" name="debtorName" class="form-control" placeholder="Debtor Name" required>
-      </div>
-      <div class="col-md-2">
-        <input type="number" [(ngModel)]="selected.amountDue" name="amountDue" class="form-control" placeholder="Amount Due" required>
+        <input type="text" class="form-control" [(ngModel)]="selected.debtorName" name="debtorName" placeholder="Debtor Name" required>
       </div>
       <div class="col-md-3">
-        <input type="date" [(ngModel)]="selected.dueDate" name="dueDate" class="form-control" required>
+        <input type="number" class="form-control" [(ngModel)]="selected.amountDue" name="amountDue" placeholder="Amount Due" required>
       </div>
-      <div class="col-md-3">
-        <input type="text" [(ngModel)]="selected.reason" name="reason" class="form-control" placeholder="Reason" required>
+      <!-- <div class="col-md-3">
+        <input type="date" class="form-control" [(ngModel)]="selected.dueDate" name="dueDate" required>
+      </div> -->
+      <div class="col-md-6">
+        <input type="text" class="form-control" [(ngModel)]="selected.reason" name="reason" placeholder="Reason">
       </div>
-      <div class="col-md-12">
-        <input type="text" [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks">
+
+      <!-- ✅ Department dropdown -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
       </div>
+
+      <!-- ✅ Department Unit dropdown -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <input type="text" class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks">
+      </div>
+
       <div class="col-md-12 text-end">
-        <button class="btn btn-primary me-2" type="submit">
-          {{ isEdit ? 'Update' : 'Create' }}
+        <button type="submit" class="btn btn-success me-2">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Save' }}
         </button>
-        <button class="btn btn-secondary" type="button" (click)="resetForm()">Clear</button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
       </div>
     </form>
   </div>
 
-  <div class="card mt-4 shadow p-4">
-    <h5>Accounts Receivable Records</h5>
-    <table class="table table-bordered table-striped mt-2">
-      <thead class="table-light">
+  <div class="card mt-4 shadow p-4 border-start border-info border-4">
+    <h5 class="mb-3">Accounts Receivable Records</h5>
+    <table class="table table-bordered table-striped text-center align-middle">
+      <thead class="table-dark">
         <tr>
           <th>ID</th>
           <th>Debtor</th>
           <th>Amount</th>
           <th>Due Date</th>
           <th>Reason</th>
+          <th>Dept</th>
+          <th>Unit</th>
           <th>Remarks</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let entry of receivables">
-          <td>{{ entry.id }}</td>
-          <td>{{ entry.debtorName }}</td>
-          <td>{{ entry.amountDue }}</td>
-          <td>{{ entry.dueDate | date: 'shortDate' }}</td>
-          <td>{{ entry.reason }}</td>
-          <td>{{ entry.remarks }}</td>
+        <tr *ngFor="let item of receivables">
+          <td>{{ item.id }}</td>
+          <td>{{ item.debtorName }}</td>
+          <td>{{ item.amountDue | currency }}</td>
+          <td>{{ item.dueDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ item.reason }}</td>
+          <td>{{ item.department }}</td>
+          <td>{{ item.departmentUnit }}</td>
+          <td>{{ item.remarks }}</td>
           <td>
-            <button class="btn btn-sm btn-info me-1" (click)="edit(entry)">
+            <button class="btn btn-sm btn-info me-1" (click)="edit(item)">
               <i class="fa fa-edit"></i>
             </button>
-            <button class="btn btn-sm btn-danger" (click)="delete(entry.id)">
+            <button class="btn btn-sm btn-danger" (click)="delete(item.id)">
               <i class="fa fa-trash"></i>
             </button>
           </td>

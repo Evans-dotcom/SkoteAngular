@@ -1,6 +1,7 @@
 <div class="container mt-4">
-  <div class="card p-4 shadow border-start border-info border-4">
-    <h4 class="mb-3 text-info">{{ isEdit ? 'Edit Furniture' : 'Add Furniture/Fitting' }}</h4>
+  <div class="card p-4 shadow border-start border-primary border-4">
+    <h4 class="mb-3 text-primary">{{ isEdit ? 'Edit Furniture/Fitting' : 'Add Furniture/Fitting' }}</h4>
+
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
         <input type="text" class="form-control" [(ngModel)]="selected.itemDescription" name="itemDescription" placeholder="Item Description" required>
@@ -17,20 +18,32 @@
       <div class="col-md-4">
         <input type="text" class="form-control" [(ngModel)]="selected.location" name="location" placeholder="Location" required>
       </div>
+
+      <!-- Department dropdown -->
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.department" name="department" placeholder="Department" required>
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
       </div>
+
+      <!-- Unit dropdown -->
       <div class="col-md-4">
-        <input type="date" class="form-control" [(ngModel)]="selected.purchaseDate" name="purchaseDate" required>
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
       </div>
+
       <div class="col-md-6">
         <input type="text" class="form-control" [(ngModel)]="selected.responsibleOfficer" name="responsibleOfficer" placeholder="Responsible Officer" required>
       </div>
       <div class="col-md-6">
         <input type="text" class="form-control" [(ngModel)]="selected.condition" name="condition" placeholder="Condition" required>
       </div>
+
       <div class="col-12 text-end">
-        <button type="submit" class="btn btn-info me-2">
+        <button type="submit" class="btn btn-success me-2">
           <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Save' }}
         </button>
         <button type="button" class="btn btn-secondary" (click)="resetForm()">
@@ -40,9 +53,10 @@
     </form>
   </div>
 
+  <!-- Table -->
   <div class="card mt-4 shadow p-3 border-start border-dark border-4">
     <h5 class="mb-3">Furniture/Fittings Records</h5>
-    <table class="table table-bordered table-hover table-striped text-center">
+    <table class="table table-bordered table-hover table-striped text-center align-middle">
       <thead class="table-dark">
         <tr>
           <th>ID</th>
@@ -52,6 +66,7 @@
           <th>Cost</th>
           <th>Location</th>
           <th>Dept</th>
+          <th>Unit</th>
           <th>Date</th>
           <th>Officer</th>
           <th>Condition</th>
@@ -67,6 +82,7 @@
           <td>{{ item.purchaseCost | currency }}</td>
           <td>{{ item.location }}</td>
           <td>{{ item.department }}</td>
+          <td>{{ item.departmentUnit }}</td>
           <td>{{ item.purchaseDate | date:'yyyy-MM-dd' }}</td>
           <td>{{ item.responsibleOfficer }}</td>
           <td>{{ item.condition }}</td>

@@ -7,59 +7,96 @@ import { PlantMachinery, PlantMachineryService } from './plant-machinery.service
   styleUrls: ['./plant-machinery.component.scss']
 })
 export class PlantMachineryComponent implements OnInit {
-  plantItems: PlantMachinery[] = [];
-  selectedItem: PlantMachinery = this.emptyItem();
+  assets: PlantMachinery[] = [];
+  selected: PlantMachinery = this.emptyAsset();
   isEdit = false;
+
+  departments: string[] = [
+    'Agriculture, Livestock and Co-operative Management',
+    'Health Services',
+    'Water, Environment, Energy and natural resources',
+    'Information, Communication, E-Government, Youth Affairs, Gender and Sports',
+    'Public Works, Roads and Transport',
+    'Public Service Management',
+    'Trade, Industrialization, Tourism and wildlife',
+    'Finance and Economic Planning',
+    'Education, Culture and Social Services',
+    'Lands, Housing and Physical Planning'
+  ];
+
+  unitsMap: { [key: string]: string[] } = {
+    'Agriculture, Livestock and Co-operative Management': ['Crop Management', 'Veterinary', 'Fisheries'],
+    'Health Services': ['Clinic', 'Pharmacy', 'Nursing'],
+    'Water, Environment, Energy and natural resources': ['Water Supply', 'Forestry', 'Conservation'],
+    'Information, Communication, E-Government, Youth Affairs, Gender and Sports': ['ICT', 'Youth Affairs', 'Sports'],
+    'Public Works, Roads and Transport': ['Roads', 'Transport', 'Maintenance'],
+    'Public Service Management': ['HR', 'Administration'],
+    'Trade, Industrialization, Tourism and wildlife': ['Trade', 'Tourism', 'Wildlife'],
+    'Finance and Economic Planning': ['Accounts', 'Procurement', 'Audit'],
+    'Education, Culture and Social Services': ['Schools', 'Culture', 'Social Work'],
+    'Lands, Housing and Physical Planning': ['Survey', 'Housing', 'Planning']
+  };
+
+  units: string[] = [];
 
   constructor(private service: PlantMachineryService) {}
 
   ngOnInit(): void {
-    this.loadItems();
+    this.loadData();
   }
 
-  loadItems() {
-    this.service.getAll().subscribe(data => this.plantItems = data);
+  loadData() {
+    this.service.getAll().subscribe(data => (this.assets = data));
   }
 
   save() {
-    if (this.isEdit && this.selectedItem.id) {
-      this.service.update(this.selectedItem.id, this.selectedItem).subscribe(() => {
+    if (this.isEdit && this.selected.id) {
+      this.service.update(this.selected.id, this.selected).subscribe(() => {
         this.resetForm();
-        this.loadItems();
+        this.loadData();
       });
     } else {
-      this.service.create(this.selectedItem).subscribe(() => {
+      this.service.create(this.selected).subscribe(() => {
         this.resetForm();
-        this.loadItems();
+        this.loadData();
       });
     }
   }
 
   edit(item: PlantMachinery) {
-    this.selectedItem = { ...item };
+    this.selected = { ...item };
     this.isEdit = true;
+    this.onDepartmentChange();
   }
 
   delete(id?: number) {
-    if (id && confirm('Are you sure you want to delete this record?')) {
-      this.service.delete(id).subscribe(() => this.loadItems());
+    if (id && confirm('Delete this Plant Machinery asset?')) {
+      this.service.delete(id).subscribe(() => this.loadData());
     }
   }
 
   resetForm() {
-    this.selectedItem = this.emptyItem();
+    this.selected = this.emptyAsset();
     this.isEdit = false;
+    this.units = [];
   }
 
-  emptyItem(): PlantMachinery {
+  emptyAsset(): PlantMachinery {
     return {
       equipmentName: '',
       serialNumber: '',
       makeModel: '',
-      purchaseDate: new Date(),
+     // purchaseDate: new Date(),
       value: 0,
       location: '',
-      operationalStatus: ''
+      operationalStatus: '',
+      department: '',
+      departmentUnit: ''
     };
+  }
+
+  onDepartmentChange() {
+    this.units = this.unitsMap[this.selected.department] || [];
+    this.selected.departmentUnit = '';
   }
 }

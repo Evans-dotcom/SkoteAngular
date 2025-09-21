@@ -1,1 +1,96 @@
-<p>portable-items works!</p>
+<div class="container mt-4">
+  <div class="card shadow p-4 border-start border-primary border-4">
+    <h4 class="mb-3 text-primary">{{ isEdit ? 'Edit Portable Item' : 'Add Portable Item' }}</h4>
+
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.itemName" name="itemName" class="form-control" placeholder="Item Name" required>
+      </div>
+      <div class="col-md-3">
+        <input type="text" [(ngModel)]="selected.tagNumber" name="tagNumber" class="form-control" placeholder="Tag Number">
+      </div>
+      <div class="col-md-3">
+        <input type="text" [(ngModel)]="selected.assignedTo" name="assignedTo" class="form-control" placeholder="Assigned To">
+      </div>
+      <div class="col-md-2">
+        <input type="text" [(ngModel)]="selected.location" name="location" class="form-control" placeholder="Location">
+      </div>
+
+      <!-- Department -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+
+      <!-- Unit -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <input type="text" [(ngModel)]="selected.condition" name="condition" class="form-control" placeholder="Condition">
+      </div>
+      <div class="col-md-6">
+        <input type="text" [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks">
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-success me-2">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Create' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Records Table -->
+  <div class="card mt-4 shadow p-3 border-start border-dark border-4">
+    <h5 class="mb-3">Portable Items Records</h5>
+    <table class="table table-bordered table-striped text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Item</th>
+          <th>Tag</th>
+          <th>Assigned To</th>
+          <th>Department</th>
+          <th>Unit</th>
+          <th>Location</th>
+          <th>Date Issued</th>
+          <th>Condition</th>
+          <th>Remarks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items">
+          <td>{{ item.id }}</td>
+          <td>{{ item.itemName }}</td>
+          <td>{{ item.tagNumber }}</td>
+          <td>{{ item.assignedTo }}</td>
+          <td>{{ item.department }}</td>
+          <td>{{ item.departmentUnit }}</td>
+          <td>{{ item.location }}</td>
+          <td>{{ item.dateIssued | date:'yyyy-MM-dd' }}</td>
+          <td>{{ item.condition }}</td>
+          <td>{{ item.remarks }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-1" (click)="edit(item)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(item.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

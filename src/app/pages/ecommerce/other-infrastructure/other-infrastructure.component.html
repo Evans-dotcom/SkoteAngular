@@ -1,1 +1,93 @@
-<p>other-infrastructure works!</p>
+<div class="container mt-4">
+  <div class="card shadow p-4 border-start border-primary border-4">
+    <h4 class="text-primary mb-4">
+      {{ isEdit ? 'Edit Other Infrastructure' : 'Add Other Infrastructure' }}
+    </h4>
+
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.assetName" name="assetName" class="form-control" placeholder="Asset Name" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.location" name="location" class="form-control" placeholder="Location" required>
+      </div>
+      <div class="col-md-4">
+        <input type="number" [(ngModel)]="selected.value" name="value" class="form-control" placeholder="Value" required>
+      </div>
+      <div class="col-md-6">
+        <input type="text" [(ngModel)]="selected.description" name="description" class="form-control" placeholder="Description" required>
+      </div>
+
+      <!-- Department -->
+      <div class="col-md-3">
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+
+      <!-- Department Unit -->
+      <div class="col-md-3">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-12">
+        <textarea [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary me-2">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Save' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Records Table -->
+  <div class="card mt-4 shadow p-3 border-start border-dark border-4">
+    <h5 class="mb-3">Other Infrastructure Records</h5>
+    <table class="table table-bordered table-striped text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Asset Name</th>
+          <th>Location</th>
+          <th>Description</th>
+          <th>Value</th>
+          <th>Acquisition Date</th>
+          <th>Department</th>
+          <th>Unit</th>
+          <th>Remarks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let record of records">
+          <td>{{ record.id }}</td>
+          <td>{{ record.assetName }}</td>
+          <td>{{ record.location }}</td>
+          <td>{{ record.description }}</td>
+          <td>{{ record.value | currency }}</td>
+          <td>{{ record.acquisitionDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ record.department }}</td>
+          <td>{{ record.departmentUnit }}</td>
+          <td>{{ record.remarks }}</td>
+          <td>
+            <button class="btn btn-sm btn-info me-1" (click)="edit(record)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(record.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

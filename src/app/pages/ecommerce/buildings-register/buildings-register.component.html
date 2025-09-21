@@ -1,1 +1,95 @@
-<p>buildings-register works!</p>
+<div class="container mt-4">
+  <div class="card shadow p-4 border-start border-info border-4">
+    <h4 class="text-info mb-4">{{ isEdit ? 'Edit Building' : 'Add Building' }}</h4>
+
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.buildingName" name="buildingName" class="form-control" placeholder="Building Name" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.location" name="location" class="form-control" placeholder="Location" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.usePurpose" name="usePurpose" class="form-control" placeholder="Use/Purpose" required>
+      </div>
+      <div class="col-md-3">
+        <input type="number" [(ngModel)]="selected.constructionCost" name="constructionCost" class="form-control" placeholder="Construction Cost" required>
+      </div>
+      <div class="col-md-3">
+        <input type="number" [(ngModel)]="selected.depreciation" name="depreciation" class="form-control" placeholder="Depreciation" required>
+      </div>
+      <div class="col-md-3">
+        <input type="number" [(ngModel)]="selected.netBookValue" name="netBookValue" class="form-control" placeholder="Net Book Value" required>
+      </div>
+
+      <!-- Department Dropdown -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+
+      <!-- Department Unit -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-success me-2">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Save' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Records Table -->
+  <div class="card mt-4 shadow p-3 border-start border-dark border-4">
+    <h5 class="mb-3">Buildings Register</h5>
+    <table class="table table-bordered table-striped text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Location</th>
+          <th>Use</th>
+          <th>Date Constructed</th>
+          <th>Cost</th>
+          <th>Depreciation</th>
+          <th>Net Value</th>
+          <th>Department</th>
+          <th>Unit</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let b of buildings">
+          <td>{{ b.id }}</td>
+          <td>{{ b.buildingName }}</td>
+          <td>{{ b.location }}</td>
+          <td>{{ b.usePurpose }}</td>
+          <td>{{ b.dateConstructed | date:'yyyy-MM-dd' }}</td>
+          <td>{{ b.constructionCost | currency }}</td>
+          <td>{{ b.depreciation | number:'1.0-2' }}</td>
+          <td>{{ b.netBookValue | currency }}</td>
+          <td>{{ b.department }}</td>
+          <td>{{ b.departmentUnit }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-1" (click)="edit(b)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(b.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

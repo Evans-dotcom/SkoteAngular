@@ -1,76 +1,93 @@
 <div class="container mt-4">
-  <div class="card shadow p-4">
-    <h4 class="mb-4 text-info">
-      {{ isEdit ? 'Edit Stock Record' : 'Add Stock Item' }}
-    </h4>
+  <div class="card p-4 shadow border-start border-success border-4">
+    <h4 class="mb-3 text-success">{{ isEdit ? 'Edit Stock Item' : 'Add Stock Item' }}</h4>
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
-        <input type="text" [(ngModel)]="selectedItem.itemName" name="itemName" class="form-control" placeholder="Item Name" required>
+        <input type="text" [(ngModel)]="selected.itemName" name="itemName" class="form-control" placeholder="Item Name" required>
       </div>
       <div class="col-md-2">
-        <input type="text" [(ngModel)]="selectedItem.unit" name="unit" class="form-control" placeholder="Unit" required>
+        <input type="text" [(ngModel)]="selected.unit" name="unit" class="form-control" placeholder="Unit (e.g. Kg, Litre)" required>
       </div>
       <div class="col-md-2">
-        <input type="number" [(ngModel)]="selectedItem.quantity" name="quantity" class="form-control" placeholder="Qty" required>
+        <input type="number" [(ngModel)]="selected.quantity" name="quantity" class="form-control" placeholder="Quantity" required>
       </div>
       <div class="col-md-2">
-        <input type="number" [(ngModel)]="selectedItem.unitCost" name="unitCost" class="form-control" placeholder="Unit Cost" required>
+        <input type="number" [(ngModel)]="selected.unitCost" name="unitCost" class="form-control" placeholder="Unit Cost" required>
       </div>
       <div class="col-md-2">
-        <input type="number" [(ngModel)]="selectedItem.totalValue" name="totalValue" class="form-control" placeholder="Total Value" required>
+        <input type="text" [(ngModel)]="selected.totalValue" name="totalValue" class="form-control" placeholder="Total Value" readonly>
       </div>
       <div class="col-md-4">
-        <input type="text" [(ngModel)]="selectedItem.location" name="location" class="form-control" placeholder="Location" required>
+        <input type="text" [(ngModel)]="selected.location" name="location" class="form-control" placeholder="Location" required>
       </div>
       <div class="col-md-4">
-        <input type="date" [(ngModel)]="selectedItem.lastRestocked" name="lastRestocked" class="form-control" required>
+        <select [(ngModel)]="selected.department" name="department" class="form-select" (change)="onDepartmentChange()" required>
+          <option value="" disabled>Select Department</option>
+          <option *ngFor="let dept of (departments | keyvalue)" [value]="dept.key">{{ dept.key }}</option>
+        </select>
       </div>
       <div class="col-md-4">
-        <input type="text" [(ngModel)]="selectedItem.remarks" name="remarks" class="form-control" placeholder="Remarks">
+        <select [(ngModel)]="selected.departmentUnit" name="departmentUnit" class="form-select" required>
+          <option value="" disabled>Select Department Unit</option>
+          <option *ngFor="let unit of availableUnits" [value]="unit">{{ unit }}</option>
+        </select>
       </div>
-      <div class="col-md-12 text-end">
-        <button class="btn btn-primary me-2" type="submit">
-          {{ isEdit ? 'Update' : 'Create' }}
+      <!-- <div class="col-md-6">
+        <input type="date" [(ngModel)]="selected.lastRestocked" name="lastRestocked" class="form-control" required>
+      </div> -->
+      <div class="col-md-6">
+        <input type="text" [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks">
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-success me-2">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Save' }}
         </button>
-        <button class="btn btn-secondary" type="button" (click)="resetForm()">Clear</button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
       </div>
     </form>
   </div>
 
-  <div class="card mt-4 shadow p-4">
-    <h5>Stock Register</h5>
-    <table class="table table-bordered table-striped mt-2">
-      <thead class="table-light">
+  <div class="card mt-4 shadow p-3 border-start border-dark border-4">
+    <h5 class="mb-3">Stock Records</h5>
+    <table class="table table-bordered table-hover table-striped text-center">
+      <thead class="table-dark">
         <tr>
           <th>ID</th>
           <th>Item</th>
           <th>Unit</th>
-          <th>Qty</th>
+          <th>Quantity</th>
           <th>Unit Cost</th>
           <th>Total Value</th>
           <th>Location</th>
-          <th>Restocked</th>
+          <th>Department</th>
+          <th>Unit</th>
+          <th>Last Restocked</th>
           <th>Remarks</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of stockItems">
-          <td>{{ item.id }}</td>
-          <td>{{ item.itemName }}</td>
-          <td>{{ item.unit }}</td>
-          <td>{{ item.quantity }}</td>
-          <td>{{ item.unitCost }}</td>
-          <td>{{ item.totalValue }}</td>
-          <td>{{ item.location }}</td>
-          <td>{{ item.lastRestocked | date:'yyyy-MM-dd' }}</td>
-          <td>{{ item.remarks }}</td>
+        <tr *ngFor="let stock of stocks">
+          <td>{{ stock.id }}</td>
+          <td>{{ stock.itemName }}</td>
+          <td>{{ stock.unit }}</td>
+          <td>{{ stock.quantity }}</td>
+          <td>{{ stock.unitCost | currency }}</td>
+          <td>{{ stock.totalValue | currency }}</td>
+          <td>{{ stock.location }}</td>
+          <td>{{ stock.department }}</td>
+          <td>{{ stock.departmentUnit }}</td>
+          <td>{{ stock.lastRestocked | date:'yyyy-MM-dd' }}</td>
+          <td>{{ stock.remarks }}</td>
           <td>
-            <button class="btn btn-sm btn-info me-1" (click)="edit(item)">
+            <button class="btn btn-sm btn-warning me-1" (click)="edit(stock)">
               <i class="fa fa-edit"></i>
             </button>
-            <button class="btn btn-sm btn-danger" (click)="delete(item.id)">
+            <button class="btn btn-sm btn-danger" (click)="delete(stock.id)">
               <i class="fa fa-trash"></i>
             </button>
           </td>

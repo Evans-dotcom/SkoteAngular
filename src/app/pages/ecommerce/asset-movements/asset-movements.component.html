@@ -1,1 +1,100 @@
-<p>asset-movements works!</p>
+<div class="container mt-4">
+  <div class="card shadow p-4 border-start border-success border-4">
+    <h4 class="mb-3 text-success">{{ isEdit ? 'Edit Asset Movement' : 'Add Asset Movement' }}</h4>
+
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-3">
+        <input type="number" class="form-control" [(ngModel)]="selected.assetId" name="assetId" placeholder="Asset ID" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.fromLocation" name="fromLocation" placeholder="From Location" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.toLocation" name="toLocation" placeholder="To Location" required>
+      </div>
+      <!-- <div class="col-md-4">
+        <input type="date" class="form-control" [(ngModel)]="selected.dateMoved" name="dateMoved">
+      </div> -->
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.movedBy" name="movedBy" placeholder="Moved By">
+      </div>
+
+      <!-- Department -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+
+      <!-- Department Unit -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+
+      <!-- <div class="col-md-4">
+        <input type="date" class="form-control" [(ngModel)]="selected.contractDate" name="contractDate">
+      </div> -->
+
+      <div class="col-md-8">
+        <input type="text" class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks">
+      </div>
+
+      <div class="col-md-12 text-end">
+        <button class="btn btn-success me-2" type="submit">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Save' }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table -->
+  <div class="card mt-4 shadow p-4 border-start border-dark border-4">
+    <h5 class="mb-3">Asset Movement Records</h5>
+    <table class="table table-bordered table-striped text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Asset ID</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Date Moved</th>
+          <th>Moved By</th>
+          <th>Dept</th>
+          <th>Unit</th>
+          <th>Contract Date</th>
+          <th>Remarks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let m of movements">
+          <td>{{ m.id }}</td>
+          <td>{{ m.assetId }}</td>
+          <td>{{ m.fromLocation }}</td>
+          <td>{{ m.toLocation }}</td>
+          <td>{{ m.dateMoved | date:'yyyy-MM-dd' }}</td>
+          <td>{{ m.movedBy }}</td>
+          <td>{{ m.department }}</td>
+          <td>{{ m.departmentUnit }}</td>
+          <td>{{ m.contractDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ m.remarks }}</td>
+          <td>
+            <button class="btn btn-sm btn-info me-1" (click)="edit(m)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(m.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

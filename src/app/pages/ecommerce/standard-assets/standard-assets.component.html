@@ -1,45 +1,86 @@
 <div class="container mt-4">
-  <div class="card shadow p-4">
-    <h4 class="mb-4 text-primary">
-      <i class="fa fa-cubes"></i> {{ isEdit ? 'Edit Asset' : 'Add New Asset' }}
-    </h4>
+  <div class="card shadow p-4 border-start border-info border-4">
+    <h4 class="mb-3 text-info">{{ isEdit ? 'Edit Standard Asset' : 'Add Standard Asset' }}</h4>
 
-    <form (submit)="saveAsset()" class="row g-3">
-      <div class="col-md-6" *ngFor="let field of [
-        'assetDescription', 'serialNumber', 'makeModel', 'tagNumber',
-        'pvNumber', 'responsibleOfficer', 'location', 'assetCondition'
-      ]">
-        <input [(ngModel)]="selectedAsset[field]" [name]="field" class="form-control" [placeholder]="field | titlecase" required>
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.assetDescription" name="assetDescription" class="form-control" placeholder="Description" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.serialNumber" name="serialNumber" class="form-control" placeholder="Serial Number">
+      </div>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.makeModel" name="makeModel" class="form-control" placeholder="Make/Model">
       </div>
 
-      <div class="col-md-3">
-        <input type="date" [(ngModel)]="selectedAsset.deliveryDate" name="deliveryDate" class="form-control" placeholder="Delivery Date" required>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.tagNumber" name="tagNumber" class="form-control" placeholder="Tag Number">
+      </div>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.pvNumber" name="pvNumber" class="form-control" placeholder="PV Number">
+      </div>
+      <div class="col-md-4">
+        <input type="number" [(ngModel)]="selected.purchaseAmount" name="purchaseAmount" class="form-control" placeholder="Purchase Amount">
       </div>
 
-      <div class="col-md-3" *ngFor="let numberField of [
-        'purchaseAmount', 'depreciationRate', 'annualDepreciation',
-        'accumulatedDepreciation', 'netBookValue'
-      ]">
-        <input type="number" [(ngModel)]="selectedAsset[numberField]" [name]="numberField" class="form-control" [placeholder]="numberField | titlecase" required>
+      <div class="col-md-4">
+        <input type="number" [(ngModel)]="selected.depreciationRate" name="depreciationRate" class="form-control" placeholder="Depreciation Rate (%)">
+      </div>
+      <div class="col-md-4">
+        <input type="number" [(ngModel)]="selected.annualDepreciation" name="annualDepreciation" class="form-control" placeholder="Annual Depreciation">
+      </div>
+      <div class="col-md-4">
+        <input type="number" [(ngModel)]="selected.accumulatedDepreciation" name="accumulatedDepreciation" class="form-control" placeholder="Accumulated Depreciation">
+      </div>
+      <div class="col-md-4">
+        <input type="number" [(ngModel)]="selected.netBookValue" name="netBookValue" class="form-control" placeholder="Net Book Value">
       </div>
 
-      <div class="col-md-12">
-        <textarea [(ngModel)]="selectedAsset.notes" name="notes" class="form-control" placeholder="Notes"></textarea>
+      <!-- Department -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+
+      <!-- Department Unit -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <input type="text" [(ngModel)]="selected.responsibleOfficer" name="responsibleOfficer" class="form-control" placeholder="Responsible Officer">
+      </div>
+      <div class="col-md-6">
+        <input type="text" [(ngModel)]="selected.location" name="location" class="form-control" placeholder="Location">
+      </div>
+
+      <div class="col-md-6">
+        <input type="text" [(ngModel)]="selected.assetCondition" name="assetCondition" class="form-control" placeholder="Condition">
+      </div>
+      <div class="col-md-6">
+        <textarea [(ngModel)]="selected.notes" name="notes" class="form-control" placeholder="Notes"></textarea>
       </div>
 
       <div class="col-12 text-end">
-        <button class="btn btn-success me-2" type="submit">
-          {{ isEdit ? 'Update' : 'Create' }}
+        <button type="submit" class="btn btn-info me-2">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Create' }}
         </button>
-        <button class="btn btn-secondary" type="button" (click)="resetForm()">Clear</button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
       </div>
     </form>
   </div>
 
-  <div class="card mt-4 shadow p-4">
-    <h5>Standard Assets</h5>
-    <table class="table table-bordered table-hover mt-2">
-      <thead class="table-light">
+  <div class="card mt-4 shadow p-3 border-start border-dark border-4">
+    <h5 class="mb-3">Standard Assets</h5>
+    <table class="table table-bordered table-hover table-striped text-center align-middle">
+      <thead class="table-dark">
         <tr>
           <th>ID</th>
           <th>Description</th>
@@ -47,39 +88,45 @@
           <th>Model</th>
           <th>Tag</th>
           <th>Delivery</th>
-          <th>PV#</th>
+          <th>Contract</th>
+          <th>PV</th>
           <th>Purchase</th>
-          <th>Dep %</th>
-          <th>Annual Dep</th>
-          <th>Accum Dep</th>
+          <th>Rate %</th>
+          <th>Annual Dep.</th>
+          <th>Accum. Dep.</th>
           <th>NBV</th>
           <th>Officer</th>
           <th>Location</th>
           <th>Condition</th>
+          <th>Dept</th>
+          <th>Unit</th>
           <th>Notes</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let asset of standardAssets">
+        <tr *ngFor="let asset of assets">
           <td>{{ asset.id }}</td>
           <td>{{ asset.assetDescription }}</td>
           <td>{{ asset.serialNumber }}</td>
           <td>{{ asset.makeModel }}</td>
           <td>{{ asset.tagNumber }}</td>
           <td>{{ asset.deliveryDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ asset.contractDate | date:'yyyy-MM-dd' }}</td>
           <td>{{ asset.pvNumber }}</td>
-          <td>{{ asset.purchaseAmount }}</td>
-          <td>{{ asset.depreciationRate }}%</td>
-          <td>{{ asset.annualDepreciation }}</td>
-          <td>{{ asset.accumulatedDepreciation }}</td>
-          <td>{{ asset.netBookValue }}</td>
+          <td>{{ asset.purchaseAmount | currency }}</td>
+          <td>{{ asset.depreciationRate }}</td>
+          <td>{{ asset.annualDepreciation | currency }}</td>
+          <td>{{ asset.accumulatedDepreciation | currency }}</td>
+          <td>{{ asset.netBookValue | currency }}</td>
           <td>{{ asset.responsibleOfficer }}</td>
           <td>{{ asset.location }}</td>
           <td>{{ asset.assetCondition }}</td>
+          <td>{{ asset.department }}</td>
+          <td>{{ asset.departmentUnit }}</td>
           <td>{{ asset.notes }}</td>
           <td>
-            <button class="btn btn-sm btn-primary me-1" (click)="edit(asset)">
+            <button class="btn btn-sm btn-warning me-1" (click)="edit(asset)">
               <i class="fa fa-edit"></i>
             </button>
             <button class="btn btn-sm btn-danger" (click)="delete(asset.id)">

@@ -1,40 +1,59 @@
 <div class="container mt-4">
-  <div class="card shadow p-4 border-start border-info border-4">
-    <h4 class="mb-4 text-info">{{ isEdit ? 'Edit Vehicle' : 'Add Motor Vehicle' }}</h4>
+  <div class="card shadow p-4 border-start border-primary border-4">
+    <h4 class="mb-3 text-primary">{{ isEdit ? 'Edit Motor Vehicle' : 'Add Motor Vehicle' }}</h4>
 
     <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-3">
+        <input type="text" [(ngModel)]="selected.registrationNumber" name="registrationNumber" class="form-control" placeholder="Registration Number" required>
+      </div>
+      <div class="col-md-3">
+        <input type="text" [(ngModel)]="selected.make" name="make" class="form-control" placeholder="Make" required>
+      </div>
+      <div class="col-md-3">
+        <input type="text" [(ngModel)]="selected.model" name="model" class="form-control" placeholder="Model" required>
+      </div>
+      <div class="col-md-3">
+        <input type="number" [(ngModel)]="selected.yearOfManufacture" name="yearOfManufacture" class="form-control" placeholder="Year of Manufacture" required>
+      </div>
+
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.registrationNumber" name="registrationNumber" placeholder="Reg No." required>
+        <input type="text" [(ngModel)]="selected.engineNumber" name="engineNumber" class="form-control" placeholder="Engine Number">
       </div>
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.make" name="make" placeholder="Make" required>
+        <input type="text" [(ngModel)]="selected.chassisNumber" name="chassisNumber" class="form-control" placeholder="Chassis Number">
+      </div>
+      <!-- <div class="col-md-4">
+        <input type="date" [(ngModel)]="selected.purchaseDate" name="purchaseDate" class="form-control">
+      </div> -->
+
+      <div class="col-md-4">
+        <input type="number" [(ngModel)]="selected.purchasePrice" name="purchasePrice" class="form-control" placeholder="Purchase Price">
       </div>
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.model" name="model" placeholder="Model" required>
+        <input type="text" [(ngModel)]="selected.location" name="location" class="form-control" placeholder="Location">
       </div>
-      <div class="col-md-3">
-        <input type="number" class="form-control" [(ngModel)]="selected.yearOfManufacture" name="yearOfManufacture" placeholder="Year" required>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.responsibleOfficer" name="responsibleOfficer" class="form-control" placeholder="Responsible Officer">
       </div>
-      <div class="col-md-3">
-        <input type="text" class="form-control" [(ngModel)]="selected.engineNumber" name="engineNumber" placeholder="Engine No." required>
+
+      <!-- Department -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
       </div>
-      <div class="col-md-3">
-        <input type="text" class="form-control" [(ngModel)]="selected.chassisNumber" name="chassisNumber" placeholder="Chassis No." required>
+
+      <!-- Department Unit -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
       </div>
-      <div class="col-md-3">
-        <input type="date" class="form-control" [(ngModel)]="selected.purchaseDate" name="purchaseDate" required>
-      </div>
-      <div class="col-md-3">
-        <input type="number" class="form-control" [(ngModel)]="selected.purchasePrice" name="purchasePrice" placeholder="Price" required>
-      </div>
-      <div class="col-md-3">
-        <input type="text" class="form-control" [(ngModel)]="selected.location" name="location" placeholder="Location" required>
-      </div>
-      <div class="col-md-3">
-        <input type="text" class="form-control" [(ngModel)]="selected.responsibleOfficer" name="responsibleOfficer" placeholder="Officer" required>
-      </div>
-      <div class="col-md-12 text-end">
-        <button type="submit" class="btn btn-info me-2">
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-success me-2">
           <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Create' }}
         </button>
         <button type="button" class="btn btn-secondary" (click)="resetForm()">
@@ -44,43 +63,47 @@
     </form>
   </div>
 
-  <div class="card mt-4 shadow p-4 border-start border-warning border-4">
-    <h5>Motor Vehicles</h5>
-    <table class="table table-hover table-striped table-bordered mt-2 text-center align-middle">
-      <thead class="table-light">
+  <div class="card mt-4 shadow p-3 border-start border-dark border-4">
+    <h5 class="mb-3">Motor Vehicle Records</h5>
+    <table class="table table-bordered table-hover table-striped text-center align-middle">
+      <thead class="table-dark">
         <tr>
           <th>ID</th>
-          <th>Reg No.</th>
+          <th>Reg. No</th>
           <th>Make</th>
           <th>Model</th>
           <th>Year</th>
-          <th>Engine No</th>
-          <th>Chassis No</th>
+          <th>Engine</th>
+          <th>Chassis</th>
           <th>Purchase Date</th>
           <th>Price</th>
           <th>Location</th>
           <th>Officer</th>
+          <th>Department</th>
+          <th>Unit</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let v of vehicles">
-          <td>{{ v.id }}</td>
-          <td>{{ v.registrationNumber }}</td>
-          <td>{{ v.make }}</td>
-          <td>{{ v.model }}</td>
-          <td>{{ v.yearOfManufacture }}</td>
-          <td>{{ v.engineNumber }}</td>
-          <td>{{ v.chassisNumber }}</td>
-          <td>{{ v.purchaseDate | date:'yyyy-MM-dd' }}</td>
-          <td>{{ v.purchasePrice | currency }}</td>
-          <td>{{ v.location }}</td>
-          <td>{{ v.responsibleOfficer }}</td>
+        <tr *ngFor="let vehicle of vehicles">
+          <td>{{ vehicle.id }}</td>
+          <td>{{ vehicle.registrationNumber }}</td>
+          <td>{{ vehicle.make }}</td>
+          <td>{{ vehicle.model }}</td>
+          <td>{{ vehicle.yearOfManufacture }}</td>
+          <td>{{ vehicle.engineNumber }}</td>
+          <td>{{ vehicle.chassisNumber }}</td>
+          <td>{{ vehicle.purchaseDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ vehicle.purchasePrice | currency }}</td>
+          <td>{{ vehicle.location }}</td>
+          <td>{{ vehicle.responsibleOfficer }}</td>
+          <td>{{ vehicle.department }}</td>
+          <td>{{ vehicle.departmentUnit }}</td>
           <td>
-            <button class="btn btn-sm btn-info me-1" (click)="edit(v)">
+            <button class="btn btn-sm btn-warning me-1" (click)="edit(vehicle)">
               <i class="fa fa-edit"></i>
             </button>
-            <button class="btn btn-sm btn-danger" (click)="delete(v.id)">
+            <button class="btn btn-sm btn-danger" (click)="delete(vehicle.id)">
               <i class="fa fa-trash"></i>
             </button>
           </td>

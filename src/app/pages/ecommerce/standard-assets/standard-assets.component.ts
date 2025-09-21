@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { StandardAssetService } from './standardassets.service';
-import { StandardAsset } from 'src/app/core/models/standard-asset.model';
+import { StandardAsset, StandardAssetService } from './standardassets.service';
 
 @Component({
   selector: 'app-standard-asset',
@@ -8,58 +7,86 @@ import { StandardAsset } from 'src/app/core/models/standard-asset.model';
   styleUrls: ['./standard-assets.component.scss']
 })
 export class StandardAssetComponent implements OnInit {
-  standardAssets: StandardAsset[] = [];
-  selectedAsset: StandardAsset = this.emptyAsset();
+  assets: StandardAsset[] = [];
+  selected: StandardAsset = this.emptyAsset();
   isEdit = false;
 
-  constructor(private assetService: StandardAssetService) {}
+  departments: string[] = [
+    'Agriculture, Livestock and Co-operative Management',
+    'Health Services',
+    'Water, Environment, Energy and natural resources',
+    'Information, Communication, E-Government, Youth Affairs, Gender and Sports',
+    'Public Works, Roads and Transport',
+    'Public Service Management',
+    'Trade, Industrialization, Tourism and wildlife',
+    'Finance and Economic Planning',
+    'Education, Culture and Social Services',
+    'Lands, Housing and Physical Planning'
+  ];
+
+  unitsMap: { [key: string]: string[] } = {
+    'Agriculture, Livestock and Co-operative Management': ['Crop Management', 'Veterinary', 'Fisheries'],
+    'Health Services': ['Clinic', 'Pharmacy', 'Nursing'],
+    'Water, Environment, Energy and natural resources': ['Water Supply', 'Forestry', 'Conservation'],
+    'Information, Communication, E-Government, Youth Affairs, Gender and Sports': ['ICT', 'Youth Affairs', 'Sports'],
+    'Public Works, Roads and Transport': ['Roads', 'Transport', 'Maintenance'],
+    'Public Service Management': ['HR', 'Administration'],
+    'Trade, Industrialization, Tourism and wildlife': ['Trade', 'Tourism', 'Wildlife'],
+    'Finance and Economic Planning': ['Accounts', 'Procurement', 'Audit'],
+    'Education, Culture and Social Services': ['Schools', 'Culture', 'Social Work'],
+    'Lands, Housing and Physical Planning': ['Survey', 'Housing', 'Planning']
+  };
+
+  units: string[] = [];
+
+  constructor(private service: StandardAssetService) {}
 
   ngOnInit(): void {
-    this.loadAssets();
+    this.loadData();
   }
 
-  loadAssets() {
-    this.assetService.getAll().subscribe(data => this.standardAssets = data);
+  loadData() {
+    this.service.getAll().subscribe(data => (this.assets = data));
   }
 
-  saveAsset() {
-    if (this.isEdit && this.selectedAsset.id) {
-      this.assetService.update(this.selectedAsset.id, this.selectedAsset).subscribe(() => {
+  save() {
+    if (this.isEdit && this.selected.id) {
+      this.service.update(this.selected.id, this.selected).subscribe(() => {
         this.resetForm();
-        this.loadAssets();
+        this.loadData();
       });
     } else {
-      this.assetService.create(this.selectedAsset).subscribe(() => {
+      this.service.create(this.selected).subscribe(() => {
         this.resetForm();
-        this.loadAssets();
+        this.loadData();
       });
     }
   }
 
-  edit(asset: StandardAsset) {
-    this.selectedAsset = { ...asset };
+  edit(item: StandardAsset) {
+    this.selected = { ...item };
     this.isEdit = true;
+    this.onDepartmentChange();
   }
 
-  delete(id: number | undefined) {
-    if (id && confirm('Are you sure you want to delete this asset?')) {
-      this.assetService.delete(id).subscribe(() => this.loadAssets());
+  delete(id?: number) {
+    if (id && confirm('Delete this asset?')) {
+      this.service.delete(id).subscribe(() => this.loadData());
     }
   }
 
   resetForm() {
-    this.selectedAsset = this.emptyAsset();
+    this.selected = this.emptyAsset();
     this.isEdit = false;
+    this.units = [];
   }
 
   emptyAsset(): StandardAsset {
     return {
-      id: 0,
       assetDescription: '',
       serialNumber: '',
       makeModel: '',
       tagNumber: '',
-      deliveryDate: new Date(),
       pvNumber: '',
       purchaseAmount: 0,
       depreciationRate: 0,
@@ -69,7 +96,14 @@ export class StandardAssetComponent implements OnInit {
       responsibleOfficer: '',
       location: '',
       assetCondition: '',
-      notes: ''
+      notes: '',
+      department: '',
+      departmentUnit: ''
     };
+  }
+
+  onDepartmentChange() {
+    this.units = this.unitsMap[this.selected.department] || [];
+    this.selected.departmentUnit = '';
   }
 }

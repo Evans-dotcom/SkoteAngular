@@ -1,7 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { FurnitureFitting } from 'src/app/core/models/furniture-fitting.model';
+
+export interface FurnitureFitting {
+  id?: number;
+  itemDescription: string;
+  serialNumber: string;
+  quantity: number;
+  location: string;
+  department: string;
+  departmentUnit: string;
+  purchaseCost: number;
+  responsibleOfficer: string;
+  condition: string;
+  purchaseDate?: Date;
+}
 
 @Injectable({
   providedIn: 'root'

@@ -5,7 +5,8 @@ export interface FurnitureFitting {
   quantity: number;
   location: string;
   department: string;
-  purchaseDate: Date;
+  departmentUnit: string;
+//  purchaseDate: Date;
   purchaseCost: number;
   responsibleOfficer: string;
   condition: string;

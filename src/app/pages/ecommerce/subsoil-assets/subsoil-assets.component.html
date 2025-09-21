@@ -1,1 +1,87 @@
-<p>subsoil-assets works!</p>
+<div class="container mt-4">
+  <div class="card shadow p-4 border-start border-primary border-4">
+    <h4 class="text-primary mb-3">{{ isEdit ? 'Edit Subsoil Asset' : 'Add Subsoil Asset' }}</h4>
+
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.resourceType" name="resourceType" placeholder="Resource Type" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.location" name="location" placeholder="Location" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.estimatedVolume" name="estimatedVolume" placeholder="Estimated Volume" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.ownershipStatus" name="ownershipStatus" placeholder="Ownership Status" required>
+      </div>
+      <div class="col-md-4">
+        <input type="number" class="form-control" [(ngModel)]="selected.valueEstimate" name="valueEstimate" placeholder="Value Estimate" required>
+      </div>
+      <div class="col-md-4">
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+      <div class="col-md-12">
+        <textarea class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks"></textarea>
+      </div>
+      <div class="col-md-12 text-end">
+        <button type="submit" class="btn btn-success me-2">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Save' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card mt-4 shadow p-4 border-start border-dark border-4">
+    <h5 class="mb-3">Subsoil Asset Records</h5>
+    <table class="table table-bordered table-striped text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Resource</th>
+          <th>Location</th>
+          <th>Estimated Volume</th>
+          <th>Ownership</th>
+          <th>Value</th>
+          <th>Department</th>
+          <th>Unit</th>
+          <th>Remarks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let asset of assets">
+          <td>{{ asset.id }}</td>
+          <td>{{ asset.resourceType }}</td>
+          <td>{{ asset.location }}</td>
+          <td>{{ asset.estimatedVolume }}</td>
+          <td>{{ asset.ownershipStatus }}</td>
+          <td>{{ asset.valueEstimate | currency }}</td>
+          <td>{{ asset.department }}</td>
+          <td>{{ asset.departmentUnit }}</td>
+          <td>{{ asset.remarks }}</td>
+          <td>
+            <button class="btn btn-sm btn-info me-1" (click)="edit(asset)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(asset.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

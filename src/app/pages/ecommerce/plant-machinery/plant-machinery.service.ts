@@ -7,33 +7,37 @@ export interface PlantMachinery {
   equipmentName: string;
   serialNumber: string;
   makeModel: string;
-  purchaseDate: Date;
+  //purchaseDate?: Date;
   value: number;
   location: string;
   operationalStatus: string;
+  department: string;
+  departmentUnit: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class PlantMachineryService {
-  private baseUrl = 'http://localhost:5245/api/PlantMachinery';
+  private apiUrl = 'http://localhost:5245/api/PlantMachinery';
 
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<PlantMachinery[]> {
-    return this.http.get<PlantMachinery[]>(this.baseUrl);
+    return this.http.get<PlantMachinery[]>(this.apiUrl);
   }
+
   getById(id: number): Observable<PlantMachinery> {
-    return this.http.get<PlantMachinery>(`${this.baseUrl}/${id}`);
+    return this.http.get<PlantMachinery>(`${this.apiUrl}/${id}`);
   }
-  create(item: PlantMachinery): Observable<PlantMachinery> {
-    return this.http.post<PlantMachinery>(this.baseUrl, item);
+
+  create(asset: PlantMachinery): Observable<PlantMachinery> {
+    return this.http.post<PlantMachinery>(this.apiUrl, asset);
   }
-  update(id: number, item: PlantMachinery): Observable<void> {
-    return this.http.put<void>(`${this.baseUrl}/${id}`, item);
+
+  update(id: number, asset: PlantMachinery): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}`, asset);
   }
+
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

@@ -1,1 +1,98 @@
-<p>equipment-signouts works!</p>
+<div class="container mt-4">
+  <div class="card shadow p-4 border-start border-success border-4">
+    <h4 class="text-success mb-4">{{ isEdit ? 'Edit Equipment Signout' : 'Add Equipment Signout' }}</h4>
+
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-3">
+        <input type="number" [(ngModel)]="selected.equipmentId" name="equipmentId" class="form-control" placeholder="Equipment ID" required>
+      </div>
+      <div class="col-md-3">
+        <input type="text" [(ngModel)]="selected.issuedTo" name="issuedTo" class="form-control" placeholder="Issued To" required>
+      </div>
+      <!-- <div class="col-md-3">
+        <input type="date" [(ngModel)]="selected.dateIssued" name="dateIssued" class="form-control" required>
+      </div>
+      <div class="col-md-3">
+        <input type="date" [(ngModel)]="selected.expectedReturnDate" name="expectedReturnDate" class="form-control" required>
+      </div>
+      <div class="col-md-3">
+        <input type="date" [(ngModel)]="selected.actualReturnDate" name="actualReturnDate" class="form-control">
+      </div> -->
+      <div class="col-md-3">
+        <input type="text" [(ngModel)]="selected.conditionOnReturn" name="conditionOnReturn" class="form-control" placeholder="Condition on Return">
+      </div>
+      <div class="col-md-6">
+        <textarea [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
+      </div>
+
+      <!-- Department -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+
+      <!-- Department Unit -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-success me-2">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Save' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Records Table -->
+  <div class="card mt-4 shadow p-3 border-start border-dark border-4">
+    <h5 class="mb-3">Equipment Signouts</h5>
+    <table class="table table-bordered table-striped text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Equipment ID</th>
+          <th>Issued To</th>
+          <th>Date Issued</th>
+          <th>Expected Return</th>
+          <th>Actual Return</th>
+          <th>Condition</th>
+          <th>Remarks</th>
+          <th>Department</th>
+          <th>Unit</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of signouts">
+          <td>{{ s.id }}</td>
+          <td>{{ s.equipmentId }}</td>
+          <td>{{ s.issuedTo }}</td>
+          <td>{{ s.dateIssued | date:'yyyy-MM-dd' }}</td>
+          <td>{{ s.expectedReturnDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ s.actualReturnDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ s.conditionOnReturn }}</td>
+          <td>{{ s.remarks }}</td>
+          <td>{{ s.department }}</td>
+          <td>{{ s.departmentUnit }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-1" (click)="edit(s)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(s.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

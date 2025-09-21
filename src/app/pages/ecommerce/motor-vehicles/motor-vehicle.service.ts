@@ -10,17 +10,17 @@ export interface MotorVehicle {
   yearOfManufacture: number;
   engineNumber: string;
   chassisNumber: string;
-  purchaseDate: Date;
+  //purchaseDate?: Date;
   purchasePrice: number;
   location: string;
   responsibleOfficer: string;
+  department: string;
+  departmentUnit: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class MotorVehicleService {
-  private apiUrl = 'http://localhost:5245/api/MotorVehicles';
+  private apiUrl = 'http://localhost:5245/api/MotorVehicles'; // ✅ adjust if needed
 
   constructor(private http: HttpClient) {}
 
@@ -32,12 +32,12 @@ export class MotorVehicleService {
     return this.http.get<MotorVehicle>(`${this.apiUrl}/${id}`);
   }
 
-  create(item: MotorVehicle): Observable<MotorVehicle> {
-    return this.http.post<MotorVehicle>(this.apiUrl, item);
+  create(vehicle: MotorVehicle): Observable<MotorVehicle> {
+    return this.http.post<MotorVehicle>(this.apiUrl, vehicle);
   }
 
-  update(id: number, item: MotorVehicle): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${id}`, item);
+  update(id: number, vehicle: MotorVehicle): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}`, vehicle);
   }
 
   delete(id: number): Observable<void> {

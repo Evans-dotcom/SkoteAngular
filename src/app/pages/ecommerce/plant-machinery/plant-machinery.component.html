@@ -1,71 +1,92 @@
 <div class="container mt-4">
-  <div class="card shadow p-4">
-    <h4 class="mb-4 text-info">
-      {{ isEdit ? 'Edit Equipment' : 'Add Plant/Machinery' }}
-    </h4>
+  <div class="card shadow p-4 border-start border-success border-4">
+    <h4 class="mb-3 text-success">{{ isEdit ? 'Edit Plant Machinery' : 'Add Plant Machinery' }}</h4>
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
-        <input type="text" [(ngModel)]="selectedItem.equipmentName" name="equipmentName" class="form-control" placeholder="Equipment Name" required>
+        <input type="text" [(ngModel)]="selected.equipmentName" name="equipmentName" class="form-control" placeholder="Equipment Name" required>
       </div>
       <div class="col-md-4">
-        <input type="text" [(ngModel)]="selectedItem.serialNumber" name="serialNumber" class="form-control" placeholder="Serial Number" required>
+        <input type="text" [(ngModel)]="selected.serialNumber" name="serialNumber" class="form-control" placeholder="Serial Number">
       </div>
       <div class="col-md-4">
-        <input type="text" [(ngModel)]="selectedItem.makeModel" name="makeModel" class="form-control" placeholder="Make/Model" required>
+        <input type="text" [(ngModel)]="selected.makeModel" name="makeModel" class="form-control" placeholder="Make/Model">
+      </div>
+
+      <!-- <div class="col-md-4">
+        <input type="date" [(ngModel)]="selected.purchaseDate" name="purchaseDate" class="form-control">
+      </div> -->
+      <div class="col-md-4">
+        <input type="number" [(ngModel)]="selected.value" name="value" class="form-control" placeholder="Value">
       </div>
       <div class="col-md-4">
-        <input type="date" [(ngModel)]="selectedItem.purchaseDate" name="purchaseDate" class="form-control" required>
-      </div>
-      <div class="col-md-4">
-        <input type="number" [(ngModel)]="selectedItem.value" name="value" class="form-control" placeholder="Value" required>
-      </div>
-      <div class="col-md-4">
-        <input type="text" [(ngModel)]="selectedItem.location" name="location" class="form-control" placeholder="Location" required>
+        <input type="text" [(ngModel)]="selected.location" name="location" class="form-control" placeholder="Location">
       </div>
       <div class="col-md-6">
-        <input type="text" [(ngModel)]="selectedItem.operationalStatus" name="operationalStatus" class="form-control" placeholder="Operational Status" required>
+        <input type="text" [(ngModel)]="selected.operationalStatus" name="operationalStatus" class="form-control" placeholder="Operational Status">
       </div>
-      <div class="col-md-6 text-end">
-        <button class="btn btn-primary me-2" type="submit">
-          {{ isEdit ? 'Update' : 'Create' }}
+      <!-- Department -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+
+      <!-- Department Unit -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-success me-2">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Create' }}
         </button>
-        <button class="btn btn-secondary" type="button" (click)="resetForm()">Clear</button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
       </div>
     </form>
   </div>
 
-  <div class="card mt-4 shadow p-4">
-    <h5>Plant & Machinery List</h5>
-    <table class="table table-bordered table-striped mt-2">
-      <thead class="table-light">
+  <div class="card mt-4 shadow p-3 border-start border-dark border-4">
+    <h5 class="mb-3">Plant Machinery Records</h5>
+    <table class="table table-bordered table-hover table-striped text-center align-middle">
+      <thead class="table-dark">
         <tr>
           <th>ID</th>
-          <th>Name</th>
+          <th>Equipment</th>
           <th>Serial</th>
           <th>Model</th>
-          <th>Date</th>
+          <th>Purchase Date</th>
           <th>Value</th>
           <th>Location</th>
           <th>Status</th>
+          <th>Department</th>
+          <th>Unit</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of plantItems">
-          <td>{{ item.id }}</td>
-          <td>{{ item.equipmentName }}</td>
-          <td>{{ item.serialNumber }}</td>
-          <td>{{ item.makeModel }}</td>
-          <td>{{ item.purchaseDate | date:'yyyy-MM-dd' }}</td>
-          <td>{{ item.value }}</td>
-          <td>{{ item.location }}</td>
-          <td>{{ item.operationalStatus }}</td>
+        <tr *ngFor="let asset of assets">
+          <td>{{ asset.id }}</td>
+          <td>{{ asset.equipmentName }}</td>
+          <td>{{ asset.serialNumber }}</td>
+          <td>{{ asset.makeModel }}</td>
+          <td>{{ asset.purchaseDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ asset.value | currency }}</td>
+          <td>{{ asset.location }}</td>
+          <td>{{ asset.operationalStatus }}</td>
+          <td>{{ asset.department }}</td>
+          <td>{{ asset.departmentUnit }}</td>
           <td>
-            <button class="btn btn-sm btn-info me-1" (click)="edit(item)">
+            <button class="btn btn-sm btn-warning me-1" (click)="edit(asset)">
               <i class="fa fa-edit"></i>
             </button>
-            <button class="btn btn-sm btn-danger" (click)="delete(item.id)">
+            <button class="btn btn-sm btn-danger" (click)="delete(asset.id)">
               <i class="fa fa-trash"></i>
             </button>
           </td>

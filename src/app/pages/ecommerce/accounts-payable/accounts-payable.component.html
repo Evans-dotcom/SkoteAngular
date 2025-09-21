@@ -1,1 +1,88 @@
-<p>accounts-payable works!</p>
+<div class="container mt-4">
+  <div class="card shadow p-4 border-start border-warning border-4">
+    <h4 class="text-warning mb-3">{{ isEdit ? 'Edit Accounts Payable' : 'Add Accounts Payable' }}</h4>
+
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.creditorName" name="creditorName" placeholder="Creditor Name" required>
+      </div>
+      <div class="col-md-3">
+        <input type="number" class="form-control" [(ngModel)]="selected.amountDue" name="amountDue" placeholder="Amount Due" required>
+      </div>
+      <!-- <div class="col-md-3">
+        <input type="date" class="form-control" [(ngModel)]="selected.dueDate" name="dueDate" required>
+      </div> -->
+      <div class="col-md-6">
+        <input type="text" class="form-control" [(ngModel)]="selected.reason" name="reason" placeholder="Reason" required>
+      </div>
+      
+      <!-- ✅ Department dropdown -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+
+      <!-- ✅ Department Unit dropdown -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <input type="text" class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks">
+      </div>
+
+      <div class="col-md-12 text-end">
+        <button type="submit" class="btn btn-warning me-2">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Save' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card mt-4 shadow p-4 border-start border-dark border-4">
+    <h5 class="mb-3">Accounts Payable Records</h5>
+    <table class="table table-bordered table-striped text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Creditor</th>
+          <th>Amount</th>
+          <th>Due Date</th>
+          <th>Reason</th>
+          <th>Dept</th>
+          <th>Unit</th>
+          <th>Remarks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let payable of payables">
+          <td>{{ payable.id }}</td>
+          <td>{{ payable.creditorName }}</td>
+          <td>{{ payable.amountDue | currency }}</td>
+          <td>{{ payable.dueDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ payable.reason }}</td>
+          <td>{{ payable.department }}</td>
+          <td>{{ payable.departmentUnit }}</td>
+          <td>{{ payable.remarks }}</td>
+          <td>
+            <button class="btn btn-sm btn-info me-1" (click)="edit(payable)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(payable.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

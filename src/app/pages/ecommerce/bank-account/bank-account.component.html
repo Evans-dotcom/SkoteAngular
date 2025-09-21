@@ -1,66 +1,108 @@
 <div class="container mt-4">
-  <div class="card shadow p-4">
-    <h4 class="mb-4 text-primary">
-      <i class="fa fa-bank"></i> {{ isEdit ? 'Edit Bank Account' : 'Create Bank Account' }}
-    </h4>
+  <div class="card shadow p-4 border-start border-primary border-4">
+    <h4 class="mb-3 text-primary">{{ isEdit ? 'Edit Bank Account' : 'Add Bank Account' }}</h4>
 
-    <form (submit)="saveAccount()" class="row g-3">
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.bankName" name="bankName" class="form-control" placeholder="Bank Name" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.accountName" name="accountName" class="form-control" placeholder="Account Name" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.accountNumber" name="accountNumber" class="form-control" placeholder="Account Number" required>
+      </div>
+
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.accountType" name="accountType" class="form-control" placeholder="Account Type" required>
+      </div>
+      <div class="col-md-4">
+        <input type="number" [(ngModel)]="selected.openingBalance" name="openingBalance" class="form-control" placeholder="Opening Balance" required>
+      </div>
+      <div class="col-md-4">
+        <input type="number" [(ngModel)]="selected.currentBalance" name="currentBalance" class="form-control" placeholder="Current Balance" required>
+      </div>
+
+      <!-- Department -->
       <div class="col-md-6">
-        <input [(ngModel)]="selectedAccount.bankName" name="bankName" class="form-control" placeholder="Bank Name" required>
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+
+      <!-- Department Unit -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <input type="text" [(ngModel)]="selected.officerInCharge" name="officerInCharge" class="form-control" placeholder="Officer In Charge">
       </div>
       <div class="col-md-6">
-        <input [(ngModel)]="selectedAccount.accountNumber" name="accountNumber" class="form-control" placeholder="Account Number" required>
+        <input type="text" [(ngModel)]="selected.signatories" name="signatories" class="form-control" placeholder="Signatories">
       </div>
-      <div class="col-md-6">
-        <input [(ngModel)]="selectedAccount.accountType" name="accountType" class="form-control" placeholder="Account Type" required>
-      </div>
-      <div class="col-md-3">
-        <input type="number" [(ngModel)]="selectedAccount.openingBalance" name="openingBalance" class="form-control" placeholder="Opening Balance" required>
-      </div>
-      <div class="col-md-3">
-        <input type="number" [(ngModel)]="selectedAccount.currentBalance" name="currentBalance" class="form-control" placeholder="Current Balance" required>
-      </div>
+
       <div class="col-md-12">
-        <textarea [(ngModel)]="selectedAccount.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
+        <textarea [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
       </div>
-      <div class="col-12 text-end">
-        <button class="btn btn-success me-2" type="submit">
-          {{ isEdit ? 'Update' : 'Create' }}
+
+      <div class="col-md-12 text-end">
+        <button type="submit" class="btn btn-primary me-2">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Create' }}
         </button>
-        <button class="btn btn-secondary" type="button" (click)="resetForm()">Clear</button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
       </div>
     </form>
   </div>
 
-  <div class="card mt-4 shadow p-4">
-    <h5>Bank Accounts</h5>
-    <table class="table table-bordered table-hover mt-2">
-      <thead class="table-light">
+  <!-- Table -->
+  <div class="card mt-4 shadow p-3 border-start border-dark border-4">
+    <h5 class="mb-3">Bank Accounts</h5>
+    <table class="table table-bordered table-hover table-striped text-center align-middle">
+      <thead class="table-dark">
         <tr>
           <th>ID</th>
           <th>Bank</th>
-          <th>Acc #</th>
+          <th>Account Name</th>
+          <th>Number</th>
           <th>Type</th>
           <th>Opening</th>
           <th>Current</th>
+          <th>Dept</th>
+          <th>Unit</th>
+          <th>Officer</th>
+          <th>Signatories</th>
           <th>Remarks</th>
+          <th>Contract Date</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let account of bankAccounts">
-          <td>{{ account.id }}</td>
-          <td>{{ account.bankName }}</td>
-          <td>{{ account.accountNumber }}</td>
-          <td>{{ account.accountType }}</td>
-          <td>{{ account.openingBalance }}</td>
-          <td>{{ account.currentBalance }}</td>
-          <td>{{ account.remarks }}</td>
+        <tr *ngFor="let acc of accounts">
+          <td>{{ acc.id }}</td>
+          <td>{{ acc.bankName }}</td>
+          <td>{{ acc.accountName }}</td>
+          <td>{{ acc.accountNumber }}</td>
+          <td>{{ acc.accountType }}</td>
+          <td>{{ acc.openingBalance | currency }}</td>
+          <td>{{ acc.currentBalance | currency }}</td>
+          <td>{{ acc.department }}</td>
+          <td>{{ acc.departmentUnit }}</td>
+          <td>{{ acc.officerInCharge }}</td>
+          <td>{{ acc.signatories }}</td>
+          <td>{{ acc.remarks }}</td>
+          <td>{{ acc.contractDate | date:'yyyy-MM-dd' }}</td>
           <td>
-            <button class="btn btn-sm btn-primary me-1" (click)="edit(account)">
+            <button class="btn btn-sm btn-info me-1" (click)="edit(acc)">
               <i class="fa fa-edit"></i>
             </button>
-            <button class="btn btn-sm btn-danger" (click)="delete(account.id)">
+            <button class="btn btn-sm btn-danger" (click)="delete(acc.id)">
               <i class="fa fa-trash"></i>
             </button>
           </td>

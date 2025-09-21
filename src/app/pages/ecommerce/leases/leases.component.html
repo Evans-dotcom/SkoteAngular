@@ -1,1 +1,97 @@
-<p>leases works!</p>
+<div class="container mt-4">
+  <div class="card shadow p-4 border-start border-primary border-4">
+    <h4 class="mb-3 text-primary">{{ isEdit ? 'Edit Lease' : 'Add Lease' }}</h4>
+    
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.leaseItem" name="leaseItem" placeholder="Lease Item" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.lessor" name="lessor" placeholder="Lessor" required>
+      </div>
+      <div class="col-md-4">
+        <input type="number" class="form-control" [(ngModel)]="selected.leaseCost" name="leaseCost" placeholder="Lease Cost" required>
+      </div>
+
+      <!-- <div class="col-md-6">
+        <label class="form-label">Lease Start</label>
+        <input type="date" class="form-control" [(ngModel)]="selected.leaseStart" name="leaseStart" required>
+      </div> -->
+      <!-- <div class="col-md-6">
+        <label class="form-label">Lease End</label>
+        <input type="date" class="form-control" [(ngModel)]="selected.leaseEnd" name="leaseEnd" required>
+      </div> -->
+
+      <!-- Department dropdown -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+
+      <!-- Units dropdown -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-12">
+        <textarea class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks"></textarea>
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary me-2">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Save' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Records Table -->
+  <div class="card mt-4 shadow p-3 border-start border-dark border-4">
+    <h5 class="mb-3">Lease Records</h5>
+    <table class="table table-bordered table-hover table-striped text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Item</th>
+          <th>Lessor</th>
+          <th>Cost</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Dept</th>
+          <th>Unit</th>
+          <th>Remarks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of leases">
+          <td>{{ item.id }}</td>
+          <td>{{ item.leaseItem }}</td>
+          <td>{{ item.lessor }}</td>
+          <td>{{ item.leaseCost | currency }}</td>
+          <td>{{ item.leaseStart | date:'yyyy-MM-dd' }}</td>
+          <td>{{ item.leaseEnd | date:'yyyy-MM-dd' }}</td>
+          <td>{{ item.department }}</td>
+          <td>{{ item.departmentUnit }}</td>
+          <td>{{ item.remarks }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-1" (click)="edit(item)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(item.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

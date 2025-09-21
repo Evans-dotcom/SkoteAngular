@@ -4,7 +4,7 @@ import { Imprest, ImprestService } from './imprests.service';
 @Component({
   selector: 'app-imprest',
   templateUrl: './imprests.component.html',
-  styleUrls: ['./imprests.component.css']
+  styleUrls: ['./imprests.component.scss']
 })
 export class ImprestComponent implements OnInit {
   imprests: Imprest[] = [];
@@ -55,7 +55,7 @@ export class ImprestComponent implements OnInit {
     return {
       officer: '',
       amount: 0,
-      dateIssued: new Date(),
+     // dateIssued: new Date(),
       purpose: '',
       status: '',
       remarks: ''

@@ -1,1 +1,93 @@
-<p>asset-transfers works!</p>
+<div class="container mt-4">
+  <div class="card shadow p-4 border-start border-info border-4">
+    <h4 class="mb-3 text-info">{{ isEdit ? 'Edit Asset Transfer' : 'Add Asset Transfer' }}</h4>
+
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-3">
+        <input type="number" class="form-control" [(ngModel)]="selected.assetId" name="assetId" placeholder="Asset ID" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.fromDepartment" name="fromDepartment" placeholder="From Department" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.toDepartment" name="toDepartment" placeholder="To Department" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" [(ngModel)]="selected.approvedBy" name="approvedBy" placeholder="Approved By">
+      </div>
+
+      <!-- Standardized Department -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+
+      <!-- Cascading Unit -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+      <!-- <div class="col-md-4">
+        <input type="date" class="form-control" [(ngModel)]="selected.dateTransferred" name="dateTransferred">
+      </div> -->
+      <div class="col-md-8">
+        <textarea class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks"></textarea>
+      </div>
+
+      <div class="col-md-12 text-end">
+        <button class="btn btn-success me-2" type="submit">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Save' }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table -->
+  <div class="card mt-4 shadow p-4 border-start border-dark border-4">
+    <h5 class="mb-3">Asset Transfer Records</h5>
+    <table class="table table-bordered table-striped text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Asset ID</th>
+          <th>From Dept</th>
+          <th>To Dept</th>
+          <th>Date Transferred</th>
+          <th>Approved By</th>
+          <th>Department</th>
+          <th>Unit</th>
+          <th>Remarks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let t of transfers">
+          <td>{{ t.id }}</td>
+          <td>{{ t.assetId }}</td>
+          <td>{{ t.fromDepartment }}</td>
+          <td>{{ t.toDepartment }}</td>
+          <td>{{ t.dateTransferred | date:'yyyy-MM-dd' }}</td>
+          <td>{{ t.approvedBy }}</td>
+          <td>{{ t.department }}</td>
+          <td>{{ t.departmentUnit }}</td>
+          <td>{{ t.remarks }}</td>
+          <td>
+            <button class="btn btn-sm btn-info me-1" (click)="edit(t)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(t.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

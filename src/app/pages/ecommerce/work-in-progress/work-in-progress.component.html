@@ -1,1 +1,87 @@
-<p>work-in-progress works!</p>
+<div class="container mt-4">
+  <div class="card p-4 shadow border-start border-primary border-4">
+    <h4 class="mb-3 text-primary">{{ isEdit ? 'Edit Work In Progress' : 'Add Work In Progress' }}</h4>
+
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.projectName" name="projectName" class="form-control" placeholder="Project Name" required>
+      </div>
+
+      <!-- Start Date (optional, commented) -->
+      <!-- <div class="col-md-3">
+        <input type="date" [(ngModel)]="selected.startDate" name="startDate" class="form-control" required>
+      </div> -->
+
+      <div class="col-md-3">
+        <input type="number" [(ngModel)]="selected.currentValue" name="currentValue" class="form-control" placeholder="Current Value" required>
+      </div>
+
+      <!-- ✅ Department dropdown -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+
+      <!-- ✅ Department Unit dropdown -->
+      <div class="col-md-6">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required [disabled]="!units.length">
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-12">
+        <textarea [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
+      </div>
+
+      <div class="col-md-12 text-end">
+        <button type="submit" class="btn btn-success me-2">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Create' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table -->
+  <div class="card mt-4 shadow p-3 border-start border-dark border-4">
+    <h5 class="mb-3">Work In Progress Records</h5>
+    <table class="table table-bordered table-hover table-striped text-center">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Project</th>
+          <th>Start Date</th>
+          <th>Value</th>
+          <th>Department</th>
+          <th>Unit</th>
+          <th>Remarks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of works">
+          <td>{{ item.id }}</td>
+          <td>{{ item.projectName }}</td>
+          <td>{{ item.startDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ item.currentValue | currency }}</td>
+          <td>{{ item.department }}</td>
+          <td>{{ item.departmentUnit }}</td>
+          <td>{{ item.remarks }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-1" (click)="edit(item)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(item.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

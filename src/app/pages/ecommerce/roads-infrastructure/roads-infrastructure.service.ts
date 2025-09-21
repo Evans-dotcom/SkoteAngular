@@ -10,33 +10,36 @@ export interface RoadsInfrastructure {
   constructionCost: number;
   yearConstructed: number;
   remarks: string;
+  department: string;
+  departmentUnit: string;
+  contractDate?: Date;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class RoadsInfrastructureService {
-  private baseUrl = 'http://localhost:5245/api/RoadsInfrastructure';
+  private apiUrl = 'http://localhost:5245/api/RoadsInfrastructure';
 
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<RoadsInfrastructure[]> {
-    return this.http.get<RoadsInfrastructure[]>(this.baseUrl);
+    return this.http.get<RoadsInfrastructure[]>(this.apiUrl);
   }
 
   getById(id: number): Observable<RoadsInfrastructure> {
-    return this.http.get<RoadsInfrastructure>(`${this.baseUrl}/${id}`);
+    return this.http.get<RoadsInfrastructure>(`${this.apiUrl}/${id}`);
   }
 
-  create(item: RoadsInfrastructure): Observable<RoadsInfrastructure> {
-    return this.http.post<RoadsInfrastructure>(this.baseUrl, item);
+  create(road: RoadsInfrastructure): Observable<RoadsInfrastructure> {
+    return this.http.post<RoadsInfrastructure>(this.apiUrl, road);
   }
 
-  update(id: number, item: RoadsInfrastructure): Observable<void> {
-    return this.http.put<void>(`${this.baseUrl}/${id}`, item);
+  update(id: number, road: RoadsInfrastructure): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}`, road);
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

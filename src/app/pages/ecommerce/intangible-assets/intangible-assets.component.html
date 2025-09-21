@@ -1,1 +1,88 @@
-<p>intangible-assets works!</p>
+<div class="container mt-4">
+  <div class="card shadow p-4 border-start border-info border-4">
+    <h4 class="text-info mb-4">{{ isEdit ? 'Edit Intangible Asset' : 'Add Intangible Asset' }}</h4>
+
+    <form (ngSubmit)="save()" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.assetType" name="assetType" class="form-control" placeholder="Asset Type" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="selected.description" name="description" class="form-control" placeholder="Description" required>
+      </div>
+      <!-- <div class="col-md-4">
+        <input type="date" [(ngModel)]="selected.dateAcquired" name="dateAcquired" class="form-control" required>
+      </div> -->
+      <div class="col-md-3">
+        <input type="number" [(ngModel)]="selected.value" name="value" class="form-control" placeholder="Value" required>
+      </div>
+      <div class="col-md-3">
+        <input type="number" [(ngModel)]="selected.usefulLifeYears" name="usefulLifeYears" class="form-control" placeholder="Useful Life (Years)" required>
+      </div>
+
+      <!-- Department -->
+      <div class="col-md-3">
+        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+
+      <!-- Department Unit -->
+      <div class="col-md-3">
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+          <option value="">Select Unit</option>
+          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+        </select>
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-info me-2">
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Save' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Records Table -->
+  <div class="card mt-4 shadow p-3 border-start border-dark border-4">
+    <h5 class="mb-3">Intangible Assets</h5>
+    <table class="table table-bordered table-striped text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Date Acquired</th>
+          <th>Value</th>
+          <th>Useful Life (Years)</th>
+          <th>Department</th>
+          <th>Unit</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let asset of assets">
+          <td>{{ asset.id }}</td>
+          <td>{{ asset.assetType }}</td>
+          <td>{{ asset.description }}</td>
+          <td>{{ asset.dateAcquired | date:'yyyy-MM-dd' }}</td>
+          <td>{{ asset.value | currency }}</td>
+          <td>{{ asset.usefulLifeYears }}</td>
+          <td>{{ asset.department }}</td>
+          <td>{{ asset.departmentUnit }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-1" (click)="edit(asset)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(asset.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
