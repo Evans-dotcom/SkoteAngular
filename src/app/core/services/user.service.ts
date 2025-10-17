@@ -1,17 +1,31 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
-import { User } from '../models/auth.models';
-
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class UserProfileService {
-    constructor(private http: HttpClient) { }
 
-    getAll() {
-        return this.http.get<User[]>(`/api/login`);
-    }
+  private apiUrl = 'http://localhost:5245/api/Users/register';
 
-    register(user: User) {
-        return this.http.post(`/users/register`, user);
+  constructor(private http: HttpClient) { }
+
+  // ✅ Register method for new users
+  register(userData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}`, userData).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'An unknown error occurred!';
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `Client Error: ${error.error.message}`;
+    } else {
+      errorMessage = `Server Error ${error.status}: ${error.message}`;
     }
+    return throwError(() => new Error(errorMessage));
+  }
 }
