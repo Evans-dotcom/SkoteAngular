@@ -3,6 +3,7 @@
     <h4 class="mb-3 text-primary">{{ isEdit ? 'Edit Bank Account' : 'Add Bank Account' }}</h4>
 
     <form (ngSubmit)="save()" class="row g-3">
+<<<<<<< Updated upstream
       <div class="col-md-4">
         <input type="text" [(ngModel)]="selected.bankName" name="bankName" class="form-control" placeholder="Bank Name" required>
       </div>
@@ -11,6 +12,15 @@
       </div>
       <div class="col-md-4">
         <input type="text" [(ngModel)]="selected.accountNumber" name="accountNumber" class="form-control" placeholder="Account Number" required>
+=======
+      <!-- Bank Name -->
+      <div class="col-md-6">
+        <label class="form-label fw-bold">Bank Name</label>
+        <select class="form-select" [(ngModel)]="selected.bankName" name="bankName" required>
+          <option value="">Select Bank</option>
+          <option *ngFor="let bank of banks" [value]="bank">{{ bank }}</option>
+        </select>
+>>>>>>> Stashed changes
       </div>
 
       <div class="col-md-4">
@@ -66,17 +76,31 @@
     </form>
   </div>
 
-  <!-- Table -->
-  <div class="card mt-4 shadow p-3 border-start border-dark border-4">
-    <h5 class="mb-3">Bank Account Records</h5>
+  <!-- Table Section -->
+  <div id="table-section" class="card mt-4 shadow p-3 border-start border-dark border-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5>Bank Account Records</h5>
+      <div>
+        <button class="btn btn-outline-success btn-sm me-2" (click)="exportToExcel()">
+          <i class="fa fa-file-excel"></i> Excel
+        </button>
+        <button class="btn btn-outline-danger btn-sm me-2" (click)="exportToPDF()">
+          <i class="fa fa-file-pdf"></i> PDF
+        </button>
+        <button class="btn btn-outline-dark btn-sm" (click)="printTable()">
+          <i class="fa fa-print"></i> Print
+        </button>
+      </div>
+    </div>
+
     <table class="table table-bordered table-hover table-striped text-center align-middle">
       <thead class="table-dark">
         <tr>
           <th>ID</th>
           <th>Bank</th>
-          <th>Account Number</th>
+          <th>Account No</th>
           <th>Type</th>
-          <th>Account Name</th>
+          <th>Name</th>
           <th>Officer</th>
           <th>Department</th>
           <th>Unit</th>
