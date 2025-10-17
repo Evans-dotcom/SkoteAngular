@@ -3,25 +3,31 @@
     <h4 class="mb-3 text-success">{{ isEdit ? 'Edit Asset Movement' : 'Add Asset Movement' }}</h4>
 
     <form (ngSubmit)="save()" class="row g-3">
+
       <div class="col-md-3">
-        <input type="number" class="form-control" [(ngModel)]="selected.assetId" name="assetId" placeholder="Asset ID" required>
+        <label for="assetId" class="form-label">Asset ID</label>
+        <input id="assetId" type="number" class="form-control" [(ngModel)]="selected.assetId" name="assetId" placeholder="Asset ID" required>
       </div>
+
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.fromLocation" name="fromLocation" placeholder="From Location" required>
+        <label for="fromLocation" class="form-label">From Location</label>
+        <input id="fromLocation" type="text" class="form-control" [(ngModel)]="selected.fromLocation" name="fromLocation" placeholder="From Location" required>
       </div>
+
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.toLocation" name="toLocation" placeholder="To Location" required>
+        <label for="toLocation" class="form-label">To Location</label>
+        <input id="toLocation" type="text" class="form-control" [(ngModel)]="selected.toLocation" name="toLocation" placeholder="To Location" required>
       </div>
-      <!-- <div class="col-md-4">
-        <input type="date" class="form-control" [(ngModel)]="selected.dateMoved" name="dateMoved">
-      </div> -->
+
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.movedBy" name="movedBy" placeholder="Moved By">
+        <label for="movedBy" class="form-label">Moved By</label>
+        <input id="movedBy" type="text" class="form-control" [(ngModel)]="selected.movedBy" name="movedBy" placeholder="Moved By">
       </div>
 
       <!-- Department -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+        <label for="department" class="form-label">Department</label>
+        <select id="department" class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
         </select>
@@ -29,18 +35,16 @@
 
       <!-- Department Unit -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+        <label for="departmentUnit" class="form-label">Department Unit</label>
+        <select id="departmentUnit" class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
         </select>
       </div>
 
-      <!-- <div class="col-md-4">
-        <input type="date" class="form-control" [(ngModel)]="selected.contractDate" name="contractDate">
-      </div> -->
-
       <div class="col-md-8">
-        <input type="text" class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks">
+        <label for="remarks" class="form-label">Remarks</label>
+        <input id="remarks" type="text" class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks">
       </div>
 
       <div class="col-md-12 text-end">
@@ -62,12 +66,12 @@
         <tr>
           <th>ID</th>
           <th>Asset ID</th>
-          <th>From</th>
-          <th>To</th>
+          <th>From Location</th>
+          <th>To Location</th>
           <th>Date Moved</th>
           <th>Moved By</th>
-          <th>Dept</th>
-          <th>Unit</th>
+          <th>Department</th>
+          <th>Department Unit</th>
           <th>Contract Date</th>
           <th>Remarks</th>
           <th>Actions</th>

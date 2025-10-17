@@ -3,19 +3,26 @@
     <h4 class="mb-3 text-info">{{ isEdit ? 'Edit Asset Handover' : 'Add Asset Handover' }}</h4>
 
     <form (ngSubmit)="save()" class="row g-3">
+
       <div class="col-md-3">
-        <input type="number" class="form-control" [(ngModel)]="selected.assetId" name="assetId" placeholder="Asset ID" required>
+        <label for="assetId" class="form-label">Asset ID</label>
+        <input id="assetId" type="number" class="form-control" [(ngModel)]="selected.assetId" name="assetId" placeholder="Asset ID" required>
       </div>
+
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.fromEmployee" name="fromEmployee" placeholder="From Employee" required>
+        <label for="fromEmployee" class="form-label">From Employee</label>
+        <input id="fromEmployee" type="text" class="form-control" [(ngModel)]="selected.fromEmployee" name="fromEmployee" placeholder="From Employee" required>
       </div>
+
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.toEmployee" name="toEmployee" placeholder="To Employee" required>
+        <label for="toEmployee" class="form-label">To Employee</label>
+        <input id="toEmployee" type="text" class="form-control" [(ngModel)]="selected.toEmployee" name="toEmployee" placeholder="To Employee" required>
       </div>
 
       <!-- Department -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+        <label for="department" class="form-label">Department</label>
+        <select id="department" class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
         </select>
@@ -23,25 +30,23 @@
 
       <!-- Department Unit -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+        <label for="departmentUnit" class="form-label">Department Unit</label>
+        <select id="departmentUnit" class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
         </select>
       </div>
 
-      <!-- Contract Date & Handover Date -->
-      <!-- <div class="col-md-6">
-        <input type="date" class="form-control" [(ngModel)]="selected.contractDate" name="contractDate">
-      </div>
+      <!-- Condition -->
       <div class="col-md-6">
-        <input type="date" class="form-control" [(ngModel)]="selected.dateHandedOver" name="dateHandedOver">
-      </div> -->
+        <label for="condition" class="form-label">Condition</label>
+        <input id="condition" type="text" class="form-control" [(ngModel)]="selected.condition" name="condition" placeholder="Condition">
+      </div>
 
+      <!-- Remarks -->
       <div class="col-md-6">
-        <input type="text" class="form-control" [(ngModel)]="selected.condition" name="condition" placeholder="Condition">
-      </div>
-      <div class="col-md-6">
-        <input type="text" class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks">
+        <label for="remarks" class="form-label">Remarks</label>
+        <input id="remarks" type="text" class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks">
       </div>
 
       <div class="col-md-12 text-end">
@@ -63,10 +68,10 @@
         <tr>
           <th>ID</th>
           <th>Asset ID</th>
-          <th>From</th>
-          <th>To</th>
-          <th>Dept</th>
-          <th>Unit</th>
+          <th>From Employee</th>
+          <th>To Employee</th>
+          <th>Department</th>
+          <th>Department Unit</th>
           <th>Contract Date</th>
           <th>Handover Date</th>
           <th>Condition</th>

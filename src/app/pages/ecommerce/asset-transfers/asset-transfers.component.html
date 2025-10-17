@@ -3,22 +3,31 @@
     <h4 class="mb-3 text-info">{{ isEdit ? 'Edit Asset Transfer' : 'Add Asset Transfer' }}</h4>
 
     <form (ngSubmit)="save()" class="row g-3">
+
       <div class="col-md-3">
-        <input type="number" class="form-control" [(ngModel)]="selected.assetId" name="assetId" placeholder="Asset ID" required>
+        <label for="assetId" class="form-label">Asset ID</label>
+        <input type="number" class="form-control" [(ngModel)]="selected.assetId" name="assetId" id="assetId" placeholder="Asset ID" required>
       </div>
+
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.fromDepartment" name="fromDepartment" placeholder="From Department" required>
+        <label for="fromDepartment" class="form-label">From Department</label>
+        <input type="text" class="form-control" [(ngModel)]="selected.fromDepartment" name="fromDepartment" id="fromDepartment" placeholder="From Department" required>
       </div>
+
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.toDepartment" name="toDepartment" placeholder="To Department" required>
+        <label for="toDepartment" class="form-label">To Department</label>
+        <input type="text" class="form-control" [(ngModel)]="selected.toDepartment" name="toDepartment" id="toDepartment" placeholder="To Department" required>
       </div>
+
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.approvedBy" name="approvedBy" placeholder="Approved By">
+        <label for="approvedBy" class="form-label">Approved By</label>
+        <input type="text" class="form-control" [(ngModel)]="selected.approvedBy" name="approvedBy" id="approvedBy" placeholder="Approved By">
       </div>
 
       <!-- Standardized Department -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+        <label for="department" class="form-label">Department</label>
+        <select class="form-select" [(ngModel)]="selected.department" name="department" id="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
         </select>
@@ -26,16 +35,20 @@
 
       <!-- Cascading Unit -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+        <label for="departmentUnit" class="form-label">Department Unit</label>
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" id="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
         </select>
       </div>
+
       <!-- <div class="col-md-4">
         <input type="date" class="form-control" [(ngModel)]="selected.dateTransferred" name="dateTransferred">
       </div> -->
+
       <div class="col-md-8">
-        <textarea class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks"></textarea>
+        <label for="remarks" class="form-label">Remarks</label>
+        <textarea class="form-control" [(ngModel)]="selected.remarks" name="remarks" id="remarks" placeholder="Remarks"></textarea>
       </div>
 
       <div class="col-md-12 text-end">

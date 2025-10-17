@@ -3,29 +3,41 @@
     <h4 class="mb-3 text-primary">{{ isEdit ? 'Edit Bank Account' : 'Add Bank Account' }}</h4>
 
     <form (ngSubmit)="save()" class="row g-3">
+
       <div class="col-md-4">
-        <input type="text" [(ngModel)]="selected.bankName" name="bankName" class="form-control" placeholder="Bank Name" required>
-      </div>
-      <div class="col-md-4">
-        <input type="text" [(ngModel)]="selected.accountName" name="accountName" class="form-control" placeholder="Account Name" required>
-      </div>
-      <div class="col-md-4">
-        <input type="text" [(ngModel)]="selected.accountNumber" name="accountNumber" class="form-control" placeholder="Account Number" required>
+        <label for="bankName" class="form-label">Bank Name</label>
+        <input type="text" [(ngModel)]="selected.bankName" name="bankName" id="bankName" class="form-control" placeholder="Bank Name" required>
       </div>
 
       <div class="col-md-4">
-        <input type="text" [(ngModel)]="selected.accountType" name="accountType" class="form-control" placeholder="Account Type" required>
+        <label for="accountName" class="form-label">Account Name</label>
+        <input type="text" [(ngModel)]="selected.accountName" name="accountName" id="accountName" class="form-control" placeholder="Account Name" required>
       </div>
+
       <div class="col-md-4">
-        <input type="number" [(ngModel)]="selected.openingBalance" name="openingBalance" class="form-control" placeholder="Opening Balance" required>
+        <label for="accountNumber" class="form-label">Account Number</label>
+        <input type="text" [(ngModel)]="selected.accountNumber" name="accountNumber" id="accountNumber" class="form-control" placeholder="Account Number" required>
       </div>
+
       <div class="col-md-4">
-        <input type="number" [(ngModel)]="selected.currentBalance" name="currentBalance" class="form-control" placeholder="Current Balance" required>
+        <label for="accountType" class="form-label">Account Type</label>
+        <input type="text" [(ngModel)]="selected.accountType" name="accountType" id="accountType" class="form-control" placeholder="Account Type" required>
+      </div>
+
+      <div class="col-md-4">
+        <label for="openingBalance" class="form-label">Opening Balance</label>
+        <input type="number" [(ngModel)]="selected.openingBalance" name="openingBalance" id="openingBalance" class="form-control" placeholder="Opening Balance" required>
+      </div>
+
+      <div class="col-md-4">
+        <label for="currentBalance" class="form-label">Current Balance</label>
+        <input type="number" [(ngModel)]="selected.currentBalance" name="currentBalance" id="currentBalance" class="form-control" placeholder="Current Balance" required>
       </div>
 
       <!-- Department -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+        <label for="department" class="form-label">Department</label>
+        <select class="form-select" [(ngModel)]="selected.department" name="department" id="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
         </select>
@@ -33,21 +45,26 @@
 
       <!-- Department Unit -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+        <label for="departmentUnit" class="form-label">Department Unit</label>
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" id="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
         </select>
       </div>
 
       <div class="col-md-6">
-        <input type="text" [(ngModel)]="selected.officerInCharge" name="officerInCharge" class="form-control" placeholder="Officer In Charge">
+        <label for="officerInCharge" class="form-label">Officer In Charge</label>
+        <input type="text" [(ngModel)]="selected.officerInCharge" name="officerInCharge" id="officerInCharge" class="form-control" placeholder="Officer In Charge">
       </div>
+
       <div class="col-md-6">
-        <input type="text" [(ngModel)]="selected.signatories" name="signatories" class="form-control" placeholder="Signatories">
+        <label for="signatories" class="form-label">Signatories</label>
+        <input type="text" [(ngModel)]="selected.signatories" name="signatories" id="signatories" class="form-control" placeholder="Signatories">
       </div>
 
       <div class="col-md-12">
-        <textarea [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
+        <label for="remarks" class="form-label">Remarks</label>
+        <textarea [(ngModel)]="selected.remarks" name="remarks" id="remarks" class="form-control" placeholder="Remarks"></textarea>
       </div>
 
       <div class="col-md-12 text-end">
@@ -58,6 +75,7 @@
           <i class="fa fa-times me-1"></i> Clear
         </button>
       </div>
+
     </form>
   </div>
 

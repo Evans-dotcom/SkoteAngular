@@ -4,21 +4,29 @@
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.creditorName" name="creditorName" placeholder="Creditor Name" required>
+        <label for="creditorName" class="form-label">Creditor Name</label>
+        <input type="text" class="form-control" id="creditorName" [(ngModel)]="selected.creditorName" name="creditorName" placeholder="Creditor Name" required>
       </div>
+
       <div class="col-md-3">
-        <input type="number" class="form-control" [(ngModel)]="selected.amountDue" name="amountDue" placeholder="Amount Due" required>
+        <label for="amountDue" class="form-label">Amount Due (Ksh)</label>
+        <input type="number" class="form-control" id="amountDue" [(ngModel)]="selected.amountDue" name="amountDue" placeholder="Amount Due" required>
       </div>
+
       <!-- <div class="col-md-3">
-        <input type="date" class="form-control" [(ngModel)]="selected.dueDate" name="dueDate" required>
+        <label for="dueDate" class="form-label">Due Date</label>
+        <input type="date" class="form-control" id="dueDate" [(ngModel)]="selected.dueDate" name="dueDate" required>
       </div> -->
+
       <div class="col-md-6">
-        <input type="text" class="form-control" [(ngModel)]="selected.reason" name="reason" placeholder="Reason" required>
+        <label for="reason" class="form-label">Reason / Description</label>
+        <input type="text" class="form-control" id="reason" [(ngModel)]="selected.reason" name="reason" placeholder="Reason" required>
       </div>
-      
+
       <!-- ✅ Department dropdown -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+        <label for="department" class="form-label">Department</label>
+        <select class="form-select" id="department" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
         </select>
@@ -26,14 +34,16 @@
 
       <!-- ✅ Department Unit dropdown -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+        <label for="departmentUnit" class="form-label">Department Unit</label>
+        <select class="form-select" id="departmentUnit" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
         </select>
       </div>
 
       <div class="col-md-6">
-        <input type="text" class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks">
+        <label for="remarks" class="form-label">Remarks / Additional Notes</label>
+        <input type="text" class="form-control" id="remarks" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks">
       </div>
 
       <div class="col-md-12 text-end">
