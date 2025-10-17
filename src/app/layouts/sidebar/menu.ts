@@ -250,6 +250,15 @@ export const MENU: MenuItem[] = [
             // },
         ]
     },
+     {
+        id: 3,
+        label: 'REPORTS',
+        icon: 'bx-home-circle',
+        badge: {
+            variant: 'info',
+            //text: 'MENUITEMS.ASSETS.BADGE',
+        },
+    },
     // {
     //     id: 7,
     //     isLayout: true
@@ -311,6 +320,7 @@ export const MENU: MenuItem[] = [
     //             link: '/ecommerce/customers',
     //             parentId: 12
     //         },
+
     {
         id: 12,
         label: 'MENUITEMS.ECOMMERCE.LIST.CUSTOMERS',
