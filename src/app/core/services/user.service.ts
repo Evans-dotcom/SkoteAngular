@@ -8,24 +8,31 @@ import { catchError } from 'rxjs/operators';
 })
 export class UserProfileService {
 
-  private apiUrl = 'http://localhost:5245/api/Users/register';
+  private apiUrl = 'http://localhost:5245/api/Users';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  // ✅ Register method for new users
   register(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}`, userData).pipe(
-      catchError(this.handleError)
-    );
+    return this.http.post(`${this.apiUrl}/register`, userData)
+      .pipe(catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'An unknown error occurred!';
+    let errorMessage = 'An unknown error occurred.';
+
     if (error.error instanceof ErrorEvent) {
       errorMessage = `Client Error: ${error.error.message}`;
+    } else if (error.error && typeof error.error === 'string') {
+      errorMessage = error.error;
+    } else if (error.error && error.error.message) {
+      errorMessage = error.error.message;
+    } else if (error.message) {
+      errorMessage = error.message;
     } else {
-      errorMessage = `Server Error ${error.status}: ${error.message}`;
+      errorMessage = `Server Error: ${error.status}`;
     }
-    return throwError(() => new Error(errorMessage));
+
+    console.error('Backend error:', error);
+    return throwError(() => errorMessage);
   }
 }

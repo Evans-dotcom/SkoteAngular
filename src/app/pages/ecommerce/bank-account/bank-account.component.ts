@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { BankAccount, BankAccountService } from './bankaccount.service';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-bank-account',
@@ -11,7 +14,7 @@ export class BankAccountComponent implements OnInit {
   selected: BankAccount = this.emptyForm();
   isEdit = false;
 
-  // ✅ Banks dropdown
+  // Bank list
   banks: string[] = [
     'CENTRAL BANK OF KENYA', 'Absa Bank Kenya Plc', 'Access Bank (Kenya) PLC', 'African Banking Corporation Limited',
     'Bank of Africa Limited', 'Bank of Baroda (K) Limited', 'Bank of India', 'Caritas Microfinance Bank Limited',
@@ -29,10 +32,8 @@ export class BankAccountComponent implements OnInit {
     'Standard Chartered Bank (K) Limited', 'UBA Kenya Bank Limited', 'Victoria Commercial Bank Plc'
   ];
 
-  // ✅ Account types
   accountTypes: string[] = ['Development Account', 'Current Account'];
 
-  // ✅ Departments and Units
   departments: string[] = [
     'Agriculture, Livestock and Co-operative Management',
     'Health Services',
@@ -123,5 +124,38 @@ export class BankAccountComponent implements OnInit {
       officerInCharge: '',
       signatories: ''
     };
+  }
+
+  // ---------- Export & Print Features ----------
+
+  exportToPDF() {
+    const doc = new jsPDF();
+    doc.text('Bank Accounts Report', 14, 10);
+    const rows = this.accounts.map(a => [
+      a.id, a.bankName, a.accountNumber, a.accountType,
+      a.accountName, a.department, a.departmentUnit
+    ]);
+    (doc as any).autoTable({
+      head: [['ID', 'Bank', 'Account No', 'Type', 'Name', 'Department', 'Unit']],
+      body: rows
+    });
+    doc.save('BankAccounts.pdf');
+  }
+
+  exportToExcel() {
+    const ws = XLSX.utils.json_to_sheet(this.accounts);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'BankAccounts');
+    XLSX.writeFile(wb, 'BankAccounts.xlsx');
+  }
+
+  printTable() {
+    const printContents = document.getElementById('print-section')?.innerHTML;
+    const popup = window.open('', '_blank', 'width=900,height=700');
+    popup?.document.write('<html><head><title>Bank Accounts</title></head><body>');
+    popup?.document.write(printContents || '');
+    popup?.document.write('</body></html>');
+    popup?.document.close();
+    popup?.print();
   }
 }

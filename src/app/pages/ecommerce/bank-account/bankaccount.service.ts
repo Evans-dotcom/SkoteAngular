@@ -20,7 +20,7 @@ export interface BankAccount {
 
 @Injectable({ providedIn: 'root' })
 export class BankAccountService {
-  private apiUrl = 'http://localhost:5245/api/BankAccount'; // ✅ Update if needed  http://localhost:5245/api/BankAccount
+  private apiUrl = 'http://localhost:5245/api/BankAccount'; 
 
 
   constructor(private http: HttpClient) {}
