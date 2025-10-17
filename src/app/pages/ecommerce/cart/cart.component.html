@@ -12,7 +12,7 @@
               <thead class="table-light">
                 <tr>
                   <th>Product</th>
-                  <th>Product Desc</th>
+                  <th>Product Description</th>
                   <th>Price</th>
                   <th>Quantity</th>
                   <th colspan="2">Total</th>
@@ -21,17 +21,22 @@
               <tbody>
                 <tr *ngFor="let product of cartData">
                   <td>
+                    <label class="form-label">Product Image</label><br>
                     <img src="{{ product.image }}" alt="product-img" title="product-img" class="avatar-md" />
                   </td>
                   <td>
-                    <h5 class="font-size-14 text-truncate"><a routerLink="/ecommerce/product-detail"
-                        class="text-dark">{{ product.name }}</a></h5>
+                    <label class="form-label">Product Name & Details</label>
+                    <h5 class="font-size-14 text-truncate">
+                      <a routerLink="/ecommerce/product-detail" class="text-dark">{{ product.name }}</a>
+                    </h5>
                     <p class="mb-0">Color : <span class="fw-medium">{{ product.color }}</span></p>
                   </td>
                   <td>
+                    <label class="form-label">Price</label><br>
                     {{ product.price }}
                   </td>
                   <td>
+                    <label class="form-label">Quantity</label>
                     <div style="width: 120px;">
                       <div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
                         <input type="number" [(ngModel)]="product.quantity" name="demo_vertical" class="form-control">
@@ -39,45 +44,54 @@
                     </div>
                   </td>
                   <td>
+                    <label class="form-label">Total</label><br>
                     {{ product.total }}
                   </td>
                   <td>
-                    <a href="javascript:void(0);" class="action-icon text-danger"> <i
-                        class="mdi mdi-trash-can font-size-18"></i></a>
+                    <label class="form-label">Action</label><br>
+                    <a href="javascript:void(0);" class="action-icon text-danger">
+                      <i class="mdi mdi-trash-can font-size-18"></i>
+                    </a>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
+
           <div class="row mt-4">
             <div class="col-sm-6">
+              <label class="form-label">Continue Shopping</label><br>
               <a routerLink="/ecommerce/products" class="btn btn-secondary">
-                <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping </a>
-            </div> <!-- end col -->
+                <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping
+              </a>
+            </div>
             <div class="col-sm-6">
+              <label class="form-label">Proceed to Checkout</label><br>
               <div class="text-sm-end mt-2 mt-sm-0">
                 <a routerLink="/ecommerce/checkout" class="btn btn-success">
-                  <i class="mdi mdi-cart-arrow-right me-1"></i> Checkout </a>
+                  <i class="mdi mdi-cart-arrow-right me-1"></i> Checkout
+                </a>
               </div>
-            </div> <!-- end col -->
-          </div> <!-- end row-->
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- Card and Order Summary Section -->
     <div class="col-xl-4">
       <div class="card">
         <div class="card-body">
           <h5 class="card-title mb-4">Card Details</h5>
 
+          <label class="form-label">Visa Card</label>
           <div class="card bg-primary text-white visa-card mb-0">
             <div class="card-body">
               <div>
                 <i class="bx bxl-visa visa-pattern"></i>
-
                 <div class="float-end">
                   <i class="bx bxl-visa visa-logo display-3"></i>
                 </div>
-
                 <div>
                   <i class="bx bx-chip h1 text-warning"></i>
                 </div>
@@ -85,6 +99,7 @@
 
               <div class="row mt-5">
                 <div class="col-4">
+                  <label class="form-label">Card Section 1</label>
                   <p>
                     <i class="fas fa-star-of-life m-1"></i>
                     <i class="fas fa-star-of-life m-1"></i>
@@ -92,6 +107,7 @@
                   </p>
                 </div>
                 <div class="col-4">
+                  <label class="form-label">Card Section 2</label>
                   <p>
                     <i class="fas fa-star-of-life m-1"></i>
                     <i class="fas fa-star-of-life m-1"></i>
@@ -99,6 +115,7 @@
                   </p>
                 </div>
                 <div class="col-4">
+                  <label class="form-label">Card Section 3</label>
                   <p>
                     <i class="fas fa-star-of-life m-1"></i>
                     <i class="fas fa-star-of-life m-1"></i>
@@ -108,6 +125,7 @@
               </div>
 
               <div class="mt-5">
+                <label class="form-label">Card Holder Info</label>
                 <h5 class="text-white float-end mb-0">12/22</h5>
                 <h5 class="text-white mb-0">Fredrick Taylor</h5>
               </div>
@@ -115,6 +133,8 @@
           </div>
         </div>
       </div>
+
+      <!-- Order Summary -->
       <div class="card">
         <div class="card-body">
           <h4 class="card-title mb-3">Order Summary</h4>
@@ -123,23 +143,23 @@
             <table class="table mb-0">
               <tbody>
                 <tr>
-                  <td>Grand Total :</td>
+                  <td><label class="form-label">Grand Total</label></td>
                   <td>$ 1,857</td>
                 </tr>
                 <tr>
-                  <td>Discount : </td>
+                  <td><label class="form-label">Discount</label></td>
                   <td>- $ 157</td>
                 </tr>
                 <tr>
-                  <td>Shipping Charge :</td>
+                  <td><label class="form-label">Shipping Charge</label></td>
                   <td>$ 25</td>
                 </tr>
                 <tr>
-                  <td>Estimated Tax : </td>
+                  <td><label class="form-label">Estimated Tax</label></td>
                   <td>$ 19.22</td>
                 </tr>
                 <tr>
-                  <th>Total :</th>
+                  <th><label class="form-label">Total</label></th>
                   <th>$ 1744.22</th>
                 </tr>
               </tbody>
@@ -152,5 +172,4 @@
     </div>
   </div>
   <!-- end row -->
-
 </div> <!-- container-fluid -->

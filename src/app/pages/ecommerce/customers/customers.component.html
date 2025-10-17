@@ -1,22 +1,31 @@
+<!-- ========================= CUSTOMERS PAGE CONTAINER ========================= -->
 <div class="container-fluid">
 
+  <!-- Page Title Component -->
   <app-page-title title="Customers" [breadcrumbItems]="breadCrumbItems"></app-page-title>
 
   <div class="row">
     <div class="col-12">
       <div class="card">
         <div class="card-body">
+
+          <!-- ========================= SEARCH AND ADD BUTTON SECTION ========================= -->
           <div class="row mb-2">
             <div class="col-sm-4">
+              <!-- Search Box -->
               <div class="search-box me-2 mb-2 d-inline-block">
                 <div class="position-relative">
+                  <!-- Search Input Field (bound to 'term') -->
                   <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="term" />
+                  <!-- Search Icon -->
                   <i class="bx bx-search-alt search-icon"></i>
                 </div>
               </div>
             </div>
+
             <div class="col-sm-8">
               <div class="text-sm-end">
+                <!-- Button to Open Add Customer Modal -->
                 <button type="button" class="btn btn-success btn-rounded mb-2 mr-2" (click)="openModal(content)">
                   <i class="mdi mdi-plus me-1"></i> New Customers
                 </button>
@@ -24,10 +33,13 @@
             </div>
             <!-- end col-->
           </div>
+
+          <!-- ========================= CUSTOMERS TABLE SECTION ========================= -->
           <div class="table-responsive">
             <table class="table align-middle table-nowrap">
               <thead>
                 <tr>
+                  <!-- Table Headers -->
                   <th>#</th>
                   <th>Username</th>
                   <th>Phone / Email</th>
@@ -38,42 +50,68 @@
                   <th>Action</th>
                 </tr>
               </thead>
+
               <tbody>
+                <!-- Looping through customersData with search filter -->
                 <tr *ngFor="let customers of customersData  | filter:term ;let i = index;">
+                  
+                  <!-- Checkbox Column -->
                   <td>
                     <div class="form-check font-size-16">
+                      <!-- Unique checkbox per customer -->
                       <input id="customCheck{{i}}" type="checkbox" class="form-check-input" />
                       <label class="form-check-label" for="customCheck{{i}}">&nbsp;</label>
                     </div>
                   </td>
+
+                  <!-- Username Column -->
                   <td>{{customers.username}}</td>
+
+                  <!-- Phone and Email Column -->
                   <td>
                     <p class="mb-1">{{customers.phone}}</p>
                     <p class="mb-0">{{customers.email}}</p>
                   </td>
 
+                  <!-- Address Column -->
                   <td>{{customers.address}}</td>
+
+                  <!-- Rating Column -->
                   <td>
                     <span class="badge bg-success font-size-12">
                       <i class="mdi mdi-star me-1"></i>
                       {{customers.rating}}
                     </span>
                   </td>
+
+                  <!-- Wallet Balance Column -->
                   <td>{{customers.balance}}</td>
+
+                  <!-- Joining Date Column -->
                   <td>{{customers.date | date: 'dd MMM, YYYY'}}</td>
+
+                  <!-- Action Dropdown -->
                   <td>
                     <div class="dropdown" ngbDropdown placement="bottom-right">
+                      <!-- Dropdown Toggle -->
                       <a href="javascript: void(0);" class="dropdown-toggle card-drop" data-toggle="dropdown"
                         ngbDropdownToggle aria-expanded="false">
                         <i class="mdi mdi-dots-horizontal font-size-18"></i>
                       </a>
+                      <!-- Dropdown Menu -->
                       <ul class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
-                        <li><a href="javascript: void(0);" class="dropdown-item"><i
-                              class="fas fa-pencil-alt text-success me-1"></i>
-                            Edit</a></li>
-                        <li><a href="javascript: void(0);" class="dropdown-item"><i
-                              class="fas fa-trash-alt text-danger me-1"></i>
-                            Delete</a></li>
+                        <li>
+                          <!-- Edit Option -->
+                          <a href="javascript: void(0);" class="dropdown-item">
+                            <i class="fas fa-pencil-alt text-success me-1"></i> Edit
+                          </a>
+                        </li>
+                        <li>
+                          <!-- Delete Option -->
+                          <a href="javascript: void(0);" class="dropdown-item">
+                            <i class="fas fa-trash-alt text-danger me-1"></i> Delete
+                          </a>
+                        </li>
                       </ul>
                     </div>
                   </td>
@@ -81,9 +119,13 @@
               </tbody>
             </table>
           </div>
-          <!-- pagination -->
-          <ngb-pagination [collectionSize]="50" [(page)]="currentpage"
-            class="pagination pagination-rounded justify-content-end mb-2" aria-label="Default pagination">
+
+          <!-- ========================= PAGINATION SECTION ========================= -->
+          <ngb-pagination 
+            [collectionSize]="50"  <!-- Total number of customer entries -->
+            [(page)]="currentpage" <!-- Current active page -->
+            class="pagination pagination-rounded justify-content-end mb-2" 
+            aria-label="Default pagination">
           </ngb-pagination>
         </div>
       </div>
@@ -92,59 +134,83 @@
   <!-- end row -->
 </div>
 
-<!-- Standard Modal -->
+<!-- ========================= ADD CUSTOMER MODAL TEMPLATE ========================= -->
 <ng-template #content role="document" let-modal>
+
+  <!-- Modal Header -->
   <div class="modal-header">
     <h5 class="modal-title mt-0">Add Customer</h5>
+    <!-- Close Modal Button -->
     <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
   </div>
+
+  <!-- Modal Body -->
   <div class="modal-body">
+   <!-- Add Customer Form -->
    <form (ngSubmit)="saveCustomer()" [formGroup]="formData">
     <div class="row">
       <div class="col-12">
+
+        <!-- Username Field -->
         <div class="mb-3">
           <label class="control-label">Username</label>
           <input class="form-control" placeholder="Enter Username" type="text" name="title" autocomplete="off" formControlName="username"
               [ngClass]="{'is-invalid': submitted && form.username.errors}" />
-            <div *ngIf="submitted && form.username.errors" class="invalid-feedback">
-              <span *ngIf="form.username.errors.required">Username is required.</span>
-            </div>
+          <!-- Username Validation Message -->
+          <div *ngIf="submitted && form.username.errors" class="invalid-feedback">
+            <span *ngIf="form.username.errors.required">Username is required.</span>
+          </div>
         </div>
+
+        <!-- Email Field -->
         <div class="mb-3">
           <label class="control-label">Email</label>
           <input class="form-control" placeholder="Enter email" type="text" name="email" autocomplete="off" formControlName="email"
               [ngClass]="{'is-invalid': submitted && form.email.errors}" />
-              <div *ngIf="submitted && form.email.errors" class="invalid-feedback">
-                <span *ngIf="form.email.errors.required">Email is required.</span>
-                <span *ngIf="form.email.errors.pattern">This value should be a valid email.</span>
-              </div>
+          <!-- Email Validation Messages -->
+          <div *ngIf="submitted && form.email.errors" class="invalid-feedback">
+            <span *ngIf="form.email.errors.required">Email is required.</span>
+            <span *ngIf="form.email.errors.pattern">This value should be a valid email.</span>
+          </div>
         </div>
+
+        <!-- Phone Field -->
         <div class="mb-3">
           <label class="control-label">Phone</label>
           <input class="form-control" placeholder="Enter phone" type="text" name="phone" autocomplete="off" formControlName="phone"
               [ngClass]="{'is-invalid': submitted && form.phone.errors}" />
-            <div *ngIf="submitted && form.phone.errors" class="invalid-feedback">
-              <span *ngIf="form.phone.errors.required">Phone is required.</span>
-            </div>
+          <!-- Phone Validation Message -->
+          <div *ngIf="submitted && form.phone.errors" class="invalid-feedback">
+            <span *ngIf="form.phone.errors.required">Phone is required.</span>
+          </div>
         </div>
+
+        <!-- Address Field -->
         <div class="mb-3">
           <label class="control-label">Address</label>
           <input class="form-control" placeholder="Enter address" type="text" autocomplete="off" name="address" formControlName="address"
               [ngClass]="{'is-invalid': submitted && form.address.errors}" />
-            <div *ngIf="submitted && form.address.errors" class="invalid-feedback">
-              <span *ngIf="form.address.errors.required">Address is required.</span>
-            </div>
+          <!-- Address Validation Message -->
+          <div *ngIf="submitted && form.address.errors" class="invalid-feedback">
+            <span *ngIf="form.address.errors.required">Address is required.</span>
+          </div>
         </div>
+
+        <!-- Balance Field -->
         <div class="mb-3">
           <label class="control-label">Balance</label>
           <input class="form-control" placeholder="Enter balance" type="text" autocomplete="off" name="balance" formControlName="balance"
               [ngClass]="{'is-invalid': submitted && form.address.errors}" />
-            <div *ngIf="submitted && form.balance.errors" class="invalid-feedback">
-              <span *ngIf="form.balance.errors.required">balance is required.</span>
-            </div>
+          <!-- Balance Validation Message -->
+          <div *ngIf="submitted && form.balance.errors" class="invalid-feedback">
+            <span *ngIf="form.balance.errors.required">Balance is required.</span>
+          </div>
         </div>
+
       </div>
     </div>
+
+    <!-- Save Button -->
     <button type="submit" class="btn btn-success" id="btn-save-event">
       Save
     </button>
