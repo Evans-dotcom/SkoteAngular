@@ -1,49 +1,50 @@
 <div class="container mt-4">
-  <div class="card shadow p-4 border-start border-primary border-4">
-    <h4 class="text-primary mb-3">{{ isEdit ? 'Edit Subsoil Asset' : 'Add Subsoil Asset' }}</h4>
+  <div class="card p-4 shadow border-start border-primary border-4">
+    <h4 class="mb-3 text-primary">{{ isEdit ? 'Edit Work In Progress' : 'Add Work In Progress' }}</h4>
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
-        <label for="resourceType" class="form-label">Resource Type</label>
-        <input type="text" id="resourceType" class="form-control" [(ngModel)]="selected.resourceType" name="resourceType" placeholder="Resource Type" required>
+        <label for="projectName" class="form-label">Project Name</label>
+        <input type="text" id="projectName" [(ngModel)]="selected.projectName" name="projectName" class="form-control" placeholder="Project Name" required>
       </div>
-      <div class="col-md-4">
-        <label for="location" class="form-label">Location</label>
-        <input type="text" id="location" class="form-control" [(ngModel)]="selected.location" name="location" placeholder="Location" required>
+
+      <!-- Start Date (optional, commented) -->
+      <!-- <div class="col-md-3">
+        <label for="startDate" class="form-label">Start Date</label>
+        <input type="date" id="startDate" [(ngModel)]="selected.startDate" name="startDate" class="form-control" required>
+      </div> -->
+
+      <div class="col-md-3">
+        <label for="currentValue" class="form-label">Current Value</label>
+        <input type="number" id="currentValue" [(ngModel)]="selected.currentValue" name="currentValue" class="form-control" placeholder="Current Value" required>
       </div>
-      <div class="col-md-4">
-        <label for="estimatedVolume" class="form-label">Estimated Volume</label>
-        <input type="text" id="estimatedVolume" class="form-control" [(ngModel)]="selected.estimatedVolume" name="estimatedVolume" placeholder="Estimated Volume" required>
-      </div>
-      <div class="col-md-4">
-        <label for="ownershipStatus" class="form-label">Ownership Status</label>
-        <input type="text" id="ownershipStatus" class="form-control" [(ngModel)]="selected.ownershipStatus" name="ownershipStatus" placeholder="Ownership Status" required>
-      </div>
-      <div class="col-md-4">
-        <label for="valueEstimate" class="form-label">Value Estimate</label>
-        <input type="number" id="valueEstimate" class="form-control" [(ngModel)]="selected.valueEstimate" name="valueEstimate" placeholder="Value Estimate" required>
-      </div>
-      <div class="col-md-4">
+
+      <!-- ✅ Department dropdown -->
+      <div class="col-md-6">
         <label for="department" class="form-label">Department</label>
         <select id="department" class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
         </select>
       </div>
-      <div class="col-md-4">
+
+      <!-- ✅ Department Unit dropdown -->
+      <div class="col-md-6">
         <label for="departmentUnit" class="form-label">Department Unit</label>
-        <select id="departmentUnit" class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+        <select id="departmentUnit" class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required [disabled]="!units.length">
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
         </select>
       </div>
+
       <div class="col-md-12">
         <label for="remarks" class="form-label">Remarks</label>
-        <textarea id="remarks" class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks"></textarea>
+        <textarea id="remarks" [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
       </div>
+
       <div class="col-md-12 text-end">
         <button type="submit" class="btn btn-success me-2">
-          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Save' }}
+          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Create' }}
         </button>
         <button type="button" class="btn btn-secondary" (click)="resetForm()">
           <i class="fa fa-times me-1"></i> Clear
@@ -52,16 +53,15 @@
     </form>
   </div>
 
-  <div class="card mt-4 shadow p-4 border-start border-dark border-4">
-    <h5 class="mb-3">Subsoil Asset Records</h5>
-    <table class="table table-bordered table-striped text-center align-middle">
+  <!-- Table -->
+  <div class="card mt-4 shadow p-3 border-start border-dark border-4">
+    <h5 class="mb-3">Work In Progress Records</h5>
+    <table class="table table-bordered table-hover table-striped text-center">
       <thead class="table-dark">
         <tr>
           <th>ID</th>
-          <th>Resource</th>
-          <th>Location</th>
-          <th>Estimated Volume</th>
-          <th>Ownership</th>
+          <th>Project</th>
+          <th>Start Date</th>
           <th>Value</th>
           <th>Department</th>
           <th>Unit</th>
@@ -70,21 +70,19 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let asset of assets">
-          <td>{{ asset.id }}</td>
-          <td>{{ asset.resourceType }}</td>
-          <td>{{ asset.location }}</td>
-          <td>{{ asset.estimatedVolume }}</td>
-          <td>{{ asset.ownershipStatus }}</td>
-          <td>{{ asset.valueEstimate | currency }}</td>
-          <td>{{ asset.department }}</td>
-          <td>{{ asset.departmentUnit }}</td>
-          <td>{{ asset.remarks }}</td>
+        <tr *ngFor="let item of works">
+          <td>{{ item.id }}</td>
+          <td>{{ item.projectName }}</td>
+          <td>{{ item.startDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ item.currentValue | currency }}</td>
+          <td>{{ item.department }}</td>
+          <td>{{ item.departmentUnit }}</td>
+          <td>{{ item.remarks }}</td>
           <td>
-            <button class="btn btn-sm btn-info me-1" (click)="edit(asset)">
+            <button class="btn btn-sm btn-warning me-1" (click)="edit(item)">
               <i class="fa fa-edit"></i>
             </button>
-            <button class="btn btn-sm btn-danger" (click)="delete(asset.id)">
+            <button class="btn btn-sm btn-danger" (click)="delete(item.id)">
               <i class="fa fa-trash"></i>
             </button>
           </td>

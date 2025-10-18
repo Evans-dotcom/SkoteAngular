@@ -1,25 +1,32 @@
 <div class="container mt-4">
+  <!-- Label: Main Container for Work In Progress Form and Records -->
+
   <div class="card p-4 shadow border-start border-primary border-4">
+    <!-- Label: Form Card Section -->
     <h4 class="mb-3 text-primary">{{ isEdit ? 'Edit Work In Progress' : 'Add Work In Progress' }}</h4>
 
     <form (ngSubmit)="save()" class="row g-3">
+      <!-- Label: Project Name -->
       <div class="col-md-4">
         <label for="projectName" class="form-label">Project Name</label>
         <input type="text" id="projectName" [(ngModel)]="selected.projectName" name="projectName" class="form-control" placeholder="Project Name" required>
       </div>
 
-      <!-- Start Date (optional, commented) -->
-      <!-- <div class="col-md-3">
+      <!-- Label: Start Date (optional field, currently commented out) -->
+      <!-- 
+      <div class="col-md-3">
         <label for="startDate" class="form-label">Start Date</label>
         <input type="date" id="startDate" [(ngModel)]="selected.startDate" name="startDate" class="form-control" required>
-      </div> -->
+      </div>
+      -->
 
+      <!-- Label: Current Value -->
       <div class="col-md-3">
         <label for="currentValue" class="form-label">Current Value</label>
         <input type="number" id="currentValue" [(ngModel)]="selected.currentValue" name="currentValue" class="form-control" placeholder="Current Value" required>
       </div>
 
-      <!-- ✅ Department dropdown -->
+      <!-- Label: Department Dropdown -->
       <div class="col-md-6">
         <label for="department" class="form-label">Department</label>
         <select id="department" class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
@@ -28,7 +35,7 @@
         </select>
       </div>
 
-      <!-- ✅ Department Unit dropdown -->
+      <!-- Label: Department Unit Dropdown -->
       <div class="col-md-6">
         <label for="departmentUnit" class="form-label">Department Unit</label>
         <select id="departmentUnit" class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required [disabled]="!units.length">
@@ -37,11 +44,13 @@
         </select>
       </div>
 
+      <!-- Label: Remarks -->
       <div class="col-md-12">
         <label for="remarks" class="form-label">Remarks</label>
         <textarea id="remarks" [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
       </div>
 
+      <!-- Label: Form Action Buttons (Save/Update and Clear) -->
       <div class="col-md-12 text-end">
         <button type="submit" class="btn btn-success me-2">
           <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Create' }}
@@ -53,32 +62,36 @@
     </form>
   </div>
 
-  <!-- Table -->
+  <!-- Label: Work In Progress Records Table Section -->
   <div class="card mt-4 shadow p-3 border-start border-dark border-4">
     <h5 class="mb-3">Work In Progress Records</h5>
+
     <table class="table table-bordered table-hover table-striped text-center">
       <thead class="table-dark">
         <tr>
-          <th>ID</th>
-          <th>Project</th>
-          <th>Start Date</th>
-          <th>Value</th>
-          <th>Department</th>
-          <th>Unit</th>
-          <th>Remarks</th>
-          <th>Actions</th>
+          <!-- Table Column Labels -->
+          <th>ID</th> <!-- Label: Record ID -->
+          <th>Project</th> <!-- Label: Project Name -->
+          <th>Start Date</th> <!-- Label: Start Date -->
+          <th>Value</th> <!-- Label: Current Value -->
+          <th>Department</th> <!-- Label: Department Name -->
+          <th>Unit</th> <!-- Label: Department Unit -->
+          <th>Remarks</th> <!-- Label: Remarks / Comments -->
+          <th>Actions</th> <!-- Label: Edit / Delete Controls -->
         </tr>
       </thead>
+
       <tbody>
         <tr *ngFor="let item of works">
-          <td>{{ item.id }}</td>
-          <td>{{ item.projectName }}</td>
-          <td>{{ item.startDate | date:'yyyy-MM-dd' }}</td>
-          <td>{{ item.currentValue | currency }}</td>
-          <td>{{ item.department }}</td>
-          <td>{{ item.departmentUnit }}</td>
-          <td>{{ item.remarks }}</td>
+          <td>{{ item.id }}</td> <!-- Label: Unique Work Record ID -->
+          <td>{{ item.projectName }}</td> <!-- Label: Project Name -->
+          <td>{{ item.startDate | date:'yyyy-MM-dd' }}</td> <!-- Label: Start Date -->
+          <td>{{ item.currentValue | currency }}</td> <!-- Label: Current Project Value -->
+          <td>{{ item.department }}</td> <!-- Label: Department -->
+          <td>{{ item.departmentUnit }}</td> <!-- Label: Unit -->
+          <td>{{ item.remarks }}</td> <!-- Label: Remarks -->
           <td>
+            <!-- Label: Edit and Delete Action Buttons -->
             <button class="btn btn-sm btn-warning me-1" (click)="edit(item)">
               <i class="fa fa-edit"></i>
             </button>

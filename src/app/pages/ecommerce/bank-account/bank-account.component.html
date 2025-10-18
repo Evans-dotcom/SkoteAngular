@@ -5,26 +5,35 @@
     <form (ngSubmit)="save()" class="row g-3">
       <!-- Bank Name -->
       <div class="col-md-6">
-        <label class="form-label fw-bold">Bank Name</label>
-        <select class="form-select" [(ngModel)]="selected.bankName" name="bankName" required>
+        <label for="bankName" class="form-label fw-bold">Bank Name</label>
+        <select id="bankName" class="form-select" [(ngModel)]="selected.bankName" name="bankName" required>
           <option value="">Select Bank</option>
           <option *ngFor="let bank of banks" [value]="bank">{{ bank }}</option>
         </select>
       </div>
 
+      <!-- Account Type -->
       <div class="col-md-4">
-        <input type="text" [(ngModel)]="selected.accountType" name="accountType" class="form-control" placeholder="Account Type" required>
+        <label for="accountType" class="form-label">Account Type</label>
+        <input type="text" id="accountType" [(ngModel)]="selected.accountType" name="accountType" class="form-control" placeholder="Account Type" required>
       </div>
+
+      <!-- Opening Balance -->
       <div class="col-md-4">
-        <input type="number" [(ngModel)]="selected.openingBalance" name="openingBalance" class="form-control" placeholder="Opening Balance" required>
+        <label for="openingBalance" class="form-label">Opening Balance</label>
+        <input type="number" id="openingBalance" [(ngModel)]="selected.openingBalance" name="openingBalance" class="form-control" placeholder="Opening Balance" required>
       </div>
+
+      <!-- Current Balance -->
       <div class="col-md-4">
-        <input type="number" [(ngModel)]="selected.currentBalance" name="currentBalance" class="form-control" placeholder="Current Balance" required>
+        <label for="currentBalance" class="form-label">Current Balance</label>
+        <input type="number" id="currentBalance" [(ngModel)]="selected.currentBalance" name="currentBalance" class="form-control" placeholder="Current Balance" required>
       </div>
 
       <!-- Department -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+        <label for="department" class="form-label">Department</label>
+        <select id="department" class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
         </select>
@@ -32,24 +41,29 @@
 
       <!-- Department Unit -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+        <label for="departmentUnit" class="form-label">Department Unit</label>
+        <select id="departmentUnit" class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
         </select>
       </div>
 
-      <!-- Officer & Signatories -->
+      <!-- Officer In Charge -->
       <div class="col-md-6">
-        <input type="text" [(ngModel)]="selected.officerInCharge" name="officerInCharge" class="form-control" placeholder="Officer In Charge">
+        <label for="officerInCharge" class="form-label">Officer In Charge</label>
+        <input type="text" id="officerInCharge" [(ngModel)]="selected.officerInCharge" name="officerInCharge" class="form-control" placeholder="Officer In Charge">
       </div>
 
+      <!-- Signatories -->
       <div class="col-md-6">
-        <input type="text" [(ngModel)]="selected.signatories" name="signatories" class="form-control" placeholder="Signatories">
+        <label for="signatories" class="form-label">Signatories</label>
+        <input type="text" id="signatories" [(ngModel)]="selected.signatories" name="signatories" class="form-control" placeholder="Signatories">
       </div>
 
       <!-- Remarks -->
       <div class="col-md-12">
-        <textarea [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
+        <label for="remarks" class="form-label">Remarks</label>
+        <textarea id="remarks" [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
       </div>
 
       <!-- Submit Buttons -->
@@ -61,62 +75,62 @@
           <i class="fa fa-times me-1"></i> Clear
         </button>
       </div>
-
     </form>
   </div>
 
- <!-- Table Section -->
-<div id="table-section" class="card mt-4 shadow p-3 border-start border-dark border-4">
-  <div class="d-flex justify-content-between align-items-center mb-3 no-print">
-    <h5>Bank Account Records</h5>
-    <div>
-      <button class="btn btn-outline-success btn-sm me-2" (click)="exportToExcel()">
-        <i class="fa fa-file-excel"></i> Excel
-      </button>
-      <button class="btn btn-outline-danger btn-sm me-2" (click)="exportToPDF()">
-        <i class="fa fa-file-pdf"></i> PDF
-      </button>
-      <button class="btn btn-outline-dark btn-sm" (click)="printTable()">
-        <i class="fa fa-print"></i> Print
-      </button>
+  <!-- Table Section -->
+  <div id="table-section" class="card mt-4 shadow p-3 border-start border-dark border-4">
+    <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+      <h5>Bank Account Records</h5>
+      <div>
+        <button class="btn btn-outline-success btn-sm me-2" (click)="exportToExcel()">
+          <i class="fa fa-file-excel"></i> Excel
+        </button>
+        <button class="btn btn-outline-danger btn-sm me-2" (click)="exportToPDF()">
+          <i class="fa fa-file-pdf"></i> PDF
+        </button>
+        <button class="btn btn-outline-dark btn-sm" (click)="printTable()">
+          <i class="fa fa-print"></i> Print
+        </button>
+      </div>
     </div>
-  </div>
 
-  <table class="table table-bordered table-hover table-striped text-center align-middle">
-    <thead class="table-dark">
-      <tr>
-        <th>ID</th>
-        <th>Bank</th>
-        <th>Account No</th>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Officer</th>
-        <th>Department</th>
-        <th>Unit</th>
-        <th>Remarks</th>
-        <th class="no-print">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of accounts">
-        <td>{{ item.id }}</td>
-        <td>{{ item.bankName }}</td>
-        <td>{{ item.accountNumber }}</td>
-        <td>{{ item.accountType }}</td>
-        <td>{{ item.accountName }}</td>
-        <td>{{ item.officerInCharge }}</td>
-        <td>{{ item.department }}</td>
-        <td>{{ item.departmentUnit }}</td>
-        <td>{{ item.remarks }}</td>
-        <td class="no-print">
-          <button class="btn btn-sm btn-warning me-1" (click)="edit(item)">
-            <i class="fa fa-edit"></i>
-          </button>
-          <button class="btn btn-sm btn-danger" (click)="delete(item.id)">
-            <i class="fa fa-trash"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <table class="table table-bordered table-hover table-striped text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Bank</th>
+          <th>Account No</th>
+          <th>Type</th>
+          <th>Name</th>
+          <th>Officer</th>
+          <th>Department</th>
+          <th>Unit</th>
+          <th>Remarks</th>
+          <th class="no-print">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of accounts">
+          <td>{{ item.id }}</td>
+          <td>{{ item.bankName }}</td>
+          <td>{{ item.accountNumber }}</td>
+          <td>{{ item.accountType }}</td>
+          <td>{{ item.accountName }}</td>
+          <td>{{ item.officerInCharge }}</td>
+          <td>{{ item.department }}</td>
+          <td>{{ item.departmentUnit }}</td>
+          <td>{{ item.remarks }}</td>
+          <td class="no-print">
+            <button class="btn btn-sm btn-warning me-1" (click)="edit(item)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="delete(item.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
