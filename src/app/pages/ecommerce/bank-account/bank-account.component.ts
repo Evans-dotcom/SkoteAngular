@@ -165,12 +165,42 @@ export class BankAccountComponent implements OnInit {
   }
 
   printTable() {
-    const printContents = document.getElementById('print-section')?.innerHTML;
-    const popup = window.open('', '_blank', 'width=900,height=700');
-    popup?.document.write('<html><head><title>Bank Accounts</title></head><body>');
-    popup?.document.write(printContents || '');
-    popup?.document.write('</body></html>');
-    popup?.document.close();
-    popup?.print();
-  }
+  const printContents = document.getElementById('table-section')?.innerHTML;
+  const popup = window.open('', '_blank', 'width=900,height=700');
+  popup?.document.write(`
+    <html>
+      <head>
+        <title>Bank Account Records</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          h3 { text-align: center; margin-bottom: 20px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+          th, td { border: 1px solid #000; padding: 8px; text-align: left; font-size: 12px; }
+          th { background-color: #343a40; color: white; }
+          tr:nth-child(even) { background-color: #f2f2f2; }
+          .header { text-align: center; margin-bottom: 20px; }
+          .header h2 { margin: 0; color: #0d6efd; }
+          
+          /* Hide elements with no-print class */
+          .no-print { display: none !important; }
+          
+          @media print {
+            .no-print { display: none !important; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h2>County Government Bank Accounts</h2>
+          <p><strong>Generated On:</strong> ${new Date().toLocaleString()}</p>
+        </div>
+        <h3>Bank Account Records</h3>
+        ${printContents || '<p>No data available.</p>'}
+      </body>
+    </html>
+  `);
+  popup?.document.close();
+  popup?.print();
+}
+
 }
