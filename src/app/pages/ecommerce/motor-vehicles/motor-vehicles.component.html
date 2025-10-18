@@ -4,40 +4,47 @@
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-3">
+        <label for="registrationNumber" class="form-label">Registration Number</label>
         <input type="text" [(ngModel)]="selected.registrationNumber" name="registrationNumber" class="form-control" placeholder="Registration Number" required>
       </div>
       <div class="col-md-3">
+        <label for="make" class="form-label">Make</label>
         <input type="text" [(ngModel)]="selected.make" name="make" class="form-control" placeholder="Make" required>
       </div>
       <div class="col-md-3">
+        <label for="model" class="form-label">Model</label>
         <input type="text" [(ngModel)]="selected.model" name="model" class="form-control" placeholder="Model" required>
       </div>
       <div class="col-md-3">
+        <label for="yearOfManufacture" class="form-label">Year of Manufacture</label>
         <input type="number" [(ngModel)]="selected.yearOfManufacture" name="yearOfManufacture" class="form-control" placeholder="Year of Manufacture" required>
       </div>
 
       <div class="col-md-4">
+        <label for="engineNumber" class="form-label">Engine Number</label>
         <input type="text" [(ngModel)]="selected.engineNumber" name="engineNumber" class="form-control" placeholder="Engine Number">
       </div>
       <div class="col-md-4">
+        <label for="chassisNumber" class="form-label">Chassis Number</label>
         <input type="text" [(ngModel)]="selected.chassisNumber" name="chassisNumber" class="form-control" placeholder="Chassis Number">
       </div>
-      <!-- <div class="col-md-4">
-        <input type="date" [(ngModel)]="selected.purchaseDate" name="purchaseDate" class="form-control">
-      </div> -->
 
       <div class="col-md-4">
+        <label for="purchasePrice" class="form-label">Purchase Price</label>
         <input type="number" [(ngModel)]="selected.purchasePrice" name="purchasePrice" class="form-control" placeholder="Purchase Price">
       </div>
       <div class="col-md-4">
+        <label for="location" class="form-label">Location</label>
         <input type="text" [(ngModel)]="selected.location" name="location" class="form-control" placeholder="Location">
       </div>
       <div class="col-md-4">
+        <label for="responsibleOfficer" class="form-label">Responsible Officer</label>
         <input type="text" [(ngModel)]="selected.responsibleOfficer" name="responsibleOfficer" class="form-control" placeholder="Responsible Officer">
       </div>
 
       <!-- Department -->
       <div class="col-md-6">
+        <label for="department" class="form-label">Department</label>
         <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
@@ -46,6 +53,7 @@
 
       <!-- Department Unit -->
       <div class="col-md-6">
+        <label for="departmentUnit" class="form-label">Department Unit</label>
         <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>

@@ -4,21 +4,25 @@
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
-        <input type="text" [(ngModel)]="selected.projectName" name="projectName" class="form-control" placeholder="Project Name" required>
+        <label for="projectName" class="form-label">Project Name</label>
+        <input type="text" id="projectName" [(ngModel)]="selected.projectName" name="projectName" class="form-control" placeholder="Project Name" required>
       </div>
 
       <!-- Start Date (optional, commented) -->
       <!-- <div class="col-md-3">
-        <input type="date" [(ngModel)]="selected.startDate" name="startDate" class="form-control" required>
+        <label for="startDate" class="form-label">Start Date</label>
+        <input type="date" id="startDate" [(ngModel)]="selected.startDate" name="startDate" class="form-control" required>
       </div> -->
 
       <div class="col-md-3">
-        <input type="number" [(ngModel)]="selected.currentValue" name="currentValue" class="form-control" placeholder="Current Value" required>
+        <label for="currentValue" class="form-label">Current Value</label>
+        <input type="number" id="currentValue" [(ngModel)]="selected.currentValue" name="currentValue" class="form-control" placeholder="Current Value" required>
       </div>
 
       <!-- ✅ Department dropdown -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+        <label for="department" class="form-label">Department</label>
+        <select id="department" class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
         </select>
@@ -26,14 +30,16 @@
 
       <!-- ✅ Department Unit dropdown -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required [disabled]="!units.length">
+        <label for="departmentUnit" class="form-label">Department Unit</label>
+        <select id="departmentUnit" class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required [disabled]="!units.length">
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
         </select>
       </div>
 
       <div class="col-md-12">
-        <textarea [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
+        <label for="remarks" class="form-label">Remarks</label>
+        <textarea id="remarks" [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
       </div>
 
       <div class="col-md-12 text-end">

@@ -4,21 +4,27 @@
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
+        <label class="form-label">Officer Name</label>
         <input type="text" class="form-control" [(ngModel)]="selected.officer" name="officer" placeholder="Officer Name" required>
       </div>
       <div class="col-md-2">
+        <label class="form-label">Amount</label>
         <input type="number" class="form-control" [(ngModel)]="selected.amount" name="amount" placeholder="Amount" required>
       </div>
       <!-- <div class="col-md-3">
+        <label class="form-label">Date Issued</label>
         <input type="date" class="form-control" [(ngModel)]="selected.dateIssued" name="dateIssued" required>
       </div> -->
       <div class="col-md-3">
+        <label class="form-label">Status</label>
         <input type="text" class="form-control" [(ngModel)]="selected.status" name="status" placeholder="Status" required>
       </div>
       <div class="col-md-6">
+        <label class="form-label">Purpose</label>
         <input type="text" class="form-control" [(ngModel)]="selected.purpose" name="purpose" placeholder="Purpose" required>
       </div>
       <div class="col-md-6">
+        <label class="form-label">Remarks</label>
         <input type="text" class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks">
       </div>
       <div class="col-md-12 text-end">

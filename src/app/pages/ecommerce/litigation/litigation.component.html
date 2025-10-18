@@ -4,20 +4,25 @@
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-3">
+        <label class="form-label">Case Number</label>
         <input type="text" [(ngModel)]="selected.caseNumber" name="caseNumber" class="form-control" placeholder="Case Number" required>
       </div>
       <div class="col-md-4">
+        <label class="form-label">Parties Involved</label>
         <input type="text" [(ngModel)]="selected.partiesInvolved" name="partiesInvolved" class="form-control" placeholder="Parties Involved" required>
       </div>
       <div class="col-md-3">
+        <label class="form-label">Subject</label>
         <input type="text" [(ngModel)]="selected.subject" name="subject" class="form-control" placeholder="Subject" required>
       </div>
       <div class="col-md-2">
+        <label class="form-label">Status</label>
         <input type="text" [(ngModel)]="selected.status" name="status" class="form-control" placeholder="Status" required>
       </div>
 
       <!-- Department -->
       <div class="col-md-6">
+        <label class="form-label">Department</label>
         <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
@@ -26,6 +31,7 @@
 
       <!-- Department Unit -->
       <div class="col-md-6">
+        <label class="form-label">Department Unit</label>
         <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
@@ -33,6 +39,7 @@
       </div>
 
       <div class="col-md-12">
+        <label class="form-label">Remarks</label>
         <textarea [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
       </div>
 

@@ -4,21 +4,29 @@
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
-        <input type="text" [(ngModel)]="selected.parcelNumber" name="parcelNumber" class="form-control" placeholder="Parcel Number" required>
+        <label for="parcelNumber" class="form-label">Parcel Number</label>
+        <input type="text" [(ngModel)]="selected.parcelNumber" name="parcelNumber" id="parcelNumber" class="form-control" placeholder="Parcel Number" required>
       </div>
+
       <div class="col-md-4">
-        <input type="text" [(ngModel)]="selected.location" name="location" class="form-control" placeholder="Location" required>
+        <label for="location" class="form-label">Location</label>
+        <input type="text" [(ngModel)]="selected.location" name="location" id="location" class="form-control" placeholder="Location" required>
       </div>
+
       <div class="col-md-2">
-        <input type="number" [(ngModel)]="selected.acreage" name="acreage" class="form-control" placeholder="Acreage" required>
+        <label for="acreage" class="form-label">Acreage</label>
+        <input type="number" [(ngModel)]="selected.acreage" name="acreage" id="acreage" class="form-control" placeholder="Acreage" required>
       </div>
+
       <div class="col-md-4">
-        <input type="text" [(ngModel)]="selected.titleDeedNumber" name="titleDeedNumber" class="form-control" placeholder="Title Deed Number" required>
+        <label for="titleDeedNumber" class="form-label">Title Deed Number</label>
+        <input type="text" [(ngModel)]="selected.titleDeedNumber" name="titleDeedNumber" id="titleDeedNumber" class="form-control" placeholder="Title Deed Number" required>
       </div>
 
       <!-- Department -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+        <label for="department" class="form-label">Department</label>
+        <select class="form-select" [(ngModel)]="selected.department" name="department" id="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
         </select>
@@ -26,17 +34,21 @@
 
       <!-- Department Unit -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+        <label for="departmentUnit" class="form-label">Department Unit</label>
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" id="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
         </select>
       </div>
 
       <div class="col-md-6">
-        <input type="text" [(ngModel)]="selected.ownershipStatus" name="ownershipStatus" class="form-control" placeholder="Ownership Status">
+        <label for="ownershipStatus" class="form-label">Ownership Status</label>
+        <input type="text" [(ngModel)]="selected.ownershipStatus" name="ownershipStatus" id="ownershipStatus" class="form-control" placeholder="Ownership Status">
       </div>
+
       <div class="col-md-6">
-        <input type="number" [(ngModel)]="selected.landValue" name="landValue" class="form-control" placeholder="Land Value">
+        <label for="landValue" class="form-label">Land Value</label>
+        <input type="number" [(ngModel)]="selected.landValue" name="landValue" id="landValue" class="form-control" placeholder="Land Value">
       </div>
 
       <div class="col-12 text-end">
@@ -59,12 +71,12 @@
           <th>Parcel Number</th>
           <th>Location</th>
           <th>Acreage</th>
-          <th>Title Deed</th>
+          <th>Title Deed Number</th>
           <th>Date Acquired</th>
-          <th>Ownership</th>
-          <th>Value</th>
+          <th>Ownership Status</th>
+          <th>Land Value</th>
           <th>Department</th>
-          <th>Unit</th>
+          <th>Department Unit</th>
           <th>Actions</th>
         </tr>
       </thead>

@@ -4,27 +4,24 @@
     
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.leaseItem" name="leaseItem" placeholder="Lease Item" required>
-      </div>
-      <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.lessor" name="lessor" placeholder="Lessor" required>
-      </div>
-      <div class="col-md-4">
-        <input type="number" class="form-control" [(ngModel)]="selected.leaseCost" name="leaseCost" placeholder="Lease Cost" required>
+        <label for="leaseItem" class="form-label">Lease Item</label>
+        <input type="text" id="leaseItem" class="form-control" [(ngModel)]="selected.leaseItem" name="leaseItem" placeholder="Lease Item" required>
       </div>
 
-      <!-- <div class="col-md-6">
-        <label class="form-label">Lease Start</label>
-        <input type="date" class="form-control" [(ngModel)]="selected.leaseStart" name="leaseStart" required>
-      </div> -->
-      <!-- <div class="col-md-6">
-        <label class="form-label">Lease End</label>
-        <input type="date" class="form-control" [(ngModel)]="selected.leaseEnd" name="leaseEnd" required>
-      </div> -->
+      <div class="col-md-4">
+        <label for="lessor" class="form-label">Lessor</label>
+        <input type="text" id="lessor" class="form-control" [(ngModel)]="selected.lessor" name="lessor" placeholder="Lessor" required>
+      </div>
+
+      <div class="col-md-4">
+        <label for="leaseCost" class="form-label">Lease Cost</label>
+        <input type="number" id="leaseCost" class="form-control" [(ngModel)]="selected.leaseCost" name="leaseCost" placeholder="Lease Cost" required>
+      </div>
 
       <!-- Department dropdown -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+        <label for="department" class="form-label">Department</label>
+        <select id="department" class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
         </select>
@@ -32,14 +29,16 @@
 
       <!-- Units dropdown -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+        <label for="departmentUnit" class="form-label">Department Unit</label>
+        <select id="departmentUnit" class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
         </select>
       </div>
 
       <div class="col-md-12">
-        <textarea class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks"></textarea>
+        <label for="remarks" class="form-label">Remarks</label>
+        <textarea id="remarks" class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks"></textarea>
       </div>
 
       <div class="col-12 text-end">
@@ -60,13 +59,13 @@
       <thead class="table-dark">
         <tr>
           <th>ID</th>
-          <th>Item</th>
+          <th>Lease Item</th>
           <th>Lessor</th>
-          <th>Cost</th>
-          <th>Start</th>
-          <th>End</th>
-          <th>Dept</th>
-          <th>Unit</th>
+          <th>Lease Cost</th>
+          <th>Lease Start</th>
+          <th>Lease End</th>
+          <th>Department</th>
+          <th>Department Unit</th>
           <th>Remarks</th>
           <th>Actions</th>
         </tr>

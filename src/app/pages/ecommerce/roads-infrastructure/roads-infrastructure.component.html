@@ -4,35 +4,51 @@
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
+        <label class="form-label">Road Name</label>
         <input type="text" [(ngModel)]="selectedRoad.roadName" name="roadName" class="form-control" placeholder="Road Name" required>
       </div>
+
       <div class="col-md-4">
+        <label class="form-label">Location</label>
         <input type="text" [(ngModel)]="selectedRoad.location" name="location" class="form-control" placeholder="Location" required>
       </div>
+
       <div class="col-md-2">
+        <label class="form-label">Length (Km)</label>
         <input type="number" [(ngModel)]="selectedRoad.lengthKm" name="lengthKm" class="form-control" placeholder="Length (Km)" required>
       </div>
+
       <div class="col-md-2">
+        <label class="form-label">Construction Cost</label>
         <input type="number" [(ngModel)]="selectedRoad.constructionCost" name="constructionCost" class="form-control" placeholder="Cost" required>
       </div>
+
       <div class="col-md-2">
+        <label class="form-label">Year Constructed</label>
         <input type="number" [(ngModel)]="selectedRoad.yearConstructed" name="yearConstructed" class="form-control" placeholder="Year Built" required>
       </div>
+
       <div class="col-md-4">
+        <label class="form-label">Department</label>
         <select class="form-select" [(ngModel)]="selectedRoad.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
         </select>
       </div>
+
       <div class="col-md-4">
+        <label class="form-label">Department Unit</label>
         <select class="form-select" [(ngModel)]="selectedRoad.departmentUnit" name="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
         </select>
       </div>
+
       <div class="col-md-12">
+        <label class="form-label">Remarks</label>
         <textarea [(ngModel)]="selectedRoad.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
       </div>
+
       <div class="col-md-12 text-end">
         <button class="btn btn-primary me-2" type="submit">
           <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Create' }}

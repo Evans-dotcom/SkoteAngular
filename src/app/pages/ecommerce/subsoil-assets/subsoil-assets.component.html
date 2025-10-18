@@ -4,34 +4,42 @@
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.resourceType" name="resourceType" placeholder="Resource Type" required>
+        <label for="resourceType" class="form-label">Resource Type</label>
+        <input type="text" id="resourceType" class="form-control" [(ngModel)]="selected.resourceType" name="resourceType" placeholder="Resource Type" required>
       </div>
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.location" name="location" placeholder="Location" required>
+        <label for="location" class="form-label">Location</label>
+        <input type="text" id="location" class="form-control" [(ngModel)]="selected.location" name="location" placeholder="Location" required>
       </div>
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.estimatedVolume" name="estimatedVolume" placeholder="Estimated Volume" required>
+        <label for="estimatedVolume" class="form-label">Estimated Volume</label>
+        <input type="text" id="estimatedVolume" class="form-control" [(ngModel)]="selected.estimatedVolume" name="estimatedVolume" placeholder="Estimated Volume" required>
       </div>
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.ownershipStatus" name="ownershipStatus" placeholder="Ownership Status" required>
+        <label for="ownershipStatus" class="form-label">Ownership Status</label>
+        <input type="text" id="ownershipStatus" class="form-control" [(ngModel)]="selected.ownershipStatus" name="ownershipStatus" placeholder="Ownership Status" required>
       </div>
       <div class="col-md-4">
-        <input type="number" class="form-control" [(ngModel)]="selected.valueEstimate" name="valueEstimate" placeholder="Value Estimate" required>
+        <label for="valueEstimate" class="form-label">Value Estimate</label>
+        <input type="number" id="valueEstimate" class="form-control" [(ngModel)]="selected.valueEstimate" name="valueEstimate" placeholder="Value Estimate" required>
       </div>
       <div class="col-md-4">
-        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+        <label for="department" class="form-label">Department</label>
+        <select id="department" class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
         </select>
       </div>
       <div class="col-md-4">
-        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+        <label for="departmentUnit" class="form-label">Department Unit</label>
+        <select id="departmentUnit" class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
         </select>
       </div>
       <div class="col-md-12">
-        <textarea class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks"></textarea>
+        <label for="remarks" class="form-label">Remarks</label>
+        <textarea id="remarks" class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks"></textarea>
       </div>
       <div class="col-md-12 text-end">
         <button type="submit" class="btn btn-success me-2">

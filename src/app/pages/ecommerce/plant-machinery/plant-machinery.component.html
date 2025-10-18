@@ -4,29 +4,38 @@
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
+        <label for="equipmentName" class="form-label">Equipment Name</label>
         <input type="text" [(ngModel)]="selected.equipmentName" name="equipmentName" class="form-control" placeholder="Equipment Name" required>
       </div>
       <div class="col-md-4">
+        <label for="serialNumber" class="form-label">Serial Number</label>
         <input type="text" [(ngModel)]="selected.serialNumber" name="serialNumber" class="form-control" placeholder="Serial Number">
       </div>
       <div class="col-md-4">
+        <label for="makeModel" class="form-label">Make / Model</label>
         <input type="text" [(ngModel)]="selected.makeModel" name="makeModel" class="form-control" placeholder="Make/Model">
       </div>
 
       <!-- <div class="col-md-4">
+        <label for="purchaseDate" class="form-label">Purchase Date</label>
         <input type="date" [(ngModel)]="selected.purchaseDate" name="purchaseDate" class="form-control">
       </div> -->
       <div class="col-md-4">
+        <label for="value" class="form-label">Value</label>
         <input type="number" [(ngModel)]="selected.value" name="value" class="form-control" placeholder="Value">
       </div>
       <div class="col-md-4">
+        <label for="location" class="form-label">Location</label>
         <input type="text" [(ngModel)]="selected.location" name="location" class="form-control" placeholder="Location">
       </div>
       <div class="col-md-6">
+        <label for="operationalStatus" class="form-label">Operational Status</label>
         <input type="text" [(ngModel)]="selected.operationalStatus" name="operationalStatus" class="form-control" placeholder="Operational Status">
       </div>
+
       <!-- Department -->
       <div class="col-md-6">
+        <label for="department" class="form-label">Department</label>
         <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
@@ -35,6 +44,7 @@
 
       <!-- Department Unit -->
       <div class="col-md-6">
+        <label for="departmentUnit" class="form-label">Department Unit</label>
         <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>

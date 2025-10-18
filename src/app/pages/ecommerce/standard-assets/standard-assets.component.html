@@ -4,40 +4,58 @@
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
+        <label class="form-label">Asset Description</label>
         <input type="text" [(ngModel)]="selected.assetDescription" name="assetDescription" class="form-control" placeholder="Description" required>
       </div>
+
       <div class="col-md-4">
+        <label class="form-label">Serial Number</label>
         <input type="text" [(ngModel)]="selected.serialNumber" name="serialNumber" class="form-control" placeholder="Serial Number">
       </div>
+
       <div class="col-md-4">
+        <label class="form-label">Make / Model</label>
         <input type="text" [(ngModel)]="selected.makeModel" name="makeModel" class="form-control" placeholder="Make/Model">
       </div>
 
       <div class="col-md-4">
+        <label class="form-label">Tag Number</label>
         <input type="text" [(ngModel)]="selected.tagNumber" name="tagNumber" class="form-control" placeholder="Tag Number">
       </div>
+
       <div class="col-md-4">
+        <label class="form-label">PV Number</label>
         <input type="text" [(ngModel)]="selected.pvNumber" name="pvNumber" class="form-control" placeholder="PV Number">
       </div>
+
       <div class="col-md-4">
+        <label class="form-label">Purchase Amount</label>
         <input type="number" [(ngModel)]="selected.purchaseAmount" name="purchaseAmount" class="form-control" placeholder="Purchase Amount">
       </div>
 
       <div class="col-md-4">
+        <label class="form-label">Depreciation Rate (%)</label>
         <input type="number" [(ngModel)]="selected.depreciationRate" name="depreciationRate" class="form-control" placeholder="Depreciation Rate (%)">
       </div>
+
       <div class="col-md-4">
+        <label class="form-label">Annual Depreciation</label>
         <input type="number" [(ngModel)]="selected.annualDepreciation" name="annualDepreciation" class="form-control" placeholder="Annual Depreciation">
       </div>
+
       <div class="col-md-4">
+        <label class="form-label">Accumulated Depreciation</label>
         <input type="number" [(ngModel)]="selected.accumulatedDepreciation" name="accumulatedDepreciation" class="form-control" placeholder="Accumulated Depreciation">
       </div>
+
       <div class="col-md-4">
+        <label class="form-label">Net Book Value</label>
         <input type="number" [(ngModel)]="selected.netBookValue" name="netBookValue" class="form-control" placeholder="Net Book Value">
       </div>
 
       <!-- Department -->
       <div class="col-md-6">
+        <label class="form-label">Department</label>
         <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
@@ -46,6 +64,7 @@
 
       <!-- Department Unit -->
       <div class="col-md-6">
+        <label class="form-label">Department Unit</label>
         <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
@@ -53,16 +72,22 @@
       </div>
 
       <div class="col-md-6">
+        <label class="form-label">Responsible Officer</label>
         <input type="text" [(ngModel)]="selected.responsibleOfficer" name="responsibleOfficer" class="form-control" placeholder="Responsible Officer">
       </div>
+
       <div class="col-md-6">
+        <label class="form-label">Location</label>
         <input type="text" [(ngModel)]="selected.location" name="location" class="form-control" placeholder="Location">
       </div>
 
       <div class="col-md-6">
+        <label class="form-label">Condition</label>
         <input type="text" [(ngModel)]="selected.assetCondition" name="assetCondition" class="form-control" placeholder="Condition">
       </div>
+
       <div class="col-md-6">
+        <label class="form-label">Notes</label>
         <textarea [(ngModel)]="selected.notes" name="notes" class="form-control" placeholder="Notes"></textarea>
       </div>
 

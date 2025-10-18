@@ -4,23 +4,29 @@
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
+        <label class="form-label">Asset Type</label>
         <input type="text" [(ngModel)]="selected.assetType" name="assetType" class="form-control" placeholder="Asset Type" required>
       </div>
       <div class="col-md-4">
+        <label class="form-label">Description</label>
         <input type="text" [(ngModel)]="selected.description" name="description" class="form-control" placeholder="Description" required>
       </div>
       <!-- <div class="col-md-4">
+        <label class="form-label">Date Acquired</label>
         <input type="date" [(ngModel)]="selected.dateAcquired" name="dateAcquired" class="form-control" required>
       </div> -->
       <div class="col-md-3">
+        <label class="form-label">Value</label>
         <input type="number" [(ngModel)]="selected.value" name="value" class="form-control" placeholder="Value" required>
       </div>
       <div class="col-md-3">
+        <label class="form-label">Useful Life (Years)</label>
         <input type="number" [(ngModel)]="selected.usefulLifeYears" name="usefulLifeYears" class="form-control" placeholder="Useful Life (Years)" required>
       </div>
 
       <!-- Department -->
       <div class="col-md-3">
+        <label class="form-label">Department</label>
         <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
@@ -29,6 +35,7 @@
 
       <!-- Department Unit -->
       <div class="col-md-3">
+        <label class="form-label">Department Unit</label>
         <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>

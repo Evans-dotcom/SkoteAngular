@@ -4,26 +4,33 @@
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-3">
+        <label class="form-label">Asset ID</label>
         <input type="number" [(ngModel)]="selected.assetId" name="assetId" class="form-control" placeholder="Asset ID" required>
       </div>
       <div class="col-md-3">
+        <label class="form-label">Maintenance Type</label>
         <input type="text" [(ngModel)]="selected.maintenanceType" name="maintenanceType" class="form-control" placeholder="Maintenance Type" required>
       </div>
       <!-- <div class="col-md-3">
+        <label class="form-label">Date Started</label>
         <input type="date" [(ngModel)]="selected.dateStarted" name="dateStarted" class="form-control" required>
       </div>
       <div class="col-md-3">
+        <label class="form-label">Date Completed</label>
         <input type="date" [(ngModel)]="selected.dateCompleted" name="dateCompleted" class="form-control" required>
       </div> -->
       <div class="col-md-3">
+        <label class="form-label">Cost</label>
         <input type="number" [(ngModel)]="selected.cost" name="cost" class="form-control" placeholder="Cost" required>
       </div>
       <div class="col-md-6">
+        <label class="form-label">Remarks</label>
         <textarea [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
       </div>
 
       <!-- Department -->
       <div class="col-md-3">
+        <label class="form-label">Department</label>
         <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
@@ -32,6 +39,7 @@
 
       <!-- Department Unit -->
       <div class="col-md-3">
+        <label class="form-label">Department Unit</label>
         <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>

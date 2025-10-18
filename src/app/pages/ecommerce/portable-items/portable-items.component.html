@@ -4,20 +4,28 @@
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
+        <label class="form-label">Item Name</label>
         <input type="text" [(ngModel)]="selected.itemName" name="itemName" class="form-control" placeholder="Item Name" required>
       </div>
+
       <div class="col-md-3">
+        <label class="form-label">Tag Number</label>
         <input type="text" [(ngModel)]="selected.tagNumber" name="tagNumber" class="form-control" placeholder="Tag Number">
       </div>
+
       <div class="col-md-3">
+        <label class="form-label">Assigned To</label>
         <input type="text" [(ngModel)]="selected.assignedTo" name="assignedTo" class="form-control" placeholder="Assigned To">
       </div>
+
       <div class="col-md-2">
+        <label class="form-label">Location</label>
         <input type="text" [(ngModel)]="selected.location" name="location" class="form-control" placeholder="Location">
       </div>
 
       <!-- Department -->
       <div class="col-md-6">
+        <label class="form-label">Department</label>
         <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
@@ -26,6 +34,7 @@
 
       <!-- Unit -->
       <div class="col-md-6">
+        <label class="form-label">Department Unit</label>
         <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
@@ -33,9 +42,12 @@
       </div>
 
       <div class="col-md-6">
+        <label class="form-label">Condition</label>
         <input type="text" [(ngModel)]="selected.condition" name="condition" class="form-control" placeholder="Condition">
       </div>
+
       <div class="col-md-6">
+        <label class="form-label">Remarks</label>
         <input type="text" [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks">
       </div>
 

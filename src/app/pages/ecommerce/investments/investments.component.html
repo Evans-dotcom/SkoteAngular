@@ -6,28 +6,40 @@
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.investmentType" name="investmentType" placeholder="Investment Type" required>
+        <label for="investmentType" class="form-label">Investment Type</label>
+        <input type="text" class="form-control" [(ngModel)]="selected.investmentType" name="investmentType" id="investmentType" placeholder="Investment Type" required>
       </div>
+
       <div class="col-md-4">
-        <input type="text" class="form-control" [(ngModel)]="selected.institution" name="institution" placeholder="Institution" required>
+        <label for="institution" class="form-label">Institution</label>
+        <input type="text" class="form-control" [(ngModel)]="selected.institution" name="institution" id="institution" placeholder="Institution" required>
       </div>
+
       <!-- Date Invested -->
       <!-- <div class="col-md-4">
-        <input type="date" class="form-control" [(ngModel)]="selected.dateInvested" name="dateInvested" required>
+        <label for="dateInvested" class="form-label">Date Invested</label>
+        <input type="date" class="form-control" [(ngModel)]="selected.dateInvested" name="dateInvested" id="dateInvested" required>
       </div> -->
+
       <div class="col-md-4">
-        <input type="number" class="form-control" [(ngModel)]="selected.amount" name="amount" placeholder="Amount" required>
+        <label for="amount" class="form-label">Amount</label>
+        <input type="number" class="form-control" [(ngModel)]="selected.amount" name="amount" id="amount" placeholder="Amount" required>
       </div>
+
       <div class="col-md-4">
-        <input type="number" class="form-control" [(ngModel)]="selected.expectedReturn" name="expectedReturn" placeholder="Expected Return" required>
+        <label for="expectedReturn" class="form-label">Expected Return</label>
+        <input type="number" class="form-control" [(ngModel)]="selected.expectedReturn" name="expectedReturn" id="expectedReturn" placeholder="Expected Return" required>
       </div>
+
       <div class="col-md-4">
-        <textarea class="form-control" [(ngModel)]="selected.remarks" name="remarks" placeholder="Remarks"></textarea>
+        <label for="remarks" class="form-label">Remarks</label>
+        <textarea class="form-control" [(ngModel)]="selected.remarks" name="remarks" id="remarks" placeholder="Remarks"></textarea>
       </div>
 
       <!-- Department dropdown -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+        <label for="department" class="form-label">Department</label>
+        <select class="form-select" [(ngModel)]="selected.department" name="department" id="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
         </select>
@@ -35,7 +47,8 @@
 
       <!-- Department Unit dropdown -->
       <div class="col-md-6">
-        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+        <label for="departmentUnit" class="form-label">Department Unit</label>
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" id="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
         </select>
@@ -60,13 +73,13 @@
         <thead class="table-light">
           <tr>
             <th>ID</th>
-            <th>Type</th>
+            <th>Investment Type</th>
             <th>Institution</th>
             <th>Date Invested</th>
             <th>Amount</th>
             <th>Expected Return</th>
             <th>Department</th>
-            <th>Unit</th>
+            <th>Department Unit</th>
             <th>Remarks</th>
             <th>Actions</th>
           </tr>
