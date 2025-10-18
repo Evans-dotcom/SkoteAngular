@@ -1,26 +1,36 @@
 <div class="container mt-4">
   <div class="card shadow p-4 border-start border-primary border-4">
-    <h4 class="text-primary mb-4">{{ isEdit ? 'Edit Biological Asset' : 'Add Biological Asset' }}</h4>
+    <h4 class="text-primary mb-4">{{ isEdit ? 'Edit Building' : 'Add Building' }}</h4>
 
     <form (ngSubmit)="save()" class="row g-3">
       <div class="col-md-4">
-        <label class="form-label">Asset Type</label>
-        <input type="text" [(ngModel)]="selected.assetType" name="assetType" class="form-control" placeholder="Asset Type" required>
+        <label class="form-label">Building Name</label>
+        <input type="text" [(ngModel)]="selected.buildingName" name="buildingName" class="form-control" placeholder="Building Name" required>
       </div>
 
-      <div class="col-md-2">
-        <label class="form-label">Quantity</label>
-        <input type="number" [(ngModel)]="selected.quantity" name="quantity" class="form-control" placeholder="Quantity" required>
-      </div>
-
-      <div class="col-md-3">
-        <label class="form-label">Value</label>
-        <input type="number" [(ngModel)]="selected.value" name="value" class="form-control" placeholder="Value" required>
-      </div>
-
-      <div class="col-md-3">
+      <div class="col-md-4">
         <label class="form-label">Location</label>
         <input type="text" [(ngModel)]="selected.location" name="location" class="form-control" placeholder="Location" required>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Use Purpose</label>
+        <input type="text" [(ngModel)]="selected.usePurpose" name="usePurpose" class="form-control" placeholder="Use Purpose" required>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Construction Cost</label>
+        <input type="number" [(ngModel)]="selected.constructionCost" name="constructionCost" class="form-control" placeholder="Construction Cost" required>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Depreciation</label>
+        <input type="number" [(ngModel)]="selected.depreciation" name="depreciation" class="form-control" placeholder="Depreciation" required>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Net Book Value</label>
+        <input type="number" [(ngModel)]="selected.netBookValue" name="netBookValue" class="form-control" placeholder="Net Book Value" required>
       </div>
 
       <!-- Department -->
@@ -35,15 +45,10 @@
       <!-- Department Unit -->
       <div class="col-md-6">
         <label class="form-label">Department Unit</label>
-        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+        <select class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required [disabled]="!units.length">
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
         </select>
-      </div>
-
-      <div class="col-md-12">
-        <label class="form-label">Notes</label>
-        <textarea [(ngModel)]="selected.notes" name="notes" class="form-control" placeholder="Notes"></textarea>
       </div>
 
       <div class="col-md-12 text-end">
@@ -59,40 +64,38 @@
 
   <!-- Table -->
   <div class="card mt-4 shadow p-4 border-start border-dark border-4">
-    <h5>Biological Assets Records</h5>
+    <h5>Buildings Register Records</h5>
     <table class="table table-bordered table-striped text-center align-middle">
       <thead class="table-dark">
         <tr>
           <th>ID</th>
-          <th>Asset Type</th>
-          <th>Quantity</th>
-          <th>Acquisition Date</th>
-          <th>Value</th>
+          <th>Building Name</th>
           <th>Location</th>
+          <th>Use Purpose</th>
+          <th>Construction Cost</th>
+          <th>Depreciation</th>
+          <th>Net Book Value</th>
           <th>Department</th>
           <th>Department Unit</th>
-          <th>Contract Date</th>
-          <th>Notes</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let asset of assets">
-          <td>{{ asset.id }}</td>
-          <td>{{ asset.assetType }}</td>
-          <td>{{ asset.quantity }}</td>
-          <td>{{ asset.acquisitionDate | date:'yyyy-MM-dd' }}</td>
-          <td>{{ asset.value | currency }}</td>
-          <td>{{ asset.location }}</td>
-          <td>{{ asset.department }}</td>
-          <td>{{ asset.departmentUnit }}</td>
-          <td>{{ asset.contractDate | date:'yyyy-MM-dd' }}</td>
-          <td>{{ asset.notes }}</td>
+        <tr *ngFor="let building of buildings">
+          <td>{{ building.id }}</td>
+          <td>{{ building.buildingName }}</td>
+          <td>{{ building.location }}</td>
+          <td>{{ building.usePurpose }}</td>
+          <td>{{ building.constructionCost | currency }}</td>
+          <td>{{ building.depreciation | currency }}</td>
+          <td>{{ building.netBookValue | currency }}</td>
+          <td>{{ building.department }}</td>
+          <td>{{ building.departmentUnit }}</td>
           <td>
-            <button class="btn btn-sm btn-info me-1" (click)="edit(asset)">
+            <button class="btn btn-sm btn-warning me-1" (click)="edit(building)">
               <i class="fa fa-edit"></i>
             </button>
-            <button class="btn btn-sm btn-danger" (click)="delete(asset.id)">
+            <button class="btn btn-sm btn-danger" (click)="delete(building.id)">
               <i class="fa fa-trash"></i>
             </button>
           </td>

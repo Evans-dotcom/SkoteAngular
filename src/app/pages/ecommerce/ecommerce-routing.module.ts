@@ -6,7 +6,7 @@ import { ProductdetailComponent } from './productdetail/productdetail.component'
 import { ShopsComponent } from './shops/shops.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { CartComponent } from './cart/cart.component';
-import { CustomersComponent } from './customers/customers.component';
+// import { CustomersComponent } from './customers/customers.component';
 import { OrdersComponent } from './orders/orders.component';
 import { AddDriverComponent } from './drivers/driver.component';
 import { AddCustomerComponent } from './Customers1/customers1.component';
@@ -61,10 +61,10 @@ const routes: Routes = [
     },
 
 
-    {
-        path: 'customers',
-        component: CustomersComponent
-    },
+    // {
+    //     path: 'customers',
+    //     component: CustomersComponent
+    // },
     {
         path: 'Customers1',
         component: AddCustomerComponent

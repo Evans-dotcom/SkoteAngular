@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { BankAccount, BankAccountService } from './bankaccount.service';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+// import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 
 @Component({
@@ -62,7 +63,7 @@ export class BankAccountComponent implements OnInit {
 
   units: string[] = [];
 
-  constructor(private service: BankAccountService) {}
+  constructor(private service: BankAccountService) { }
 
   ngOnInit(): void {
     this.loadData();
@@ -127,20 +128,34 @@ export class BankAccountComponent implements OnInit {
   }
 
   // ---------- Export & Print Features ----------
-
   exportToPDF() {
     const doc = new jsPDF();
-    doc.text('Bank Accounts Report', 14, 10);
-    const rows = this.accounts.map(a => [
-      a.id, a.bankName, a.accountNumber, a.accountType,
-      a.accountName, a.department, a.departmentUnit
-    ]);
-    (doc as any).autoTable({
+
+    // Title
+    doc.setFontSize(14);
+    doc.text('Bank Accounts Report', 14, 15);
+
+    // Table
+    autoTable(doc, {
       head: [['ID', 'Bank', 'Account No', 'Type', 'Name', 'Department', 'Unit']],
-      body: rows
+      body: this.accounts.map(a => [
+        a.id,
+        a.bankName,
+        a.accountNumber,
+        a.accountType,
+        a.accountName,
+        a.department,
+        a.departmentUnit
+      ]),
+      startY: 25,
+      styles: { fontSize: 9, halign: 'left' },
+      headStyles: { fillColor: [22, 160, 133] },
     });
+
+    // Save file
     doc.save('BankAccounts.pdf');
   }
+
 
   exportToExcel() {
     const ws = XLSX.utils.json_to_sheet(this.accounts);

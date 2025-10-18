@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { EcommerceRoutingModule } from './ecommerce-routing.module';
@@ -19,7 +19,6 @@ import { ShopsComponent } from './shops/shops.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { CartComponent } from './cart/cart.component';
 import { AddproductComponent } from './addproduct/addproduct.component';
-import { CustomersComponent } from './customers/customers.component';
 import { OrdersComponent } from './orders/orders.component';
 import { AddDriverComponent } from './drivers/driver.component';
 import { AddCustomerComponent } from './Customers1/customers1.component';
@@ -64,7 +63,7 @@ const config: DropzoneConfigInterface = {
   // tslint:disable-next-line: max-line-length
   declarations: [ProductsComponent , AddDriverComponent,AddCustomerComponent,
     AddproductComponent,ProductdetailComponent,
-     ShopsComponent, CheckoutComponent, CartComponent, CustomersComponent, OrdersComponent, BankAccountComponent, AccountListComponent, FurnitureFittingComponent, PlantMachineryComponent, PortableItemsComponent,
+     ShopsComponent, CheckoutComponent, CartComponent, OrdersComponent, BankAccountComponent, AccountListComponent, FurnitureFittingComponent, PlantMachineryComponent, PortableItemsComponent,
       MotorVehicleComponent, LandRegisterComponent, BuildingsRegisterComponent, 
       IntangibleAssetComponent, ImprestComponent,StocksRegisterComponent,
        RoadsInfrastructureComponent, OtherInfrastructureComponent, BuildingsRegisterComponent, BiologicalAssetComponent,
@@ -96,4 +95,5 @@ const config: DropzoneConfigInterface = {
     }
   ]
 })
-export class EcommerceModule { }
+export class EcommerceModule {
+ }

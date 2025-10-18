@@ -3,16 +3,6 @@
     <h4 class="mb-3 text-primary">{{ isEdit ? 'Edit Bank Account' : 'Add Bank Account' }}</h4>
 
     <form (ngSubmit)="save()" class="row g-3">
-<<<<<<< Updated upstream
-      <div class="col-md-4">
-        <input type="text" [(ngModel)]="selected.bankName" name="bankName" class="form-control" placeholder="Bank Name" required>
-      </div>
-      <div class="col-md-4">
-        <input type="text" [(ngModel)]="selected.accountName" name="accountName" class="form-control" placeholder="Account Name" required>
-      </div>
-      <div class="col-md-4">
-        <input type="text" [(ngModel)]="selected.accountNumber" name="accountNumber" class="form-control" placeholder="Account Number" required>
-=======
       <!-- Bank Name -->
       <div class="col-md-6">
         <label class="form-label fw-bold">Bank Name</label>
@@ -20,7 +10,6 @@
           <option value="">Select Bank</option>
           <option *ngFor="let bank of banks" [value]="bank">{{ bank }}</option>
         </select>
->>>>>>> Stashed changes
       </div>
 
       <div class="col-md-4">
