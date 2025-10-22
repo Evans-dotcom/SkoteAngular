@@ -1,5 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { AccountsPayable, AccountsPayableService } from './accounts-payable.service';
+import * as XLSX from 'xlsx';
+import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
+import jsPDF from 'jspdf';
+
+
+// This augmentation is necessary for TypeScript when using jspdf-autotable with jspdf
+declare module 'jspdf' {
+  export interface jsPDF {
+    autoTable: (options: any) => jsPDF;
+  }
+}
 
 @Component({
   selector: 'app-accounts-payable',
@@ -11,7 +23,6 @@ export class AccountsPayableComponent implements OnInit {
   selected: AccountsPayable = this.emptyForm();
   isEdit = false;
 
-  // ✅ Standardized Departments
   departments: string[] = [
     'Agriculture, Livestock and Co-operative Management',
     'Health Services',
@@ -25,7 +36,6 @@ export class AccountsPayableComponent implements OnInit {
     'Lands, Housing and Physical Planning'
   ];
 
-  // ✅ Units mapped per department
   unitsMap: { [key: string]: string[] } = {
     'Agriculture, Livestock and Co-operative Management': [
       'Crop Management', 'Livestock', 'Fisheries', 'Co-operatives'
@@ -88,7 +98,7 @@ export class AccountsPayableComponent implements OnInit {
   edit(item: AccountsPayable): void {
     this.selected = { ...item };
     this.isEdit = true;
-    this.onDepartmentChange(); // pre-load units
+    this.onDepartmentChange();
   }
 
   delete(id?: number): void {
@@ -107,7 +117,6 @@ export class AccountsPayableComponent implements OnInit {
     return {
       creditorName: '',
       amountDue: 0,
-      //dueDate: new Date(),
       reason: '',
       remarks: '',
       department: '',
@@ -118,5 +127,80 @@ export class AccountsPayableComponent implements OnInit {
   onDepartmentChange(): void {
     this.units = this.unitsMap[this.selected.department] || [];
     this.selected.departmentUnit = '';
+  }
+
+  exportToExcel(): void {
+    const data = this.payables.map(p => ({
+        ID: p.id,
+        'Creditor Name': p.creditorName,
+        'Amount Due (Ksh)': p.amountDue,
+        Reason: p.reason,
+        Department: p.department,
+        Unit: p.departmentUnit,
+        Remarks: p.remarks
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'AccountsPayable');
+    XLSX.writeFile(wb, 'Accounts_Payable_Register.xlsx');
+  }
+
+  exportToPDF(): void {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text('County Accounts Payable Register', 14, 15);
+
+    const head = [['ID', 'Creditor Name', 'Amount Due (Ksh)', 'Reason', 'Department', 'Unit', 'Remarks']];
+const body = this.payables.map(p => [
+  p.id ?? '',
+  p.creditorName,
+  p.amountDue.toLocaleString('en-KE'),
+  p.reason,
+  p.department,
+  p.departmentUnit,
+  p.remarks
+]);
+
+autoTable(doc, {
+  head,
+  body,
+  startY: 25,
+  styles: { fontSize: 8 },
+  headStyles: { fillColor: [22, 160, 133] },
+  alternateRowStyles: { fillColor: [240, 240, 240] }
+});
+
+doc.save('Accounts_Payable_Register.pdf');
+  }
+
+  printTable(): void {
+    const printContents = document.getElementById('accounts-payable-table')?.innerHTML;
+    const popup = window.open('', '_blank', 'width=1000,height=700');
+
+    popup?.document.write(`
+      <html>
+        <head>
+          <title>Accounts Payable Printout</title>
+          <style>
+            body { font-family: sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ccc; padding: 10px; text-align: left; font-size: 12px; }
+            th { background-color: #eee; font-weight: bold; }
+            .no-print { display: none !important; }
+            .font-mono { text-align: right; }
+          </style>
+        </head>
+        <body>
+          <h2>Accounts Payable Register - Printout</h2>
+          ${printContents || '<p style="text-align: center;">No data available for printing.</p>'}
+        </body>
+      </html>
+    `);
+
+    popup?.document.close();
+    setTimeout(() => {
+        popup?.print();
+    }, 500);
   }
 }

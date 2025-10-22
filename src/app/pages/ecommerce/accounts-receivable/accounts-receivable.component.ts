@@ -1,5 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { AccountsReceivable, AccountsReceivableService } from './accounts-receivable.service';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
+declare module 'jspdf' {
+  export interface jsPDF {
+    autoTable: (options: any) => jsPDF;
+  }
+}
 
 @Component({
   selector: 'app-accounts-receivable',
@@ -11,7 +20,6 @@ export class AccountsReceivableComponent implements OnInit {
   selected: AccountsReceivable = this.emptyForm();
   isEdit = false;
 
-  // ✅ Standardized Departments
   departments: string[] = [
     'Agriculture, Livestock and Co-operative Management',
     'Health Services',
@@ -25,7 +33,6 @@ export class AccountsReceivableComponent implements OnInit {
     'Lands, Housing and Physical Planning'
   ];
 
-  // ✅ Units per department
   unitsMap: { [key: string]: string[] } = {
     'Agriculture, Livestock and Co-operative Management': [
       'Crop Management', 'Livestock', 'Fisheries', 'Co-operatives'
@@ -61,7 +68,7 @@ export class AccountsReceivableComponent implements OnInit {
 
   units: string[] = [];
 
-  constructor(private service: AccountsReceivableService) {}
+  constructor(private service: AccountsReceivableService) { }
 
   ngOnInit(): void {
     this.loadData();
@@ -107,7 +114,6 @@ export class AccountsReceivableComponent implements OnInit {
     return {
       debtorName: '',
       amountDue: 0,
-      //dueDate: new Date(),
       reason: '',
       remarks: '',
       department: '',
@@ -118,5 +124,80 @@ export class AccountsReceivableComponent implements OnInit {
   onDepartmentChange(): void {
     this.units = this.unitsMap[this.selected.department] || [];
     this.selected.departmentUnit = '';
+  }
+
+  exportToExcel(): void {
+    const data = this.receivables.map(r => ({
+      ID: r.id,
+      'Debtor Name': r.debtorName,
+      'Amount Due (Ksh)': r.amountDue,
+      Reason: r.reason,
+      Department: r.department,
+      Unit: r.departmentUnit,
+      Remarks: r.remarks
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'AccountsReceivable');
+    XLSX.writeFile(wb, 'Accounts_Receivable_Register.xlsx');
+  }
+
+  exportToPDF(): void {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text('County Accounts Receivable Register', 14, 15);
+
+    const head = [['ID', 'Debtor Name', 'Amount Due (Ksh)', 'Reason', 'Department', 'Unit', 'Remarks']];
+    const body = this.receivables.map(r => [
+      r.id ?? '',
+      r.debtorName,
+      r.amountDue.toLocaleString('en-KE'),
+      r.reason,
+      r.department,
+      r.departmentUnit,
+      r.remarks
+    ]);
+
+    autoTable(doc, {
+      head,
+      body,
+      startY: 25,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [22, 160, 133] },
+      alternateRowStyles: { fillColor: [240, 240, 240] }
+    });
+
+    doc.save('Accounts_Receivable_Register.pdf');
+  }
+
+  printTable(): void {
+    const printContents = document.getElementById('accounts-receivable-table')?.innerHTML;
+    const popup = window.open('', '_blank', 'width=1000,height=700');
+
+    popup?.document.write(`
+      <html>
+        <head>
+          <title>Accounts Receivable Printout</title>
+          <style>
+            body { font-family: sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ccc; padding: 10px; text-align: left; font-size: 12px; }
+            th { background-color: #eee; font-weight: bold; }
+            .no-print { display: none !important; }
+            .font-mono { text-align: right; }
+          </style>
+        </head>
+        <body>
+          <h2>Accounts Receivable Register - Printout</h2>
+          ${printContents || '<p style="text-align: center;">No data available for printing.</p>'}
+        </body>
+      </html>
+    `);
+
+    popup?.document.close();
+    setTimeout(() => {
+      popup?.print();
+    }, 500);
   }
 }

@@ -7,258 +7,283 @@ export const MENU: MenuItem[] = [
     //     label: 'MENUITEMS.MENU.TEXT',
     //     isTitle: true
     // },
-    {
-        id: 2,
-        label: 'MENUITEMS.DASHBOARDS.TEXT',
-        icon: 'bx-home-circle',
-        badge: {
-            variant: 'info',
-            text: 'MENUITEMS.DASHBOARDS.BADGE',
-        },
-        subItems: [
-            {
-                id: 3,
-                label: 'MENUITEMS.DASHBOARDS.LIST.DEFAULT',
-                link: '/dashboard',
-                parentId: 2
-            }
-            // {
-            //     id: 4,
-            //     label: 'MENUITEMS.DASHBOARDS.LIST.SAAS',
-            //     link: '/dashboards/saas',
-            //     parentId: 2
-            // },
-            // {
-            //     id: 5,
-            //     label: 'MENUITEMS.DASHBOARDS.LIST.CRYPTO',
-            //     link: '/dashboards/crypto',
-            //     parentId: 2
-            // },
-            // {
-            //     id: 6,
-            //     label: 'MENUITEMS.DASHBOARDS.LIST.BLOG',
-            //     link: '/dashboards/blog',
-            //     parentId: 2
-            // },
-        ]
+   {
+    id: 2,
+    label: 'MENUITEMS.DASHBOARDS.TEXT',
+    icon: 'bx-home-circle',
+    badge: {
+        variant: 'info',
+        text: 'MENUITEMS.DASHBOARDS.BADGE',
     },
-    {
-        id: 2,
-        label: 'ASSETS',
-        icon: 'bx-home-circle',
-        badge: {
-            variant: 'info',
-            //text: 'MENUITEMS.ASSETS.BADGE',
-        },
-        subItems: [
-            {
-                id: 3,
-                label: 'Bank Accounts',
-                link: '/banklist',
-                parentId: 2
-            },
-            {
-                id: 3,
-                label: 'Standard Assets',
-                link: '/standardassets',
-                parentId: 2
-            },
-            {
-                id: 4,
-                label: 'PlantMachinery',
-                link: '/plantMachinery',
-                parentId: 2
-            },
-            {
-                id: 5,
-                label: 'MotorVehicles',
-                link: '/vehicles',
-                parentId: 2
-            },
-            {
-                id: 6,
-                label: 'Land Register',
-                link: '/landsregister',
-                parentId: 2
-            },
-            {
-                id: 7,
-                label: 'Investments',
-                link: '/investments',
-                parentId: 2
-            },
-
-            {
-                id: 10,
-                label: 'FurnitureFittings',
-                link: '/furniturefittings',
-                parentId: 2
-            },
-            {
-                id: 11,
-                label: 'Lease',
-                link: '/lease',
-                parentId: 2
-            },
-            {
-                id: 12,
-                label: 'Roads Infrastructure',
-                link: '/roadsInfrastructure',
-                parentId: 2
-            },
-
-            {
-                id: 14,
-                label: 'Imprest',
-                link: '/imprest',
-                parentId: 2
-            },
-            {
-                id: 15,
-                label: 'Work-In Progress',
-                link: '/workinprogress',
-                parentId: 2
-            },
-            {
-                id: 16,
-                label: 'Stock Register',
-                link: '/stockregister',
-                parentId: 2
-            },
-            {
-                id: 17,
-                label: 'Portable Items',
-                link: '/portableitems',
-                parentId: 2
-            },
-            {
-                id: 18,
-                label: 'Subsoil Assets',
-                link: '/subsoilassets',
-                parentId: 2
-            },
-        
-            {
-                id: 21,
-                label: 'Asset Movements',
-                link: '/assetmovements',
-                parentId: 2
-            },
-            {
-                id: 22,
-                label: 'Asset Handovers',
-                link: '/assethandover',
-                parentId: 2
-            },
-            {
-                id: 23,
-                label: 'Asset Reconciliations',
-                link: '/assetreconciliations',
-                parentId: 2
-            },
-
-            {
-                id: 25,
-                label: 'Litigation',
-                link: '/litigation',
-                parentId: 2
-            },
-            {
-                id: 13,
-                label: 'Accounts Payable',
-                link: '/accountspayable',
-                parentId: 2
-            },
-            {
-                id: 25,
-                label: 'Accounts Receivable',
-                link: '/accountsreceivable',
-                parentId: 2
-            },
-            {
-                id: 25,
-                label: 'Asset Handover',
-                link: '/assethandover',
-                parentId: 2
-            },
-            
-            { id: 27,
-                label:'Asset Transfers',
-                link: '/assettransfers',
-                parentId: 2
-            },
-             { id: 28,
-                label:'Asset Reconciliation',
-                link: '/assetreconciliation',
-                parentId: 2
-            },
-                { id: 29,
-                label:'Biological Assets',
-                link: '/biologicalassets',
-                parentId: 2
-            },
-                { id: 30,
-                label:'Buildings Register',
-                link: '/buildingsregister',
-                parentId: 2
-            },
-                { id: 31,
-                label:'Equipment Signout',
-                link: '/equipment-signout',
-                parentId: 2
-            },
-            { id: 32,
-                label:'Intangible Assets',
-                link: '/intangibleassets',
-                parentId: 2
-            },
-            {
-                id: 33,
-                label: 'major-maintenance',
-                link: '/major-maintenance',
-                parentId: 2
-            },
-                { id: 34,
-                label:'Other Infrastructure',
-                link: '/otherinfrastructure',
-                parentId: 2
-            },
-            {
-                id: 35,
-                label: 'Portable Items',
-                link: '/portable-items',
-                parentId: 2
-            }
-
-            // {
-            //     id: 4,
-            //     label: 'MENUITEMS.DASHBOARDS.LIST.SAAS',
-            //     link: '/dashboards/saas',
-            //     parentId: 2
-            // },
-            // {
-            //     id: 5,
-            //     label: 'MENUITEMS.DASHBOARDS.LIST.CRYPTO',
-            //     link: '/dashboards/crypto',
-            //     parentId: 2
-            // },
-            // {
-            //     id: 6,
-            //     label: 'MENUITEMS.DASHBOARDS.LIST.BLOG',
-            //     link: '/dashboards/blog',
-            //     parentId: 2
-            // },
-        ]
+    subItems: [
+        {
+            id: 3,
+            label: 'MENUITEMS.DASHBOARDS.LIST.DEFAULT',
+            link: '/dashboard',
+            parentId: 2
+        }
+    ]
+},
+{
+    id: 2,
+    label: 'ASSETS',
+    icon: 'bx-home-circle',
+    badge: {
+        variant: 'info',
     },
-     {
-        id: 3,
-        label: 'REPORTS',
-        icon: 'bx-home-circle',
-        badge: {
-            variant: 'info',
-            //text: 'MENUITEMS.ASSETS.BADGE',
+    subItems: [
+        {
+            id: 3,
+            label: 'Bank Accounts',
+            link: '/banklist',
+            parentId: 2
         },
+        {
+            id: 3,
+            label: 'Standard Assets',
+            link: '/standardassets',
+            parentId: 2
+        },
+        {
+            id: 4,
+            label: 'PlantMachinery',
+            link: '/plantMachinery',
+            parentId: 2
+        },
+        {
+            id: 5,
+            label: 'MotorVehicles',
+            link: '/vehicles',
+            parentId: 2
+        },
+        {
+            id: 6,
+            label: 'Land Register',
+            link: '/landsregister',
+            parentId: 2
+        },
+        {
+            id: 7,
+            label: 'Investments',
+            link: '/investments',
+            parentId: 2
+        },
+        {
+            id: 10,
+            label: 'FurnitureFittings',
+            link: '/furniturefittings',
+            parentId: 2
+        },
+        {
+            id: 11,
+            label: 'Lease',
+            link: '/lease',
+            parentId: 2
+        },
+        {
+            id: 12,
+            label: 'Roads Infrastructure',
+            link: '/roadsInfrastructure',
+            parentId: 2
+        },
+        {
+            id: 14,
+            label: 'Imprest',
+            link: '/imprest',
+            parentId: 2
+        },
+        {
+            id: 15,
+            label: 'Work-In Progress',
+            link: '/workinprogress',
+            parentId: 2
+        },
+        {
+            id: 16,
+            label: 'Stock Register',
+            link: '/stockregister',
+            parentId: 2
+        },
+        {
+            id: 17,
+            label: 'Portable Items',
+            link: '/portableitems',
+            parentId: 2
+        },
+        {
+            id: 18,
+            label: 'Subsoil Assets',
+            link: '/subsoilassets',
+            parentId: 2
+        },
+        {
+            id: 21,
+            label: 'Asset Movements',
+            link: '/assetmovements',
+            parentId: 2
+        },
+        {
+            id: 22,
+            label: 'Asset Handovers',
+            link: '/assethandover',
+            parentId: 2
+        },
+        {
+            id: 23,
+            label: 'Asset Reconciliations',
+            link: '/assetreconciliations',
+            parentId: 2
+        },
+        {
+            id: 25,
+            label: 'Litigation',
+            link: '/litigation',
+            parentId: 2
+        },
+        {
+            id: 13,
+            label: 'Accounts Payable',
+            link: '/accountspayable',
+            parentId: 2
+        },
+        {
+            id: 25,
+            label: 'Accounts Receivable',
+            link: '/accountsreceivable',
+            parentId: 2
+        },
+        {
+            id: 25,
+            label: 'Asset Handover',
+            link: '/assethandover',
+            parentId: 2
+        },
+        { 
+            id: 27,
+            label: 'Asset Transfers',
+            link: '/assettransfers',
+            parentId: 2
+        },
+        { 
+            id: 28,
+            label: 'Asset Reconciliation',
+            link: '/assetreconciliation',
+            parentId: 2
+        },
+        { 
+            id: 29,
+            label: 'Biological Assets',
+            link: '/biologicalassets',
+            parentId: 2
+        },
+        { 
+            id: 30,
+            label: 'Buildings Register',
+            link: '/buildingsregister',
+            parentId: 2
+        },
+        { 
+            id: 31,
+            label: 'Equipment Signout',
+            link: '/equipment-signout',
+            parentId: 2
+        },
+        { 
+            id: 32,
+            label: 'Intangible Assets',
+            link: '/intangibleassets',
+            parentId: 2
+        },
+        {
+            id: 33,
+            label: 'major-maintenance',
+            link: '/major-maintenance',
+            parentId: 2
+        },
+        { 
+            id: 34,
+            label: 'Other Infrastructure',
+            link: '/otherinfrastructure',
+            parentId: 2
+        },
+        {
+            id: 35,
+            label: 'Portable Items',
+            link: '/portable-items',
+            parentId: 2
+        }
+    ]
+},
+{
+    id: 3,
+    label: 'REPORTS',
+    icon: 'bx-file',
+    badge: {
+        variant: 'info',
     },
+    subItems: [
+        {
+            id: 36,
+            label: 'Agriculture, Livestock and Co-operative Management',
+            link: '/reports/agriculture-livestock-cooperative',
+            parentId: 3
+        },
+        {
+            id: 37,
+            label: 'Health Services',
+            link: '/reports/health-services',
+            parentId: 3
+        },
+        {
+            id: 38,
+            label: 'Water, Environment, Energy and Natural Resources',
+            link: '/reports/water-environment-energy',
+            parentId: 3
+        },
+        {
+            id: 39,
+            label: 'Information, Communication, E-Government, Youth Affairs, Gender and Sports',
+            link: '/reports/information-communication',
+            parentId: 3
+        },
+        {
+            id: 40,
+            label: 'Public Works, Roads and Transport',
+            link: '/reports/public-works-roads-transport',
+            parentId: 3
+        },
+        {
+            id: 41,
+            label: 'Public Service Management',
+            link: '/reports/public-service-management',
+            parentId: 3
+        },
+        {
+            id: 42,
+            label: 'Trade, Industrialization, Tourism and Wildlife',
+            link: '/reports/trade-industrialization-tourism',
+            parentId: 3
+        },
+        {
+            id: 43,
+            label: 'Finance and Economic Planning',
+            link: '/reports/finance-economic-planning',
+            parentId: 3
+        },
+        {
+            id: 44,
+            label: 'Education, Culture and Social Services',
+            link: '/reports/education-culture-social',
+            parentId: 3
+        },
+        {
+            id: 45,
+            label: 'Lands, Housing and Physical Planning',
+            link: '/reports/lands-housing-physical-planning',
+            parentId: 3
+        }
+    ]
+}
     // {
     //     id: 7,
     //     isLayout: true
@@ -321,25 +346,25 @@ export const MENU: MenuItem[] = [
     //             parentId: 12
     //         },
 
-    {
-        id: 12,
-        label: 'MENUITEMS.ECOMMERCE.LIST.CUSTOMERS',
-        isTitle: true
+    // {
+    //     id: 12,
+    //     label: 'MENUITEMS.ECOMMERCE.LIST.CUSTOMERS',
+    //     isTitle: true
 
 
-    },
-    {
-        id: 16,
-        label: 'Customers1',
-        link: '/ecommerce/Customers1',
-        parentId: 12
-    },
-    {
-        id: 16,
-        label: 'Drivers',
-        link: '/ecommerce/drivers',
-        parentId: 12
-    },
+    // },
+    // {
+    //     id: 16,
+    //     label: 'Customers1',
+    //     link: '/ecommerce/Customers1',
+    //     parentId: 12
+    // },
+    // {
+    //     id: 16,
+    //     label: 'Drivers',
+    //     link: '/ecommerce/drivers',
+    //     parentId: 12
+    // },
     //         {
     //             id: 17,
     //             label: 'MENUITEMS.ECOMMERCE.LIST.CART',

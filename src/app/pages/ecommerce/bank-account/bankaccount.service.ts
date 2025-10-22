@@ -16,6 +16,9 @@ export interface BankAccount {
   contractDate?: Date;
   officerInCharge: string;
   signatories: string;
+  //  status?: string;           // Pending | Approved | Rejected
+  // approvedBy?: string;
+  // approvalDate?: Date;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -44,4 +47,19 @@ export class BankAccountService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+  // ✅ Approve Bank Account
+approve(id: number) {
+  return this.http.put(`${this.apiUrl}/approve/${id}`, {});
+}
+
+// ✅ Reject Bank Account
+reject(id: number) {
+  return this.http.put(`${this.apiUrl}/reject/${id}`, {});
+}
+
+// ✅ Get approved accounts only
+getApproved() {
+  return this.http.get<BankAccount[]>(`${this.apiUrl}/approved`);
+}
+
 }

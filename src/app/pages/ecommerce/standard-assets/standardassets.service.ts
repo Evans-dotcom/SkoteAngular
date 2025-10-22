@@ -8,8 +8,8 @@ export interface StandardAsset {
   serialNumber: string;
   makeModel: string;
   tagNumber: string;
-  deliveryDate?: Date;
-  contractDate?: Date;
+  //deliveryDate?: Date;
+  //contractDate?: Date;
   pvNumber: string;
   purchaseAmount: number;
   depreciationRate: number;
