@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { BankAccount, BankAccountService } from './bankaccount.service';
+import { BankAccount, BankAccountService, BankAccountCreateDto } from './bankaccount.service';
+import { AuthenticationService } from 'src/app/core/services/auth.service';
 import jsPDF from 'jspdf';
-// import 'jspdf-autotable';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-bank-account',
@@ -12,10 +13,14 @@ import * as XLSX from 'xlsx';
 })
 export class BankAccountComponent implements OnInit {
   accounts: BankAccount[] = [];
-  selected: BankAccount = this.emptyForm();
+  approvedAccounts: BankAccount[] = [];
+  rejectedAccounts: BankAccount[] = [];
+  pendingAccounts: BankAccount[] = [];
+  selected: BankAccountCreateDto = this.emptyForm();
   isEdit = false;
+  isAdmin = false;
+  currentUserEmail = '';
 
-  // Bank list
   banks: string[] = [
     'CENTRAL BANK OF KENYA', 'Absa Bank Kenya Plc', 'Access Bank (Kenya) PLC', 'African Banking Corporation Limited',
     'Bank of Africa Limited', 'Bank of Baroda (K) Limited', 'Bank of India', 'Caritas Microfinance Bank Limited',
@@ -63,40 +68,175 @@ export class BankAccountComponent implements OnInit {
 
   units: string[] = [];
 
-  constructor(private service: BankAccountService) { }
+  constructor(
+    private service: BankAccountService,
+    public authService: AuthenticationService
+  ) {}
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.isAdmin();
+    this.currentUserEmail = this.authService.CurrentUser()?.email || '';
     this.loadData();
   }
 
   loadData() {
-    this.service.getAll().subscribe(data => (this.accounts = data));
+    this.service.getApproved().subscribe({
+      next: (data) => (this.approvedAccounts = data),
+      error: (error) => console.error('Error loading approved accounts:', error)
+    });
+
+    this.service.getRejected().subscribe({
+      next: (data) => (this.rejectedAccounts = data),
+      error: (error) => console.error('Error loading rejected accounts:', error)
+    });
+
+    if (this.isAdmin) {
+      this.service.getPending().subscribe({
+        next: (data) => (this.pendingAccounts = data),
+        error: (error) => console.error('Error loading pending accounts:', error)
+      });
+    }
   }
 
   save() {
-    if (this.isEdit && this.selected.id) {
-      this.service.update(this.selected.id, this.selected).subscribe(() => {
-        this.resetForm();
-        this.loadData();
+    if (!this.validateForm()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validation Error',
+        text: 'Please fill in all required fields.'
       });
-    } else {
-      this.service.create(this.selected).subscribe(() => {
-        this.resetForm();
-        this.loadData();
-      });
+      return;
     }
+
+    this.service.create(this.selected).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Bank account created successfully and pending approval.',
+          timer: 4000
+        });
+        this.resetForm();
+        this.loadData();
+      },
+      error: (error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error
+        });
+      }
+    });
   }
 
-  edit(item: BankAccount) {
-    this.selected = { ...item };
-    this.onDepartmentChange();
-    this.isEdit = true;
+  approveAccount(id: number) {
+    Swal.fire({
+      title: 'Approve Bank Account',
+      input: 'textarea',
+      inputLabel: 'Approval Remarks',
+      inputPlaceholder: 'Enter remarks...',
+      showCancelButton: true,
+      confirmButtonText: 'Approve',
+      confirmButtonColor: '#28a745',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const remarks = result.value || 'Approved';
+        this.service.approve(id, remarks).subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Approved',
+              text: 'Bank account has been approved successfully.',
+              timer: 2000
+            });
+            this.loadData();
+          },
+          error: (error) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: error
+            });
+          }
+        });
+      }
+    });
+  }
+
+  rejectAccount(id: number) {
+    Swal.fire({
+      title: 'Reject Bank Account',
+      input: 'textarea',
+      inputLabel: 'Rejection Reason',
+      inputPlaceholder: 'Enter reason for rejection...',
+      showCancelButton: true,
+      confirmButtonText: 'Reject',
+      confirmButtonColor: '#dc3545',
+      cancelButtonText: 'Cancel',
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You must provide a reason for rejection!';
+        }
+        return null;
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.service.reject(id, result.value).subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Rejected',
+              text: 'Bank account has been rejected.',
+              timer: 2000
+            });
+            this.loadData();
+          },
+          error: (error) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: error
+            });
+          }
+        });
+      }
+    });
   }
 
   delete(id?: number) {
-    if (id && confirm('Are you sure you want to delete this bank account?')) {
-      this.service.delete(id).subscribe(() => this.loadData());
-    }
+    if (!id) return;
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this bank account!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.service.delete(id).subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Deleted',
+              text: 'Bank account has been deleted.',
+              timer: 2000
+            });
+            this.loadData();
+          },
+          error: (error) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: error
+            });
+          }
+        });
+      }
+    });
   }
 
   resetForm() {
@@ -110,15 +250,24 @@ export class BankAccountComponent implements OnInit {
     this.selected.departmentUnit = '';
   }
 
-  emptyForm(): BankAccount {
+  validateForm(): boolean {
+    return !!(
+      this.selected.bankName &&
+      this.selected.accountNumber &&
+      this.selected.accountType &&
+      this.selected.accountName &&
+      this.selected.department &&
+      this.selected.departmentUnit
+    );
+  }
+
+  emptyForm(): BankAccountCreateDto {
     return {
-      id: 0,
       bankName: '',
       accountNumber: '',
       accountType: '',
       accountName: '',
       openingBalance: 0,
-      currentBalance: 0,
       remarks: '',
       department: '',
       departmentUnit: '',
@@ -127,80 +276,51 @@ export class BankAccountComponent implements OnInit {
     };
   }
 
-  // ---------- Export & Print Features ----------
+  getStatusBadgeClass(status: string): string {
+    switch (status) {
+      case 'Approved':
+        return 'bg-success';
+      case 'Rejected':
+        return 'bg-danger';
+      case 'Open':
+        return 'bg-warning';
+      default:
+        return 'bg-secondary';
+    }
+  }
+
   exportToPDF() {
     const doc = new jsPDF();
-
-    // Title
     doc.setFontSize(14);
     doc.text('Bank Accounts Report', 14, 15);
 
-    // Table
     autoTable(doc, {
-      head: [['ID', 'Bank', 'Account No', 'Type', 'Name', 'Department', 'Unit']],
-      body: this.accounts.map(a => [
+      head: [['ID', 'Bank', 'Account No', 'Type', 'Name', 'Department', 'Status']],
+      body: [...this.approvedAccounts, ...this.rejectedAccounts].map(a => [
         a.id,
         a.bankName,
         a.accountNumber,
         a.accountType,
         a.accountName,
         a.department,
-        a.departmentUnit
+        a.status
       ]),
       startY: 25,
       styles: { fontSize: 9, halign: 'left' },
       headStyles: { fillColor: [22, 160, 133] },
     });
 
-    // Save file
     doc.save('BankAccounts.pdf');
   }
 
-
   exportToExcel() {
-    const ws = XLSX.utils.json_to_sheet(this.accounts);
+    const ws = XLSX.utils.json_to_sheet([...this.approvedAccounts, ...this.rejectedAccounts]);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'BankAccounts');
     XLSX.writeFile(wb, 'BankAccounts.xlsx');
   }
 
   printTable() {
-  const printContents = document.getElementById('table-section')?.innerHTML;
-  const popup = window.open('', '_blank', 'width=900,height=700');
-  popup?.document.write(`
-    <html>
-      <head>
-        <title>Bank Account Records</title>
-        <style>
-          body { font-family: Arial, sans-serif; padding: 20px; }
-          h3 { text-align: center; margin-bottom: 20px; }
-          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-          th, td { border: 1px solid #000; padding: 8px; text-align: left; font-size: 12px; }
-          th { background-color: #343a40; color: white; }
-          tr:nth-child(even) { background-color: #f2f2f2; }
-          .header { text-align: center; margin-bottom: 20px; }
-          .header h2 { margin: 0; color: #0d6efd; }
-          
-          /* Hide elements with no-print class */
-          .no-print { display: none !important; }
-          
-          @media print {
-            .no-print { display: none !important; }
-          }
-        </style>
-      </head>
-      <body>
-        <div class="header">
-          <h2>County Government Bank Accounts</h2>
-          <p><strong>Generated On:</strong> ${new Date().toLocaleString()}</p>
-        </div>
-        <h3>Bank Account Records</h3>
-        ${printContents || '<p>No data available.</p>'}
-      </body>
-    </html>
-  `);
-  popup?.document.close();
-  popup?.print();
-}
-
+    window.print();
+  }
 }

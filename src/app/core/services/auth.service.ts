@@ -1,78 +1,116 @@
 import { Injectable } from '@angular/core';
-
-import { getFirebaseBackend } from '../../authUtils';
-
-import { User } from '../models/auth.models';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError, BehaviorSubject } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { User, LoginRequest, AuthResponse } from '../models/auth.models';
 
 @Injectable({ providedIn: 'root' })
-
 export class AuthenticationService {
+  [x: string]: any;
+  private apiUrl = 'http://localhost:5245/api/Users';
+  private currentUserSubject: BehaviorSubject<User>;
+  public currentUser$: Observable<User>;
 
-    user: User;
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {
+    this.currentUserSubject = new BehaviorSubject<User>(this.getUserFromStorage());
+    this.currentUser$ = this.currentUserSubject.asObservable();
+  }
 
-    constructor() {
+  public get currentUserValue(): User {
+    return this.currentUserSubject.value;
+  }
+
+  private getUserFromStorage(): User {
+    const authUser = sessionStorage.getItem('authUser');
+    return authUser ? JSON.parse(authUser) : null;
+  }
+
+  login(email: string, password: string): Observable<User> {
+    const loginData: LoginRequest = { email, password };
+
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, loginData)
+      .pipe(
+        map(response => {
+          const user: User = {
+            id: response.id,
+            username: response.username,
+            email: response.email,
+            token: response.token,
+            role: response.role
+          };
+
+          this.SetUser(user, JSON.stringify(response));
+          this.currentUserSubject.next(user);
+          return user;
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  CurrentUser(): User {
+    return this.getUserFromStorage();
+  }
+
+  SetUser(user: User, userData: string): void {
+    sessionStorage.setItem('authUser', JSON.stringify(user));
+    sessionStorage.setItem('userData', userData);
+    this.currentUserSubject.next(user);
+  }
+
+  getUserRole(): string {
+    const user = this.CurrentUser();
+    return user?.role || '';
+  }
+
+  isAdmin(): boolean {
+    return this.getUserRole().toLowerCase() === 'admin';
+  }
+
+  isUser(): boolean {
+    return this.getUserRole().toLowerCase() === 'user';
+  }
+
+  isManager(): boolean {
+    return this.getUserRole().toLowerCase() === 'manager';
+  }
+
+  hasRole(roles: string[]): boolean {
+    const userRole = this.getUserRole().toLowerCase();
+    return roles.map(r => r.toLowerCase()).includes(userRole);
+  }
+
+  isAuthenticated(): boolean {
+    const user = this.CurrentUser();
+    return user !== null && user.token !== null;
+  }
+
+  logout(): void {
+    sessionStorage.removeItem('authUser');
+    sessionStorage.removeItem('userData');
+    sessionStorage.clear();
+    this.currentUserSubject.next(null);
+    this.router.navigate(['/account/login']);
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'An unknown error occurred.';
+
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = error.error.message;
+    } else if (error.error && typeof error.error === 'string') {
+      errorMessage = error.error;
+    } else if (error.error && error.error.message) {
+      errorMessage = error.error.message;
+    } else if (error.message) {
+      errorMessage = error.message;
+    } else {
+      errorMessage = `Server Error: ${error.status}`;
     }
 
-    /**
-     * Returns the current user
-     */
-    public currentUser(): User {
-        return getFirebaseBackend().getAuthenticatedUser();
-    }
-
-    /**
-     * Performs the auth
-     * @param email email of user
-     * @param password password of user
-     */
-    login(email: string, password: string) {
-        return getFirebaseBackend().loginUser(email, password).then((response: any) => {
-            const user = response;
-            return user;
-        });
-    }
-
-    /**
-     * Performs the register
-     * @param email email
-     * @param password password
-     */
-    register(email: string, password: string) {
-        return getFirebaseBackend().registerUser(email, password).then((response: any) => {
-            const user = response;
-            return user;
-        });
-    }
-    public CurrentUser(): User {
-        if (!sessionStorage.getItem('authUser')) {
-            return null;
-        }
-        return JSON.parse(sessionStorage.getItem('authUser'));
-    }
-    SetUser(user: User,userData): void {
-        // Convert the user object to a JSON string and store it in session storage
-        sessionStorage.setItem('authUser', JSON.stringify(user));
-        // Store the JSON string in session storage
-        sessionStorage.setItem('userData', userData);
-      }
-
-    /**
-     * Reset password
-     * @param email email
-     */
-    resetPassword(email: string) {
-        return getFirebaseBackend().forgetPassword(email).then((response: any) => {
-            const message = response.data;
-            return message;
-        });
-    }
-
-    /**
-     * Logout the user
-     */
-    logout() {
-        // logout the user
-        getFirebaseBackend().logout();
-    }
+    return throwError(() => ({ message: errorMessage, status: error.status }));
+  }
 }
-

@@ -1,75 +1,73 @@
 <div class="container mt-4">
   <div class="card shadow p-4 border-start border-primary border-4">
-    <h4 class="mb-3 text-primary">{{ isEdit ? 'Edit Bank Account' : 'Add Bank Account' }}</h4>
+    <h4 class="mb-3 text-primary">Add Bank Account</h4>
 
-    <form (ngSubmit)="save()" class="row g-3">
-      <!-- Bank Name -->
+    <form (ngSubmit)="save()" class="row g-3" #bankForm="ngForm">
       <div class="col-md-6">
-        <label for="bankName" class="form-label fw-bold">Bank Name</label>
+        <label for="bankName" class="form-label fw-bold">Bank Name <span class="text-danger">*</span></label>
         <select id="bankName" class="form-select" [(ngModel)]="selected.bankName" name="bankName" required>
           <option value="">Select Bank</option>
           <option *ngFor="let bank of banks" [value]="bank">{{ bank }}</option>
         </select>
       </div>
 
-      <!-- Account Type -->
-      <div class="col-md-4">
-        <label for="accountType" class="form-label">Account Type</label>
-        <input type="text" id="accountType" [(ngModel)]="selected.accountType" name="accountType" class="form-control" placeholder="Account Type" required>
+      <div class="col-md-6">
+        <label for="accountNumber" class="form-label fw-bold">Account Number <span class="text-danger">*</span></label>
+        <input type="text" id="accountNumber" [(ngModel)]="selected.accountNumber" name="accountNumber" class="form-control" placeholder="Account Number" required>
       </div>
 
-      <!-- Opening Balance -->
+      <div class="col-md-4">
+        <label for="accountType" class="form-label">Account Type <span class="text-danger">*</span></label>
+        <select id="accountType" class="form-select" [(ngModel)]="selected.accountType" name="accountType" required>
+          <option value="">Select Type</option>
+          <option *ngFor="let type of accountTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label for="accountName" class="form-label">Account Name <span class="text-danger">*</span></label>
+        <input type="text" id="accountName" [(ngModel)]="selected.accountName" name="accountName" class="form-control" placeholder="Account Name" required>
+      </div>
+
       <div class="col-md-4">
         <label for="openingBalance" class="form-label">Opening Balance</label>
-        <input type="number" id="openingBalance" [(ngModel)]="selected.openingBalance" name="openingBalance" class="form-control" placeholder="Opening Balance" required>
+        <input type="number" id="openingBalance" [(ngModel)]="selected.openingBalance" name="openingBalance" class="form-control" placeholder="0.00">
       </div>
 
-      <!-- Current Balance -->
-      <div class="col-md-4">
-        <label for="currentBalance" class="form-label">Current Balance</label>
-        <input type="number" id="currentBalance" [(ngModel)]="selected.currentBalance" name="currentBalance" class="form-control" placeholder="Current Balance" required>
-      </div>
-
-      <!-- Department -->
       <div class="col-md-6">
-        <label for="department" class="form-label">Department</label>
+        <label for="department" class="form-label">Department <span class="text-danger">*</span></label>
         <select id="department" class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
           <option value="">Select Department</option>
           <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
         </select>
       </div>
 
-      <!-- Department Unit -->
       <div class="col-md-6">
-        <label for="departmentUnit" class="form-label">Department Unit</label>
+        <label for="departmentUnit" class="form-label">Department Unit <span class="text-danger">*</span></label>
         <select id="departmentUnit" class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
           <option value="">Select Unit</option>
           <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
         </select>
       </div>
 
-      <!-- Officer In Charge -->
       <div class="col-md-6">
         <label for="officerInCharge" class="form-label">Officer In Charge</label>
         <input type="text" id="officerInCharge" [(ngModel)]="selected.officerInCharge" name="officerInCharge" class="form-control" placeholder="Officer In Charge">
       </div>
 
-      <!-- Signatories -->
       <div class="col-md-6">
         <label for="signatories" class="form-label">Signatories</label>
         <input type="text" id="signatories" [(ngModel)]="selected.signatories" name="signatories" class="form-control" placeholder="Signatories">
       </div>
 
-      <!-- Remarks -->
       <div class="col-md-12">
         <label for="remarks" class="form-label">Remarks</label>
-        <textarea id="remarks" [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks"></textarea>
+        <textarea id="remarks" [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks" rows="3"></textarea>
       </div>
 
-      <!-- Submit Buttons -->
       <div class="col-md-12 text-end">
-        <button type="submit" class="btn btn-primary me-2">
-          <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Save' }}
+        <button type="submit" class="btn btn-primary me-2" [disabled]="!bankForm.valid">
+          <i class="fa fa-save me-1"></i> Save
         </button>
         <button type="button" class="btn btn-secondary" (click)="resetForm()">
           <i class="fa fa-times me-1"></i> Clear
@@ -78,10 +76,52 @@
     </form>
   </div>
 
-  <!-- Table Section -->
-  <div id="table-section" class="card mt-4 shadow p-3 border-start border-dark border-4">
+  <div class="card mt-4 shadow p-3 border-start border-warning border-4" *ngIf="isAdmin && pendingAccounts.length > 0">
+    <h5 class="text-warning">
+      <i class="bx bx-time-five me-2"></i>Pending Approvals ({{ pendingAccounts.length }})
+    </h5>
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover table-striped text-center align-middle">
+        <thead class="table-warning">
+          <tr>
+            <th>ID</th>
+            <th>Bank</th>
+            <th>Account No</th>
+            <th>Type</th>
+            <th>Department</th>
+            <th>Requested By</th>
+            <th>Requested At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of pendingAccounts">
+            <td>{{ item.id }}</td>
+            <td>{{ item.bankName }}</td>
+            <td>{{ item.accountNumber }}</td>
+            <td>{{ item.accountType }}</td>
+            <td>{{ item.department }}</td>
+            <td>{{ item.requestedBy }}</td>
+            <td>{{ item.requestedAt | date: 'short' }}</td>
+            <td>
+              <button class="btn btn-sm btn-success me-1" (click)="approveAccount(item.id!)">
+                <i class="bx bx-check"></i> Approve
+              </button>
+              <button class="btn btn-sm btn-danger" (click)="rejectAccount(item.id!)">
+                <i class="bx bx-x"></i> Reject
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="approved-table" class="card mt-4 shadow p-3 border-start border-success border-4">
     <div class="d-flex justify-content-between align-items-center mb-3 no-print">
-      <h5>Bank Account Records</h5>
+      <h5 class="text-success">
+        <i class="bx bx-check-circle me-2"></i>Approved Bank Accounts ({{ approvedAccounts.length }})
+      </h5>
       <div>
         <button class="btn btn-outline-success btn-sm me-2" (click)="exportToExcel()">
           <i class="fa fa-file-excel"></i> Excel
@@ -95,42 +135,82 @@
       </div>
     </div>
 
-    <table class="table table-bordered table-hover table-striped text-center align-middle">
-      <thead class="table-dark">
-        <tr>
-          <th>ID</th>
-          <th>Bank</th>
-          <th>Account No</th>
-          <th>Type</th>
-          <th>Name</th>
-          <th>Officer</th>
-          <th>Department</th>
-          <th>Unit</th>
-          <th>Remarks</th>
-          <th class="no-print">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of accounts">
-          <td>{{ item.id }}</td>
-          <td>{{ item.bankName }}</td>
-          <td>{{ item.accountNumber }}</td>
-          <td>{{ item.accountType }}</td>
-          <td>{{ item.accountName }}</td>
-          <td>{{ item.officerInCharge }}</td>
-          <td>{{ item.department }}</td>
-          <td>{{ item.departmentUnit }}</td>
-          <td>{{ item.remarks }}</td>
-          <td class="no-print">
-            <button class="btn btn-sm btn-warning me-1" (click)="edit(item)">
-              <i class="fa fa-edit"></i>
-            </button>
-            <button class="btn btn-sm btn-danger" (click)="delete(item.id)">
-              <i class="fa fa-trash"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover table-striped text-center align-middle">
+        <thead class="table-success">
+          <tr>
+            <th>ID</th>
+            <th>Bank</th>
+            <th>Account No</th>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Unit</th>
+            <th>Approved By</th>
+            <th class="no-print">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of approvedAccounts">
+            <td>{{ item.id }}</td>
+            <td>{{ item.bankName }}</td>
+            <td>{{ item.accountNumber }}</td>
+            <td>{{ item.accountType }}</td>
+            <td>{{ item.accountName }}</td>
+            <td>{{ item.department }}</td>
+            <td>{{ item.departmentUnit }}</td>
+            <td>{{ item.approvedBy }}</td>
+            <td class="no-print">
+              <button class="btn btn-sm btn-danger" (click)="delete(item.id)" *ngIf="isAdmin">
+                <i class="fa fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="rejected-table" class="card mt-4 shadow p-3 border-start border-danger border-4">
+    <h5 class="text-danger">
+      <i class="bx bx-x-circle me-2"></i>Rejected Bank Accounts ({{ rejectedAccounts.length }})
+    </h5>
+
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover table-striped text-center align-middle">
+        <thead class="table-danger">
+          <tr>
+            <th>ID</th>
+            <th>Bank</th>
+            <th>Account No</th>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Unit</th>
+            <th>Rejected By</th>
+            <th>Rejection Reason</th>
+            <th class="no-print">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of rejectedAccounts">
+            <td>{{ item.id }}</td>
+            <td>{{ item.bankName }}</td>
+            <td>{{ item.accountNumber }}</td>
+            <td>{{ item.accountType }}</td>
+            <td>{{ item.accountName }}</td>
+            <td>{{ item.department }}</td>
+            <td>{{ item.departmentUnit }}</td>
+            <td>{{ item.approvedBy }}</td>
+            <td>{{ item.approvalRemarks }}</td>
+            <td class="no-print">
+              <button class="btn btn-sm btn-danger" (click)="delete(item.id)" *ngIf="isAdmin">
+                <i class="fa fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

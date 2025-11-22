@@ -23,6 +23,7 @@ import { environment } from '../../../environments/environment';
  * Horizontal Topbar and navbar specified
  */
 export class HorizontaltopbarComponent implements OnInit, AfterViewInit {
+  [x: string]: any;
 
   element;
   cookieValue;
@@ -78,12 +79,11 @@ export class HorizontaltopbarComponent implements OnInit, AfterViewInit {
   /**
    * Logout the user
    */
-  logout() {
-    if (environment.defaultauth === 'firebase') {
-      this.authService.logout();
-    } else {
-      this.authFackservice.logout();
-    }
+  logout(): void {
+    sessionStorage.removeItem('authUser');
+    sessionStorage.removeItem('userData');
+    sessionStorage.clear();
+    this.currentUserSubject.next(null);
     this.router.navigate(['/account/login']);
   }
 

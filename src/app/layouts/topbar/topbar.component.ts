@@ -18,6 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
  * Topbar component
  */
 export class TopbarComponent implements OnInit {
+  [x: string]: any;
 
   element;
   cookieValue;
@@ -84,12 +85,11 @@ export class TopbarComponent implements OnInit {
   /**
    * Logout the user
    */
-  logout() {
-    if (environment.defaultauth === 'firebase') {
-      this.authService.logout();
-    } else {
-      this.authFackservice.logout();
-    }
+  logout(): void {
+    sessionStorage.removeItem('authUser');
+    sessionStorage.removeItem('userData');
+    sessionStorage.clear();
+    this.currentUserSubject.next(null);
     this.router.navigate(['/account/login']);
   }
 
