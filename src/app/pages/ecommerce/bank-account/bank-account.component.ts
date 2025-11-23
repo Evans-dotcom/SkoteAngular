@@ -319,8 +319,85 @@ export class BankAccountComponent implements OnInit {
     XLSX.utils.book_append_sheet(wb, ws, 'BankAccounts');
     XLSX.writeFile(wb, 'BankAccounts.xlsx');
   }
+ printTable() {
+  const approvedSection = document.getElementById('approved-table')?.innerHTML;
+  const rejectedSection = document.getElementById('rejected-table')?.innerHTML;
+  
+  const popup = window.open('', '_blank', 'width=900,height=700');
+  popup?.document.write(`
+    <html>
+      <head>
+        <title>Bank Account Records</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          h3 { text-align: center; margin-bottom: 20px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 40px; }
+          th, td { border: 1px solid #000; padding: 8px; text-align: left; font-size: 11px; }
+          th { color: white; }
+          tr:nth-child(even) { background-color: #f2f2f2; }
+          .header { text-align: center; margin-bottom: 30px; }
+          .header h2 { margin: 0; color: #0d6efd; }
+          .section-title { 
+            margin-top: 30px; 
+            margin-bottom: 15px; 
+            padding: 10px; 
+            font-size: 18px;
+            font-weight: bold;
+          }
+          .approved-section { 
+            color: #28a745; 
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+          }
+          .rejected-section { 
+            color: #dc3545; 
+            background-color: #f8d7da;
+            border-left: 5px solid #dc3545;
+          }
+          .table-success th { background-color: #28a745 !important; }
+          .table-danger th { background-color: #dc3545 !important; }
+          .no-print { display: none !important; }
+          .page-break { page-break-before: always; }
+          
+          @media print {
+            .no-print { display: none !important; }
+            body { padding: 10px; }
+            table { page-break-inside: auto; }
+            tr { page-break-inside: avoid; page-break-after: auto; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h2>County Government Bank Accounts</h2>
+          <p><strong>Generated On:</strong> ${new Date().toLocaleString()}</p>
+          <p><strong>Report Type:</strong> Approved & Rejected Bank Accounts</p>
+        </div>
 
-  printTable() {
-    window.print();
-  }
+        <div class="section-title approved-section">
+          ✓ Approved Bank Accounts (${this.approvedAccounts.length})
+        </div>
+        ${approvedSection || '<p>No approved accounts available.</p>'}
+
+        <div class="section-title rejected-section page-break">
+          ✗ Rejected Bank Accounts (${this.rejectedAccounts.length})
+        </div>
+        ${rejectedSection || '<p>No rejected accounts available.</p>'}
+
+        <div style="margin-top: 40px; text-align: center; font-size: 12px; color: #666;">
+          <p>Total Approved: ${this.approvedAccounts.length} | Total Rejected: ${this.rejectedAccounts.length}</p>
+          <p>© ${new Date().getFullYear()} County Government - Asset Management System</p>
+        </div>
+      </body>
+    </html>
+  `);
+  popup?.document.close();
+  popup?.print();
 }
+}
+
+
+
+  // printTable() {
+  //   window.print();
+  // }
