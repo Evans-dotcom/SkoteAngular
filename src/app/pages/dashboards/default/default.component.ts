@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { emailSentBarChart, monthlyEarningChart } from './data';
 import { ChartType } from './dashboard.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -9,13 +9,16 @@ import { User } from '../../../core/models/auth.models';
 import Swal from 'sweetalert2';
 import { Modal } from 'bootstrap';
 import { BankAccount, BankAccountService } from '../../ecommerce/bank-account/bankaccount.service';
+import { interval, Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { EmailNotificationService } from '../email-notification/email-notification.service';
 
 @Component({
   selector: 'app-default',
   templateUrl: './default.component.html',
   styleUrls: ['./default.component.scss']
 })
-export class DefaultComponent implements OnInit {
+export class DefaultComponent implements OnInit, OnDestroy {
   isVisible: string;
   emailSentBarChart: ChartType;
   monthlyEarningChart: ChartType;
@@ -67,6 +70,9 @@ export class DefaultComponent implements OnInit {
   selectedBankAccount: BankAccount | null = null;
   accountDetailsModal: Modal | null = null;
 
+  unreadNotificationCount: number = 0;
+  notificationSubscription: Subscription | null = null;
+
   @ViewChild('content') content;
 
   constructor(
@@ -74,7 +80,8 @@ export class DefaultComponent implements OnInit {
     private configService: ConfigService,
     private eventService: EventService,
     public authService: AuthenticationService,
-    private bankAccountService: BankAccountService
+    private bankAccountService: BankAccountService,
+    private emailNotificationService: EmailNotificationService
   ) {}
 
   ngOnInit() {
@@ -102,6 +109,15 @@ export class DefaultComponent implements OnInit {
       this.loadPendingBankAccounts();
       this.loadApprovedBankAccounts();
       this.loadRejectedBankAccounts();
+    }
+
+    this.loadNotificationCount();
+    this.startNotificationRefresh();
+  }
+
+  ngOnDestroy() {
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
     }
   }
 
@@ -147,6 +163,30 @@ export class DefaultComponent implements OnInit {
     });
   }
 
+  loadNotificationCount() {
+    this.emailNotificationService.getUnreadCount().subscribe({
+      next: (data: any) => {
+        this.unreadNotificationCount = data.count;
+      },
+      error: (error) => {
+        console.error('Error loading notification count:', error);
+      }
+    });
+  }
+
+  startNotificationRefresh() {
+    this.notificationSubscription = interval(30000)
+      .pipe(
+        switchMap(() => this.emailNotificationService.getUnreadCount())
+      )
+      .subscribe({
+        next: (data: any) => {
+          this.unreadNotificationCount = data.count;
+        },
+        error: (error) => console.error('Error refreshing notification count:', error)
+      });
+  }
+
   viewBankAccountDetails(account: BankAccount) {
     this.selectedBankAccount = account;
     const modalElement = document.getElementById('bankAccountDetailsModal');
@@ -178,25 +218,37 @@ export class DefaultComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         const remarks = result.value || 'Approved by Admin';
+        
+        Swal.fire({
+          title: 'Approving...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
         this.bankAccountService.approve(account.id!, remarks).subscribe({
           next: () => {
+            Swal.close();
             Swal.fire({
               icon: 'success',
               title: 'Approved',
-              text: 'Bank account has been approved successfully.',
-              timer: 2000
+              text: 'Bank account has been approved successfully and user has been notified via email.',
+              timer: 3000
             });
             this.loadPendingBankAccounts();
             this.loadApprovedBankAccounts();
+            this.loadNotificationCount();
             if (this.accountDetailsModal) {
               this.accountDetailsModal.hide();
             }
           },
           error: (error) => {
+            Swal.close();
             Swal.fire({
               icon: 'error',
               title: 'Error',
-              text: error
+              text: error || 'Failed to approve account'
             });
           }
         });
@@ -229,25 +281,36 @@ export class DefaultComponent implements OnInit {
       }
     }).then((result) => {
       if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Rejecting...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
         this.bankAccountService.reject(account.id!, result.value).subscribe({
           next: () => {
+            Swal.close();
             Swal.fire({
               icon: 'success',
               title: 'Rejected',
-              text: 'Bank account has been rejected.',
-              timer: 2000
+              text: 'Bank account has been rejected and user has been notified via email.',
+              timer: 3000
             });
             this.loadPendingBankAccounts();
             this.loadRejectedBankAccounts();
+            this.loadNotificationCount();
             if (this.accountDetailsModal) {
               this.accountDetailsModal.hide();
             }
           },
           error: (error) => {
+            Swal.close();
             Swal.fire({
               icon: 'error',
               title: 'Error',
-              text: error
+              text: error || 'Failed to reject account'
             });
           }
         });

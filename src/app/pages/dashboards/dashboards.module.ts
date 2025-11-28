@@ -15,9 +15,10 @@ import { DefaultComponent } from './default/default.component';
 import { SaasComponent } from './saas/saas.component';
 import { CryptoComponent } from './crypto/crypto.component';
 import { BlogComponent } from './blog/blog.component';
+import { EmailNotificationPanelComponent } from './email-notification/email-notification.component';
 
 @NgModule({
-  declarations: [DefaultComponent, SaasComponent, CryptoComponent, BlogComponent],
+  declarations: [DefaultComponent, SaasComponent, CryptoComponent, BlogComponent,EmailNotificationPanelComponent],
   imports: [
     CommonModule,
     FormsModule,

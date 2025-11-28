@@ -6,7 +6,21 @@
           <h1 class="mb-0 font-weight-bold">Asset Management Dashboard</h1>
           <p class="text-muted mb-0">Welcome back, {{ currentUser?.username }}!</p>
         </div>
-        <div class="page-title-right d-flex align-items-center">
+        <div class="page-title-right d-flex align-items-center gap-3">
+          <div class="notification-icon-container position-relative">
+            <button 
+              class="btn btn-link text-dark position-relative" 
+              data-bs-toggle="offcanvas" 
+              data-bs-target="#notificationOffcanvas"
+              title="Email Notifications">
+              <i class="bx bx-bell font-size-24"></i>
+              <span 
+                class="badge bg-danger position-absolute top-0 start-100 translate-middle" 
+                *ngIf="unreadNotificationCount > 0">
+                {{ unreadNotificationCount }}
+              </span>
+            </button>
+          </div>
           <span class="badge bg-primary me-3 p-2">{{ currentUser?.role }}</span>
           <div class="avatar-sm">
             <span class="avatar-title rounded-circle bg-dark text-white font-size-16">
@@ -536,6 +550,18 @@
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="notificationOffcanvas" aria-labelledby="notificationOffcanvasLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="notificationOffcanvasLabel">
+      <i class="bx bx-bell me-2"></i>Email Notifications
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body p-0">
+    <app-email-notification-panel></app-email-notification-panel>
   </div>
 </div>
 

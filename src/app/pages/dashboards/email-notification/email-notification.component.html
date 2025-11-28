@@ -1,0 +1,255 @@
+<div class="card shadow h-100">
+  <div class="card-header bg-light border-bottom">
+    <div class="d-flex align-items-center justify-content-between">
+      <h5 class="mb-0">
+        <i class="bx bx-bell me-2"></i>
+        <span *ngIf="isAdmin">Admin Notifications</span>
+        <span *ngIf="!isAdmin">My Notifications</span>
+        <span class="badge bg-danger ms-2" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+      </h5>
+      <div>
+        <button 
+          class="btn btn-sm btn-link text-muted me-2" 
+          (click)="loadNotifications()"
+          [disabled]="isLoading"
+          title="Refresh">
+          <i class="bx bx-refresh" [class.spin]="isLoading"></i>
+        </button>
+        <button 
+          class="btn btn-sm btn-link text-muted"
+          (click)="markAllAsRead()"
+          *ngIf="unreadCount > 0"
+          title="Mark all as read">
+          <i class="bx bx-check-all"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body p-0">
+    <div *ngIf="isLoading" class="text-center p-4">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && notifications.length === 0" class="text-center p-4 text-muted">
+      <i class="bx bx-inbox" style="font-size: 2rem;"></i>
+      <p class="mt-2">No notifications yet</p>
+    </div>
+
+    <div *ngIf="!isLoading && notifications.length > 0" class="notification-list">
+      <div 
+        *ngFor="let notification of getDisplayedNotifications()"
+        class="notification-item border-bottom p-3 cursor-pointer transition"
+        [class.unread]="notification.status !== 'Read'"
+        (click)="markAsRead(notification)">
+        
+        <div class="d-flex">
+          <div class="flex-shrink-0">
+            <div class="avatar-sm rounded-circle" 
+              [ngClass]="'bg-' + getNotificationColor(notification.notificationType)">
+              <span class="avatar-title text-white">
+                <i [class]="getNotificationIcon(notification.notificationType)"></i>
+              </span>
+            </div>
+          </div>
+
+          <div class="flex-grow-1 ms-3">
+            <h6 class="mb-1 font-size-14">
+              {{ notification.subject }}
+              <span class="badge bg-light text-dark float-end" *ngIf="notification.status !== 'Read'">New</span>
+            </h6>
+            <p class="text-muted mb-2 font-size-13">{{ notification.body }}</p>
+            <div class="d-flex align-items-center justify-content-between">
+              <small class="text-muted">
+                <i class="bx bx-tag me-1"></i>{{ notification.assetSummary }}
+              </small>
+              <small class="text-muted">
+                {{ notification.sentAt | date: 'short' }}
+              </small>
+            </div>
+            
+            <div class="mt-2">
+              <button 
+                class="btn btn-sm btn-primary"
+                (click)="viewBankDetails(notification, $event)"
+                [disabled]="loadingDetails">
+                <i class="bx bx-show me-1"></i>View Details
+              </button>
+            </div>
+          </div>
+
+          <div class="flex-shrink-0 ms-2">
+            <button 
+              class="btn btn-sm btn-link text-danger"
+              (click)="deleteNotification(notification, $event)"
+              title="Delete notification">
+              <i class="bx bx-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="hasMore()" class="text-center p-3 border-top bg-light">
+        <small class="text-muted">
+          Showing {{ getDisplayedNotifications().length }} of {{ notifications.length }} notifications
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="bankDetailsModalFromNotification" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary">
+        <h5 class="modal-title text-white">
+          <i class="bx bx-wallet me-2"></i>Bank Account Details
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      
+      <div class="modal-body" *ngIf="selectedBankAccount">
+        <div *ngIf="loadingDetails" class="text-center p-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+
+        <div *ngIf="!loadingDetails" class="row">
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold text-muted d-block mb-1">Bank Name</label>
+            <p class="font-size-14">{{ selectedBankAccount.bankName }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold text-muted d-block mb-1">Account Number</label>
+            <p class="font-size-14">{{ selectedBankAccount.accountNumber }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold text-muted d-block mb-1">Account Name</label>
+            <p class="font-size-14">{{ selectedBankAccount.accountName }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold text-muted d-block mb-1">Account Type</label>
+            <p class="font-size-14">{{ selectedBankAccount.accountType }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold text-muted d-block mb-1">Department</label>
+            <p class="font-size-14">{{ selectedBankAccount.department }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold text-muted d-block mb-1">Department Unit</label>
+            <p class="font-size-14">{{ selectedBankAccount.departmentUnit }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold text-muted d-block mb-1">Officer In Charge</label>
+            <p class="font-size-14">{{ selectedBankAccount.officerInCharge }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold text-muted d-block mb-1">Signatories</label>
+            <p class="font-size-14">{{ selectedBankAccount.signatories }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold text-muted d-block mb-1">Opening Balance</label>
+            <p class="font-size-14">{{ selectedBankAccount.openingBalance | currency }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold text-muted d-block mb-1">Current Balance</label>
+            <p class="font-size-14">{{ selectedBankAccount.currentBalance | currency }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold text-muted d-block mb-1">Requested By</label>
+            <p class="font-size-14">{{ selectedBankAccount.requestedBy }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold text-muted d-block mb-1">Requested At</label>
+            <p class="font-size-14">{{ selectedBankAccount.requestedAt | date: 'medium' }}</p>
+          </div>
+          <div class="col-md-6 mb-3" *ngIf="selectedBankAccount.approvedBy">
+            <label class="fw-bold text-muted d-block mb-1">Approved By</label>
+            <p class="font-size-14">{{ selectedBankAccount.approvedBy }}</p>
+          </div>
+          <div class="col-md-6 mb-3" *ngIf="selectedBankAccount.approvalDate">
+            <label class="fw-bold text-muted d-block mb-1">Approval Date</label>
+            <p class="font-size-14">{{ selectedBankAccount.approvalDate | date: 'medium' }}</p>
+          </div>
+          <div class="col-md-6 mb-3" *ngIf="selectedBankAccount.status">
+            <label class="fw-bold text-muted d-block mb-1">Status</label>
+            <p class="font-size-14">
+              <span class="badge" [ngClass]="{
+                'bg-success': selectedBankAccount.status === 'Approved',
+                'bg-danger': selectedBankAccount.status === 'Rejected',
+                'bg-warning': selectedBankAccount.status === 'Open'
+              }">
+                {{ selectedBankAccount.status }}
+              </span>
+            </p>
+          </div>
+          <div class="col-md-12 mb-3" *ngIf="selectedBankAccount.approvalRemarks">
+            <label class="fw-bold text-muted d-block mb-1">Approval Remarks</label>
+            <p class="font-size-14">{{ selectedBankAccount.approvalRemarks }}</p>
+          </div>
+          <div class="col-md-12 mb-3" *ngIf="selectedBankAccount.remarks">
+            <label class="fw-bold text-muted d-block mb-1">Remarks</label>
+            <p class="font-size-14">{{ selectedBankAccount.remarks }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.notification-item {
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+
+.notification-item.unread {
+  background-color: #f0f7ff;
+  border-left: 4px solid #007bff;
+}
+
+.notification-item:hover {
+  background-color: #f8f9fa;
+}
+
+.notification-list {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.transition {
+  transition: all 0.3s ease;
+}
+
+.font-size-14 {
+  font-size: 14px;
+}
+
+.font-size-13 {
+  font-size: 13px;
+}
+</style>

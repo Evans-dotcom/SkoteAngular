@@ -108,22 +108,32 @@ export class BankAccountComponent implements OnInit {
       return;
     }
 
+    Swal.fire({
+      title: 'Creating Account...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     this.service.create(this.selected).subscribe({
       next: () => {
+        Swal.close();
         Swal.fire({
           icon: 'success',
           title: 'Success',
-          text: 'Bank account created successfully and pending approval.',
-          timer: 4000
+          text: 'Bank account created successfully. Admin has been notified via email and will review your request.',
+          timer: 3000
         });
         this.resetForm();
         this.loadData();
       },
       error: (error) => {
+        Swal.close();
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: error
+          text: error || 'Failed to create bank account'
         });
       }
     });
@@ -142,21 +152,32 @@ export class BankAccountComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         const remarks = result.value || 'Approved';
+
+        Swal.fire({
+          title: 'Approving...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
         this.service.approve(id, remarks).subscribe({
           next: () => {
+            Swal.close();
             Swal.fire({
               icon: 'success',
               title: 'Approved',
-              text: 'Bank account has been approved successfully.',
-              timer: 2000
+              text: 'Bank account has been approved successfully and user has been notified via email.',
+              timer: 3000
             });
             this.loadData();
           },
           error: (error) => {
+            Swal.close();
             Swal.fire({
               icon: 'error',
               title: 'Error',
-              text: error
+              text: error || 'Failed to approve account'
             });
           }
         });
@@ -176,27 +197,37 @@ export class BankAccountComponent implements OnInit {
       cancelButtonText: 'Cancel',
       inputValidator: (value) => {
         if (!value) {
-          return 'You must provide a reason for rejection!';
+          return 'You must provide a reason for Account rejection!';
         }
         return null;
       }
     }).then((result) => {
       if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Rejecting...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
         this.service.reject(id, result.value).subscribe({
           next: () => {
+            Swal.close();
             Swal.fire({
               icon: 'success',
               title: 'Rejected',
-              text: 'Bank account has been rejected.',
-              timer: 2000
+              text: 'Bank account has been rejected and user has been notified via email.',
+              timer: 3000
             });
             this.loadData();
           },
           error: (error) => {
+            Swal.close();
             Swal.fire({
               icon: 'error',
               title: 'Error',
-              text: error
+              text: error || 'Failed to reject account'
             });
           }
         });
@@ -217,8 +248,17 @@ export class BankAccountComponent implements OnInit {
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Deleting...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
         this.service.delete(id).subscribe({
           next: () => {
+            Swal.close();
             Swal.fire({
               icon: 'success',
               title: 'Deleted',
@@ -228,10 +268,11 @@ export class BankAccountComponent implements OnInit {
             this.loadData();
           },
           error: (error) => {
+            Swal.close();
             Swal.fire({
               icon: 'error',
               title: 'Error',
-              text: error
+              text: error || 'Failed to delete account'
             });
           }
         });
@@ -319,85 +360,80 @@ export class BankAccountComponent implements OnInit {
     XLSX.utils.book_append_sheet(wb, ws, 'BankAccounts');
     XLSX.writeFile(wb, 'BankAccounts.xlsx');
   }
- printTable() {
-  const approvedSection = document.getElementById('approved-table')?.innerHTML;
-  const rejectedSection = document.getElementById('rejected-table')?.innerHTML;
-  
-  const popup = window.open('', '_blank', 'width=900,height=700');
-  popup?.document.write(`
-    <html>
-      <head>
-        <title>Bank Account Records</title>
-        <style>
-          body { font-family: Arial, sans-serif; padding: 20px; }
-          h3 { text-align: center; margin-bottom: 20px; }
-          table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 40px; }
-          th, td { border: 1px solid #000; padding: 8px; text-align: left; font-size: 11px; }
-          th { color: white; }
-          tr:nth-child(even) { background-color: #f2f2f2; }
-          .header { text-align: center; margin-bottom: 30px; }
-          .header h2 { margin: 0; color: #0d6efd; }
-          .section-title { 
-            margin-top: 30px; 
-            margin-bottom: 15px; 
-            padding: 10px; 
-            font-size: 18px;
-            font-weight: bold;
-          }
-          .approved-section { 
-            color: #28a745; 
-            background-color: #d4edda;
-            border-left: 5px solid #28a745;
-          }
-          .rejected-section { 
-            color: #dc3545; 
-            background-color: #f8d7da;
-            border-left: 5px solid #dc3545;
-          }
-          .table-success th { background-color: #28a745 !important; }
-          .table-danger th { background-color: #dc3545 !important; }
-          .no-print { display: none !important; }
-          .page-break { page-break-before: always; }
-          
-          @media print {
+
+  printTable() {
+    const approvedSection = document.getElementById('approved-table')?.innerHTML;
+    const rejectedSection = document.getElementById('rejected-table')?.innerHTML;
+    
+    const popup = window.open('', '_blank', 'width=900,height=700');
+    popup?.document.write(`
+      <html>
+        <head>
+          <title>Bank Account Records</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            h3 { text-align: center; margin-bottom: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 40px; }
+            th, td { border: 1px solid #000; padding: 8px; text-align: left; font-size: 11px; }
+            th { color: white; }
+            tr:nth-child(even) { background-color: #f2f2f2; }
+            .header { text-align: center; margin-bottom: 30px; }
+            .header h2 { margin: 0; color: #0d6efd; }
+            .section-title { 
+              margin-top: 30px; 
+              margin-bottom: 15px; 
+              padding: 10px; 
+              font-size: 18px;
+              font-weight: bold;
+            }
+            .approved-section { 
+              color: #28a745; 
+              background-color: #d4edda;
+              border-left: 5px solid #28a745;
+            }
+            .rejected-section { 
+              color: #dc3545; 
+              background-color: #f8d7da;
+              border-left: 5px solid #dc3545;
+            }
+            .table-success th { background-color: #28a745 !important; }
+            .table-danger th { background-color: #dc3545 !important; }
             .no-print { display: none !important; }
-            body { padding: 10px; }
-            table { page-break-inside: auto; }
-            tr { page-break-inside: avoid; page-break-after: auto; }
-          }
-        </style>
-      </head>
-      <body>
-        <div class="header">
-          <h2>County Government Bank Accounts</h2>
-          <p><strong>Generated On:</strong> ${new Date().toLocaleString()}</p>
-          <p><strong>Report Type:</strong> Approved & Rejected Bank Accounts</p>
-        </div>
+            .page-break { page-break-before: always; }
+            
+            @media print {
+              .no-print { display: none !important; }
+              body { padding: 10px; }
+              table { page-break-inside: auto; }
+              tr { page-break-inside: avoid; page-break-after: auto; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h2>County Government Bank Accounts</h2>
+            <p><strong>Generated On:</strong> ${new Date().toLocaleString()}</p>
+            <p><strong>Report Type:</strong> Approved & Rejected Bank Accounts</p>
+          </div>
 
-        <div class="section-title approved-section">
-          ✓ Approved Bank Accounts (${this.approvedAccounts.length})
-        </div>
-        ${approvedSection || '<p>No approved accounts available.</p>'}
+          <div class="section-title approved-section">
+            ✓ Approved Bank Accounts (${this.approvedAccounts.length})
+          </div>
+          ${approvedSection || '<p>No approved accounts available.</p>'}
 
-        <div class="section-title rejected-section page-break">
-          ✗ Rejected Bank Accounts (${this.rejectedAccounts.length})
-        </div>
-        ${rejectedSection || '<p>No rejected accounts available.</p>'}
+          <div class="section-title rejected-section page-break">
+            ✗ Rejected Bank Accounts (${this.rejectedAccounts.length})
+          </div>
+          ${rejectedSection || '<p>No rejected accounts available.</p>'}
 
-        <div style="margin-top: 40px; text-align: center; font-size: 12px; color: #666;">
-          <p>Total Approved: ${this.approvedAccounts.length} | Total Rejected: ${this.rejectedAccounts.length}</p>
-          <p>© ${new Date().getFullYear()} County Government - Asset Management System</p>
-        </div>
-      </body>
-    </html>
-  `);
-  popup?.document.close();
-  popup?.print();
+          <div style="margin-top: 40px; text-align: center; font-size: 12px; color: #666;">
+            <p>Total Approved: ${this.approvedAccounts.length} | Total Rejected: ${this.rejectedAccounts.length}</p>
+            <p>© ${new Date().getFullYear()} County Government - Asset Management System</p>
+          </div>
+        </body>
+      </html>
+    `);
+    popup?.document.close();
+    popup?.print();
+  }
 }
-}
-
-
-
-  // printTable() {
-  //   window.print();
-  // }
