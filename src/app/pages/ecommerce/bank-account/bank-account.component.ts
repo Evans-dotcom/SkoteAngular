@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BankAccount, BankAccountService, BankAccountCreateDto } from './bankaccount.service';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
+import { BreadcrumbItem, HeaderAction } from 'src/app/shared/components/page-header/page-header.component';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
@@ -20,6 +21,52 @@ export class BankAccountComponent implements OnInit {
   isEdit = false;
   isAdmin = false;
   currentUserEmail = '';
+
+  // View state
+  currentView: 'list' | 'form' = 'list';
+
+  // Pagination variables for Approved Accounts
+  approvedCurrentPage = 1;
+  approvedPageSize = 10;
+  approvedTotalItems = 0;
+  approvedPageSizeOptions = [5, 10, 25, 50, 100];
+
+  // Pagination variables for Rejected Accounts
+  rejectedCurrentPage = 1;
+  rejectedPageSize = 10;
+  rejectedTotalItems = 0;
+  rejectedPageSizeOptions = [5, 10, 25, 50, 100];
+
+  // Pagination variables for Pending Accounts
+  pendingCurrentPage = 1;
+  pendingPageSize = 10;
+  pendingTotalItems = 0;
+  pendingPageSizeOptions = [5, 10, 25, 50, 100];
+
+  // Header Configuration
+  breadcrumbs: BreadcrumbItem[] = [
+    { label: 'Home', url: '/dashboard' },
+    { label: 'Assets', url: '/' },
+    { label: 'Bank Accounts', active: true }
+  ];
+
+  headerActions: HeaderAction[] = [
+    { 
+      label: 'Add New', 
+      icon: 'bx bx-plus-circle', 
+      cssClass: 'btn-primary',
+      action: 'add'
+    }
+  ];
+
+  formHeaderActions: HeaderAction[] = [
+    { 
+      label: 'View List', 
+      icon: 'bx bx-list-ul', 
+      cssClass: 'btn-outline-primary',
+      action: 'list'
+    }
+  ];
 
   banks: string[] = [
     'CENTRAL BANK OF KENYA', 'Absa Bank Kenya Plc', 'Access Bank (Kenya) PLC', 'African Banking Corporation Limited',
@@ -79,20 +126,127 @@ export class BankAccountComponent implements OnInit {
     this.loadData();
   }
 
+  // Pagination Methods for Approved Accounts
+  get paginatedApprovedAccounts(): BankAccount[] {
+    const startIndex = (this.approvedCurrentPage - 1) * this.approvedPageSize;
+    const endIndex = startIndex + this.approvedPageSize;
+    return this.approvedAccounts.slice(startIndex, endIndex);
+  }
+
+  get approvedTotalPages(): number {
+    return Math.ceil(this.approvedTotalItems / this.approvedPageSize);
+  }
+
+  onApprovedPageChange(page: number): void {
+    if (page >= 1 && page <= this.approvedTotalPages) {
+      this.approvedCurrentPage = page;
+    }
+  }
+
+  onApprovedPageSizeChange(event: any): void {
+    this.approvedPageSize = Number(event.target.value);
+    this.approvedCurrentPage = 1;
+  }
+
+  // Pagination Methods for Rejected Accounts
+  get paginatedRejectedAccounts(): BankAccount[] {
+    const startIndex = (this.rejectedCurrentPage - 1) * this.rejectedPageSize;
+    const endIndex = startIndex + this.rejectedPageSize;
+    return this.rejectedAccounts.slice(startIndex, endIndex);
+  }
+
+  get rejectedTotalPages(): number {
+    return Math.ceil(this.rejectedTotalItems / this.rejectedPageSize);
+  }
+
+  onRejectedPageChange(page: number): void {
+    if (page >= 1 && page <= this.rejectedTotalPages) {
+      this.rejectedCurrentPage = page;
+    }
+  }
+
+  onRejectedPageSizeChange(event: any): void {
+    this.rejectedPageSize = Number(event.target.value);
+    this.rejectedCurrentPage = 1;
+  }
+
+  // Pagination Methods for Pending Accounts
+  get paginatedPendingAccounts(): BankAccount[] {
+    const startIndex = (this.pendingCurrentPage - 1) * this.pendingPageSize;
+    const endIndex = startIndex + this.pendingPageSize;
+    return this.pendingAccounts.slice(startIndex, endIndex);
+  }
+
+  get pendingTotalPages(): number {
+    return Math.ceil(this.pendingTotalItems / this.pendingPageSize);
+  }
+
+  onPendingPageChange(page: number): void {
+    if (page >= 1 && page <= this.pendingTotalPages) {
+      this.pendingCurrentPage = page;
+    }
+  }
+
+  onPendingPageSizeChange(event: any): void {
+    this.pendingPageSize = Number(event.target.value);
+    this.pendingCurrentPage = 1;
+  }
+
+  // Helper method to get Math for template
+  get Math() {
+    return Math;
+  }
+
+  // Helper method to generate page numbers
+  getPageNumbers(totalPages: number): number[] {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  // Header Action Handler
+  onHeaderAction(action: string) {
+    switch (action) {
+      case 'add':
+        this.showForm();
+        break;
+      case 'list':
+        this.showList();
+        break;
+    }
+  }
+
+  showForm() {
+    this.currentView = 'form';
+    this.resetForm();
+  }
+
+  showList() {
+    this.currentView = 'list';
+    this.resetForm();
+  }
+
   loadData() {
     this.service.getApproved().subscribe({
-      next: (data) => (this.approvedAccounts = data),
+      next: (data) => {
+        this.approvedAccounts = data;
+        this.approvedTotalItems = data.length;
+      },
       error: (error) => console.error('Error loading approved accounts:', error)
     });
 
     this.service.getRejected().subscribe({
-      next: (data) => (this.rejectedAccounts = data),
+      next: (data) => {
+        this.rejectedAccounts = data;
+        this.rejectedTotalItems = data.length;
+      },
       error: (error) => console.error('Error loading rejected accounts:', error)
     });
 
     if (this.isAdmin) {
       this.service.getPending().subscribe({
-        next: (data) => (this.pendingAccounts = data),
+        next: (data) => {
+          this.pendingAccounts = data;
+          this.pendingTotalItems = data.length;
+        },
         error: (error) => console.error('Error loading pending accounts:', error)
       });
     }
@@ -127,6 +281,7 @@ export class BankAccountComponent implements OnInit {
         });
         this.resetForm();
         this.loadData();
+        this.showList();
       },
       error: (error) => {
         Swal.close();

@@ -1,216 +1,414 @@
-<div class="container mt-4">
-  <div class="card shadow p-4 border-start border-primary border-4">
-    <h4 class="mb-3 text-primary">Add Bank Account</h4>
+<div class="container mt-0">
+  
+  <!-- LIST VIEW -->
+  <div *ngIf="currentView === 'list'">
+    <!-- Page Header -->
+    <app-page-header
+      [title]="'Bank Accounts Management'"
+      [subtitle]="'Manage and track all bank accounts across departments'"
+      [icon]="'bx bx-money'"
+      [breadcrumbs]="breadcrumbs"
+      [actions]="headerActions"
+      (actionClick)="onHeaderAction($event)">
+    </app-page-header>
 
-    <form (ngSubmit)="save()" class="row g-3" #bankForm="ngForm">
-      <div class="col-md-6">
-        <label for="bankName" class="form-label fw-bold">Bank Name <span class="text-danger">*</span></label>
-        <select id="bankName" class="form-select" [(ngModel)]="selected.bankName" name="bankName" required>
-          <option value="">Select Bank</option>
-          <option *ngFor="let bank of banks" [value]="bank">{{ bank }}</option>
-        </select>
+    <!-- Pending Approvals -->
+    <div class="card shadow border-start border-warning border-4" *ngIf="isAdmin && pendingAccounts.length > 0">
+      <div class="card-header bg-transparent border-0">
+        <h5 class="text-warning mb-0">
+          <i class="bx bx-time-five me-2"></i>Pending Approvals ({{ pendingTotalItems }})
+        </h5>
       </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover table-striped text-center align-middle">
+            <thead class="table-warning">
+              <tr>
+                <th>ID</th>
+                <th>Bank</th>
+                <th>Account No</th>
+                <th>Type</th>
+                <th>Department</th>
+                <th>Requested By</th>
+                <th>Requested At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of paginatedPendingAccounts">
+                <td>{{ item.id }}</td>
+                <td>{{ item.bankName }}</td>
+                <td>{{ item.accountNumber }}</td>
+                <td>{{ item.accountType }}</td>
+                <td>{{ item.department }}</td>
+                <td>{{ item.requestedBy }}</td>
+                <td>{{ item.requestedAt | date: 'short' }}</td>
+                <td>
+                  <button class="btn btn-sm btn-success me-1" (click)="approveAccount(item.id!)">
+                    <i class="bx bx-check"></i> Approve
+                  </button>
+                  <button class="btn btn-sm btn-danger" (click)="rejectAccount(item.id!)">
+                    <i class="bx bx-x"></i> Reject
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-      <div class="col-md-6">
-        <label for="accountNumber" class="form-label fw-bold">Account Number <span class="text-danger">*</span></label>
-        <input type="text" id="accountNumber" [(ngModel)]="selected.accountNumber" name="accountNumber" class="form-control" placeholder="Account Number" required>
-      </div>
+        <!-- Pagination Controls for Pending -->
+        <div class="d-flex justify-content-between align-items-center mt-3" *ngIf="pendingTotalItems > 0">
+          <div class="d-flex align-items-center">
+            <label class="me-2 mb-0">Items per page:</label>
+            <select class="form-select form-select-sm" style="width: auto;" 
+                    [value]="pendingPageSize" 
+                    (change)="onPendingPageSizeChange($event)"
+                    name="pendingPageSize">
+              <option *ngFor="let size of pendingPageSizeOptions" [value]="size">{{ size }}</option>
+            </select>
+            <span class="ms-3 text-muted">
+              Showing {{ (pendingCurrentPage - 1) * pendingPageSize + 1 }} 
+              to {{ Math.min(pendingCurrentPage * pendingPageSize, pendingTotalItems) }} 
+              of {{ pendingTotalItems }} entries
+            </span>
+          </div>
 
-      <div class="col-md-4">
-        <label for="accountType" class="form-label">Account Type <span class="text-danger">*</span></label>
-        <select id="accountType" class="form-select" [(ngModel)]="selected.accountType" name="accountType" required>
-          <option value="">Select Type</option>
-          <option *ngFor="let type of accountTypes" [value]="type">{{ type }}</option>
-        </select>
-      </div>
+          <nav aria-label="Pending pagination">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" [class.disabled]="pendingCurrentPage === 1">
+                <a class="page-link" (click)="onPendingPageChange(1)" href="javascript:void(0)">
+                  <i class="bx bx-chevrons-left"></i>
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="pendingCurrentPage === 1">
+                <a class="page-link" (click)="onPendingPageChange(pendingCurrentPage - 1)" href="javascript:void(0)">
+                  <i class="bx bx-chevron-left"></i>
+                </a>
+              </li>
+              
+              <li class="page-item" *ngFor="let page of getPageNumbers(pendingTotalPages)" 
+                  [class.active]="page === pendingCurrentPage">
+                <a class="page-link" (click)="onPendingPageChange(page)" href="javascript:void(0)">
+                  {{ page }}
+                </a>
+              </li>
 
-      <div class="col-md-4">
-        <label for="accountName" class="form-label">Account Name <span class="text-danger">*</span></label>
-        <input type="text" id="accountName" [(ngModel)]="selected.accountName" name="accountName" class="form-control" placeholder="Account Name" required>
-      </div>
-
-      <div class="col-md-4">
-        <label for="openingBalance" class="form-label">Opening Balance</label>
-        <input type="number" id="openingBalance" [(ngModel)]="selected.openingBalance" name="openingBalance" class="form-control" placeholder="0.00">
-      </div>
-
-      <div class="col-md-6">
-        <label for="department" class="form-label">Department <span class="text-danger">*</span></label>
-        <select id="department" class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
-          <option value="">Select Department</option>
-          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
-        </select>
-      </div>
-
-      <div class="col-md-6">
-        <label for="departmentUnit" class="form-label">Department Unit <span class="text-danger">*</span></label>
-        <select id="departmentUnit" class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
-          <option value="">Select Unit</option>
-          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
-        </select>
-      </div>
-
-      <div class="col-md-6">
-        <label for="officerInCharge" class="form-label">Officer In Charge</label>
-        <input type="text" id="officerInCharge" [(ngModel)]="selected.officerInCharge" name="officerInCharge" class="form-control" placeholder="Officer In Charge">
-      </div>
-
-      <div class="col-md-6">
-        <label for="signatories" class="form-label">Signatories</label>
-        <input type="text" id="signatories" [(ngModel)]="selected.signatories" name="signatories" class="form-control" placeholder="Signatories">
-      </div>
-
-      <div class="col-md-12">
-        <label for="remarks" class="form-label">Remarks</label>
-        <textarea id="remarks" [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks" rows="3"></textarea>
-      </div>
-
-      <div class="col-md-12 text-end">
-        <button type="submit" class="btn btn-primary me-2" [disabled]="!bankForm.valid">
-          <i class="fa fa-save me-1"></i> Create
-        </button>
-        <button type="button" class="btn btn-secondary" (click)="resetForm()">
-          <i class="fa fa-times me-1"></i> Clear
-        </button>
-      </div>
-    </form>
-  </div>
-
-  <div class="card mt-4 shadow p-3 border-start border-warning border-4" *ngIf="isAdmin && pendingAccounts.length > 0">
-    <h5 class="text-warning">
-      <i class="bx bx-time-five me-2"></i>Pending Approvals ({{ pendingAccounts.length }})
-    </h5>
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover table-striped text-center align-middle">
-        <thead class="table-warning">
-          <tr>
-            <th>ID</th>
-            <th>Bank</th>
-            <th>Account No</th>
-            <th>Type</th>
-            <th>Department</th>
-            <th>Requested By</th>
-            <th>Requested At</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of pendingAccounts">
-            <td>{{ item.id }}</td>
-            <td>{{ item.bankName }}</td>
-            <td>{{ item.accountNumber }}</td>
-            <td>{{ item.accountType }}</td>
-            <td>{{ item.department }}</td>
-            <td>{{ item.requestedBy }}</td>
-            <td>{{ item.requestedAt | date: 'short' }}</td>
-            <td>
-              <button class="btn btn-sm btn-success me-1" (click)="approveAccount(item.id!)">
-                <i class="bx bx-check"></i> Approve
-              </button>
-              <button class="btn btn-sm btn-danger" (click)="rejectAccount(item.id!)">
-                <i class="bx bx-x"></i> Reject
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div id="approved-table" class="card mt-4 shadow p-3 border-start border-success border-4">
-    <div class="d-flex justify-content-between align-items-center mb-3 no-print">
-      <h5 class="text-success">
-        <i class="bx bx-check-circle me-2"></i>Approved Bank Accounts ({{ approvedAccounts.length }})
-      </h5>
-      <div>
-        <button class="btn btn-outline-success btn-sm me-2" (click)="exportToExcel()">
-          <i class="fa fa-file-excel"></i> Excel
-        </button>
-        <button class="btn btn-outline-danger btn-sm me-2" (click)="exportToPDF()">
-          <i class="fa fa-file-pdf"></i> PDF
-        </button>
-        <button class="btn btn-outline-dark btn-sm" (click)="printTable()">
-          <i class="fa fa-print"></i> Print
-        </button>
+              <li class="page-item" [class.disabled]="pendingCurrentPage === pendingTotalPages">
+                <a class="page-link" (click)="onPendingPageChange(pendingCurrentPage + 1)" href="javascript:void(0)">
+                  <i class="bx bx-chevron-right"></i>
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="pendingCurrentPage === pendingTotalPages">
+                <a class="page-link" (click)="onPendingPageChange(pendingTotalPages)" href="javascript:void(0)">
+                  <i class="bx bx-chevrons-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
     </div>
 
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover table-striped text-center align-middle">
-        <thead class="table-success">
-          <tr>
-            <th>ID</th>
-            <th>Bank</th>
-            <th>Account No</th>
-            <th>Type</th>
-            <th>Name</th>
-            <th>Department</th>
-            <th>Unit</th>
-            <th>Approved By</th>
-            <th class="no-print">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of approvedAccounts">
-            <td>{{ item.id }}</td>
-            <td>{{ item.bankName }}</td>
-            <td>{{ item.accountNumber }}</td>
-            <td>{{ item.accountType }}</td>
-            <td>{{ item.accountName }}</td>
-            <td>{{ item.department }}</td>
-            <td>{{ item.departmentUnit }}</td>
-            <td>{{ item.approvedBy }}</td>
-            <td class="no-print">
-              <button class="btn btn-sm btn-danger" (click)="delete(item.id)" *ngIf="isAdmin">
-                <i class="fa fa-trash"></i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Approved Accounts -->
+    <div id="approved-table" class="card mt-4 shadow border-start border-success border-4">
+      <div class="card-header bg-transparent border-0">
+        <div class="d-flex justify-content-between align-items-center no-print">
+          <h5 class="text-success mb-0">
+            <i class="bx bx-check-circle me-2"></i>Approved Bank Accounts ({{ approvedTotalItems }})
+          </h5>
+          <div>
+            <button class="btn btn-outline-success btn-sm me-2" (click)="exportToExcel()">
+              <i class="fa fa-file-excel"></i> Excel
+            </button>
+            <button class="btn btn-outline-danger btn-sm me-2" (click)="exportToPDF()">
+              <i class="fa fa-file-pdf"></i> PDF
+            </button>
+            <button class="btn btn-outline-dark btn-sm" (click)="printTable()">
+              <i class="fa fa-print"></i> Print
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover table-striped text-center align-middle">
+            <thead class="table-success">
+              <tr>
+                <th>ID</th>
+                <th>Bank</th>
+                <th>Account No</th>
+                <th>Type</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Unit</th>
+                <th>Approved By</th>
+                <th class="no-print">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of paginatedApprovedAccounts">
+                <td>{{ item.id }}</td>
+                <td>{{ item.bankName }}</td>
+                <td>{{ item.accountNumber }}</td>
+                <td>{{ item.accountType }}</td>
+                <td>{{ item.accountName }}</td>
+                <td>{{ item.department }}</td>
+                <td>{{ item.departmentUnit }}</td>
+                <td>{{ item.approvedBy }}</td>
+                <td class="no-print">
+                  <button class="btn btn-sm btn-danger" (click)="delete(item.id)" *ngIf="isAdmin">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Controls for Approved -->
+        <div class="d-flex justify-content-between align-items-center mt-3 no-print" *ngIf="approvedTotalItems > 0">
+          <div class="d-flex align-items-center">
+            <label class="me-2 mb-0">Items per page:</label>
+            <select class="form-select form-select-sm" style="width: auto;" 
+                    [(ngModel)]="approvedPageSize" 
+                    (change)="onApprovedPageSizeChange(approvedPageSize)">
+              <option *ngFor="let size of approvedPageSizeOptions" [value]="size">{{ size }}</option>
+            </select>
+            <span class="ms-3 text-muted">
+              Showing {{ (approvedCurrentPage - 1) * approvedPageSize + 1 }} 
+              to {{ Math.min(approvedCurrentPage * approvedPageSize, approvedTotalItems) }} 
+              of {{ approvedTotalItems }} entries
+            </span>
+          </div>
+
+          <nav aria-label="Approved pagination">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" [class.disabled]="approvedCurrentPage === 1">
+                <a class="page-link" (click)="onApprovedPageChange(1)" href="javascript:void(0)">
+                  <i class="bx bx-chevrons-left"></i>
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="approvedCurrentPage === 1">
+                <a class="page-link" (click)="onApprovedPageChange(approvedCurrentPage - 1)" href="javascript:void(0)">
+                  <i class="bx bx-chevron-left"></i>
+                </a>
+              </li>
+              
+              <li class="page-item" *ngFor="let page of getPageNumbers(approvedTotalPages)" 
+                  [class.active]="page === approvedCurrentPage">
+                <a class="page-link" (click)="onApprovedPageChange(page)" href="javascript:void(0)">
+                  {{ page }}
+                </a>
+              </li>
+
+              <li class="page-item" [class.disabled]="approvedCurrentPage === approvedTotalPages">
+                <a class="page-link" (click)="onApprovedPageChange(approvedCurrentPage + 1)" href="javascript:void(0)">
+                  <i class="bx bx-chevron-right"></i>
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="approvedCurrentPage === approvedTotalPages">
+                <a class="page-link" (click)="onApprovedPageChange(approvedTotalPages)" href="javascript:void(0)">
+                  <i class="bx bx-chevrons-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rejected Accounts -->
+    <div id="rejected-table" class="card mt-4 shadow border-start border-danger border-4">
+      <div class="card-header bg-transparent border-0">
+        <h5 class="text-danger mb-0">
+          <i class="bx bx-x-circle me-2"></i>Rejected Bank Accounts ({{ rejectedTotalItems }})
+        </h5>
+      </div>
+
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover table-striped text-center align-middle">
+            <thead class="table-danger">
+              <tr>
+                <th>ID</th>
+                <th>Bank</th>
+                <th>Account No</th>
+                <th>Type</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Unit</th>
+                <th>Rejected By</th>
+                <th>Rejection Reason</th>
+                <th class="no-print">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of paginatedRejectedAccounts">
+                <td>{{ item.id }}</td>
+                <td>{{ item.bankName }}</td>
+                <td>{{ item.accountNumber }}</td>
+                <td>{{ item.accountType }}</td>
+                <td>{{ item.accountName }}</td>
+                <td>{{ item.department }}</td>
+                <td>{{ item.departmentUnit }}</td>
+                <td>{{ item.approvedBy }}</td>
+                <td>{{ item.approvalRemarks }}</td>
+                <td class="no-print">
+                  <button class="btn btn-sm btn-danger" (click)="delete(item.id)" *ngIf="isAdmin">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Controls for Rejected -->
+        <div class="d-flex justify-content-between align-items-center mt-3 no-print" *ngIf="rejectedTotalItems > 0">
+          <div class="d-flex align-items-center">
+            <label class="me-2 mb-0">Items per page:</label>
+            <select class="form-select form-select-sm" style="width: auto;" 
+                    [(ngModel)]="rejectedPageSize" 
+                    (change)="onRejectedPageSizeChange(rejectedPageSize)">
+              <option *ngFor="let size of rejectedPageSizeOptions" [value]="size">{{ size }}</option>
+            </select>
+            <span class="ms-3 text-muted">
+              Showing {{ (rejectedCurrentPage - 1) * rejectedPageSize + 1 }} 
+              to {{ Math.min(rejectedCurrentPage * rejectedPageSize, rejectedTotalItems) }} 
+              of {{ rejectedTotalItems }} entries
+            </span>
+          </div>
+
+          <nav aria-label="Rejected pagination">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" [class.disabled]="rejectedCurrentPage === 1">
+                <a class="page-link" (click)="onRejectedPageChange(1)" href="javascript:void(0)">
+                  <i class="bx bx-chevrons-left"></i>
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="rejectedCurrentPage === 1">
+                <a class="page-link" (click)="onRejectedPageChange(rejectedCurrentPage - 1)" href="javascript:void(0)">
+                  <i class="bx bx-chevron-left"></i>
+                </a>
+              </li>
+              
+              <li class="page-item" *ngFor="let page of getPageNumbers(rejectedTotalPages)" 
+                  [class.active]="page === rejectedCurrentPage">
+                <a class="page-link" (click)="onRejectedPageChange(page)" href="javascript:void(0)">
+                  {{ page }}
+                </a>
+              </li>
+
+              <li class="page-item" [class.disabled]="rejectedCurrentPage === rejectedTotalPages">
+                <a class="page-link" (click)="onRejectedPageChange(rejectedCurrentPage + 1)" href="javascript:void(0)">
+                  <i class="bx bx-chevron-right"></i>
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="rejectedCurrentPage === rejectedTotalPages">
+                <a class="page-link" (click)="onRejectedPageChange(rejectedTotalPages)" href="javascript:void(0)">
+                  <i class="bx bx-chevrons-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div id="rejected-table" class="card mt-4 shadow p-3 border-start border-danger border-4">
-    <h5 class="text-danger">
-      <i class="bx bx-x-circle me-2"></i>Rejected Bank Accounts ({{ rejectedAccounts.length }})
-    </h5>
+  <!-- FORM VIEW -->
+  <div *ngIf="currentView === 'form'">
+    <!-- Page Header for Form -->
+    <app-page-header
+      [title]="'Add New Bank Account'"
+      [subtitle]="'Complete the form below to create a new bank account'"
+      [icon]="'bx bx-plus-circle'"
+      [breadcrumbs]="breadcrumbs"
+      [actions]="formHeaderActions"
+      [showBackButton]="true"
+      (actionClick)="onHeaderAction($event)"
+      (backClick)="showList()">
+    </app-page-header>
 
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover table-striped text-center align-middle">
-        <thead class="table-danger">
-          <tr>
-            <th>ID</th>
-            <th>Bank</th>
-            <th>Account No</th>
-            <th>Type</th>
-            <th>Name</th>
-            <th>Department</th>
-            <th>Unit</th>
-            <th>Rejected By</th>
-            <th>Rejection Reason</th>
-            <th class="no-print">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of rejectedAccounts">
-            <td>{{ item.id }}</td>
-            <td>{{ item.bankName }}</td>
-            <td>{{ item.accountNumber }}</td>
-            <td>{{ item.accountType }}</td>
-            <td>{{ item.accountName }}</td>
-            <td>{{ item.department }}</td>
-            <td>{{ item.departmentUnit }}</td>
-            <td>{{ item.approvedBy }}</td>
-            <td>{{ item.approvalRemarks }}</td>
-            <td class="no-print">
-              <button class="btn btn-sm btn-danger" (click)="delete(item.id)" *ngIf="isAdmin">
-                <i class="fa fa-trash"></i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Form Card -->
+    <div class="card shadow p-4 border-start border-primary border-4">
+      <form (ngSubmit)="save()" class="row g-3" #bankForm="ngForm">
+        <div class="col-md-6">
+          <label for="bankName" class="form-label fw-bold">Bank Name <span class="text-danger">*</span></label>
+          <select id="bankName" class="form-select" [(ngModel)]="selected.bankName" name="bankName" required>
+            <option value="">Select Bank</option>
+            <option *ngFor="let bank of banks" [value]="bank">{{ bank }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label for="accountNumber" class="form-label fw-bold">Account Number <span class="text-danger">*</span></label>
+          <input type="text" id="accountNumber" [(ngModel)]="selected.accountNumber" name="accountNumber" class="form-control" placeholder="Account Number" required>
+        </div>
+
+        <div class="col-md-4">
+          <label for="accountType" class="form-label">Account Type <span class="text-danger">*</span></label>
+          <select id="accountType" class="form-select" [(ngModel)]="selected.accountType" name="accountType" required>
+            <option value="">Select Type</option>
+            <option *ngFor="let type of accountTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label for="accountName" class="form-label">Account Name <span class="text-danger">*</span></label>
+          <input type="text" id="accountName" [(ngModel)]="selected.accountName" name="accountName" class="form-control" placeholder="Account Name" required>
+        </div>
+
+        <div class="col-md-4">
+          <label for="openingBalance" class="form-label">Opening Balance</label>
+          <input type="number" id="openingBalance" [(ngModel)]="selected.openingBalance" name="openingBalance" class="form-control" placeholder="0.00">
+        </div>
+
+        <div class="col-md-6">
+          <label for="department" class="form-label">Department <span class="text-danger">*</span></label>
+          <select id="department" class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
+            <option value="">Select Department</option>
+            <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label for="departmentUnit" class="form-label">Department Unit <span class="text-danger">*</span></label>
+          <select id="departmentUnit" class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
+            <option value="">Select Unit</option>
+            <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label for="officerInCharge" class="form-label">Officer In Charge</label>
+          <input type="text" id="officerInCharge" [(ngModel)]="selected.officerInCharge" name="officerInCharge" class="form-control" placeholder="Officer In Charge">
+        </div>
+
+        <div class="col-md-6">
+          <label for="signatories" class="form-label">Signatories</label>
+          <input type="text" id="signatories" [(ngModel)]="selected.signatories" name="signatories" class="form-control" placeholder="Signatories">
+        </div>
+
+        <div class="col-md-12">
+          <label for="remarks" class="form-label">Remarks</label>
+          <textarea id="remarks" [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks" rows="3"></textarea>
+        </div>
+
+        <div class="col-md-12 text-end">
+          <button type="submit" class="btn btn-primary me-2" [disabled]="!bankForm.valid">
+            <i class="fa fa-save me-1"></i> Create Account
+          </button>
+          <button type="button" class="btn btn-secondary me-2" (click)="resetForm()">
+            <i class="fa fa-times me-1"></i> Clear
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="showList()">
+            <i class="fa fa-arrow-left me-1"></i> Cancel
+          </button>
+        </div>
+      </form>
     </div>
   </div>
+
 </div>

@@ -53,6 +53,7 @@ import { ImprestComponent } from './imprests/imprests.component';
 import { MotorVehicleComponent } from './motor-vehicles/motor-vehicles.component';
 import { FurnitureFittingComponent } from './furniture-fittings/furniture-fittings.component';
 import { AssetHandoverComponent } from './asset-handovers/asset-handovers.component';
+import { PageHeaderComponent } from 'src/app/shared/components/page-header/page-header.component';
 
 const config: DropzoneConfigInterface = {
   url: 'https://httpbin.org/post',
@@ -61,7 +62,7 @@ const config: DropzoneConfigInterface = {
 
 @NgModule({
   // tslint:disable-next-line: max-line-length
-  declarations: [ProductsComponent , AddDriverComponent,AddCustomerComponent,
+  declarations: [PageHeaderComponent,ProductsComponent , AddDriverComponent,AddCustomerComponent,
     AddproductComponent,ProductdetailComponent,
      ShopsComponent, CheckoutComponent, CartComponent, OrdersComponent, BankAccountComponent, AccountListComponent, FurnitureFittingComponent, PlantMachineryComponent, PortableItemsComponent,
       MotorVehicleComponent, LandRegisterComponent, BuildingsRegisterComponent, 

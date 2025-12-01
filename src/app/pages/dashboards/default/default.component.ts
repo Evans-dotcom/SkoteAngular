@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { emailSentBarChart, monthlyEarningChart } from './data';
 import { ChartType } from './dashboard.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -64,11 +65,28 @@ export class DefaultComponent implements OnInit, OnDestroy {
     { account: 'Bank of America - 9012', type: 'Transfer', amount: 1500, date: '2024-01-13', status: 'Pending' }
   ];
 
-  pendingBankAccounts: BankAccount[] = [];
-  approvedBankAccounts: BankAccount[] = [];
-  rejectedBankAccounts: BankAccount[] = [];
+  // Single array to hold all bank accounts
+  allBankAccounts: BankAccount[] = [];
+  recentBankAccounts: BankAccount[] = [];
   selectedBankAccount: BankAccount | null = null;
   accountDetailsModal: Modal | null = null;
+
+  // Computed counts
+  get pendingCount(): number {
+    return this.allBankAccounts.filter(a => a.status === 'Open').length;
+  }
+
+  get approvedCount(): number {
+    return this.allBankAccounts.filter(a => a.status === 'Approved').length;
+  }
+
+  get rejectedCount(): number {
+    return this.allBankAccounts.filter(a => a.status === 'Rejected').length;
+  }
+
+  get totalCount(): number {
+    return this.allBankAccounts.length;
+  }
 
   unreadNotificationCount: number = 0;
   notificationSubscription: Subscription | null = null;
@@ -81,7 +99,8 @@ export class DefaultComponent implements OnInit, OnDestroy {
     private eventService: EventService,
     public authService: AuthenticationService,
     private bankAccountService: BankAccountService,
-    private emailNotificationService: EmailNotificationService
+    private emailNotificationService: EmailNotificationService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -105,11 +124,8 @@ export class DefaultComponent implements OnInit, OnDestroy {
 
     this.fetchData();
 
-    if (this.isAdmin) {
-      this.loadPendingBankAccounts();
-      this.loadApprovedBankAccounts();
-      this.loadRejectedBankAccounts();
-    }
+    // Load all bank accounts
+    this.loadAllBankAccounts();
 
     this.loadNotificationCount();
     this.startNotificationRefresh();
@@ -130,35 +146,17 @@ export class DefaultComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadPendingBankAccounts() {
-    this.bankAccountService.getPending().subscribe({
+  loadAllBankAccounts() {
+    this.bankAccountService.getAll().subscribe({
       next: (data) => {
-        this.pendingBankAccounts = data;
+        this.allBankAccounts = data;
+        // Sort by ID descending (most recent first) and take top 10 for display
+        this.recentBankAccounts = data
+          .sort((a, b) => (b.id || 0) - (a.id || 0))
+          .slice(0, 10);
       },
       error: (error) => {
-        console.error('Error loading pending accounts:', error);
-      }
-    });
-  }
-
-  loadApprovedBankAccounts() {
-    this.bankAccountService.getApproved().subscribe({
-      next: (data) => {
-        this.approvedBankAccounts = data;
-      },
-      error: (error) => {
-        console.error('Error loading approved accounts:', error);
-      }
-    });
-  }
-
-  loadRejectedBankAccounts() {
-    this.bankAccountService.getRejected().subscribe({
-      next: (data) => {
-        this.rejectedBankAccounts = data;
-      },
-      error: (error) => {
-        console.error('Error loading rejected accounts:', error);
+        console.error('Error loading bank accounts:', error);
       }
     });
   }
@@ -236,8 +234,7 @@ export class DefaultComponent implements OnInit, OnDestroy {
               text: 'Bank account has been approved successfully and user has been notified via email.',
               timer: 3000
             });
-            this.loadPendingBankAccounts();
-            this.loadApprovedBankAccounts();
+            this.loadAllBankAccounts();
             this.loadNotificationCount();
             if (this.accountDetailsModal) {
               this.accountDetailsModal.hide();
@@ -298,8 +295,7 @@ export class DefaultComponent implements OnInit, OnDestroy {
               text: 'Bank account has been rejected and user has been notified via email.',
               timer: 3000
             });
-            this.loadPendingBankAccounts();
-            this.loadRejectedBankAccounts();
+            this.loadAllBankAccounts();
             this.loadNotificationCount();
             if (this.accountDetailsModal) {
               this.accountDetailsModal.hide();
@@ -316,6 +312,10 @@ export class DefaultComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  navigateToBankList() {
+    this.router.navigate(['/ecommerce/banklist']);
   }
 
   openModal() {
