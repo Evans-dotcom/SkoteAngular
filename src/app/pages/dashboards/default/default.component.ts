@@ -65,28 +65,17 @@ export class DefaultComponent implements OnInit, OnDestroy {
     { account: 'Bank of America - 9012', type: 'Transfer', amount: 1500, date: '2024-01-13', status: 'Pending' }
   ];
 
-  // Single array to hold all bank accounts
+  // Categorized bank accounts
   allBankAccounts: BankAccount[] = [];
   recentBankAccounts: BankAccount[] = [];
   selectedBankAccount: BankAccount | null = null;
   accountDetailsModal: Modal | null = null;
 
-  // Computed counts
-  get pendingCount(): number {
-    return this.allBankAccounts.filter(a => a.status === 'Open').length;
-  }
-
-  get approvedCount(): number {
-    return this.allBankAccounts.filter(a => a.status === 'Approved').length;
-  }
-
-  get rejectedCount(): number {
-    return this.allBankAccounts.filter(a => a.status === 'Rejected').length;
-  }
-
-  get totalCount(): number {
-    return this.allBankAccounts.length;
-  }
+  // Bank account counts - now as properties instead of getters
+  pendingCount: number = 0;
+  approvedCount: number = 0;
+  rejectedCount: number = 0;
+  totalCount: number = 0;
 
   unreadNotificationCount: number = 0;
   notificationSubscription: Subscription | null = null;
@@ -150,15 +139,50 @@ export class DefaultComponent implements OnInit, OnDestroy {
     this.bankAccountService.getAll().subscribe({
       next: (data) => {
         this.allBankAccounts = data;
+        
+        // Calculate counts
+        this.updateBankAccountCounts();
+        
         // Sort by ID descending (most recent first) and take top 10 for display
         this.recentBankAccounts = data
           .sort((a, b) => (b.id || 0) - (a.id || 0))
           .slice(0, 10);
+
+        console.log('Bank Accounts Loaded:', {
+          total: this.totalCount,
+          pending: this.pendingCount,
+          approved: this.approvedCount,
+          rejected: this.rejectedCount
+        });
       },
       error: (error) => {
         console.error('Error loading bank accounts:', error);
+        // Reset counts on error
+        this.pendingCount = 0;
+        this.approvedCount = 0;
+        this.rejectedCount = 0;
+        this.totalCount = 0;
       }
     });
+  }
+
+  /**
+   * Calculate and update bank account counts based on status
+   */
+  private updateBankAccountCounts() {
+    this.pendingCount = this.allBankAccounts.filter(a => 
+      a.status === 'Open' || a.status === 'Pending'
+    ).length;
+    
+    this.approvedCount = this.allBankAccounts.filter(a => 
+      a.status === 'Approved'
+    ).length;
+    
+    this.rejectedCount = this.allBankAccounts.filter(a => 
+      a.status === 'Rejected'
+    ).length;
+    
+    this.totalCount = this.allBankAccounts.length;
   }
 
   loadNotificationCount() {
@@ -232,7 +256,8 @@ export class DefaultComponent implements OnInit, OnDestroy {
               icon: 'success',
               title: 'Approved',
               text: 'Bank account has been approved successfully and user has been notified via email.',
-              timer: 3000
+              timer: 3000,
+              showConfirmButton: false
             });
             this.loadAllBankAccounts();
             this.loadNotificationCount();
@@ -293,7 +318,8 @@ export class DefaultComponent implements OnInit, OnDestroy {
               icon: 'success',
               title: 'Rejected',
               text: 'Bank account has been rejected and user has been notified via email.',
-              timer: 3000
+              timer: 3000,
+              showConfirmButton: false
             });
             this.loadAllBankAccounts();
             this.loadNotificationCount();
@@ -307,6 +333,52 @@ export class DefaultComponent implements OnInit, OnDestroy {
               icon: 'error',
               title: 'Error',
               text: error || 'Failed to reject account'
+            });
+          }
+        });
+      }
+    });
+  }
+
+  deleteBankAccount(id?: number) {
+    if (!id) return;
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this bank account!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Deleting...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        this.bankAccountService.delete(id).subscribe({
+          next: () => {
+            Swal.close();
+            Swal.fire({
+              icon: 'success',
+              title: 'Deleted',
+              text: 'Bank account has been deleted successfully.',
+              timer: 2000,
+              showConfirmButton: false
+            });
+            this.loadAllBankAccounts();
+          },
+          error: (error) => {
+            Swal.close();
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: error || 'Failed to delete account'
             });
           }
         });
@@ -345,6 +417,7 @@ export class DefaultComponent implements OnInit, OnDestroy {
       case 'Rejected':
         return 'bg-danger';
       case 'Open':
+      case 'Pending':
         return 'bg-warning';
       default:
         return 'bg-secondary';
