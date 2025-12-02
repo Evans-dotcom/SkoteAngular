@@ -1,0 +1,57 @@
+<div class="page-header-wrapper">
+  <!-- Breadcrumb Section -->
+  <nav aria-label="breadcrumb" class="mb-3" *ngIf="breadcrumbs.length > 0">
+    <ol class="breadcrumb bg-light p-3 rounded shadow-sm">
+      <li class="breadcrumb-item" *ngFor="let crumb of breadcrumbs" 
+          [class.active]="crumb.active">
+        <a *ngIf="!crumb.active && crumb.url" [href]="crumb.url" class="text-decoration-none">
+          {{ crumb.label }}
+        </a>
+        <span *ngIf="crumb.active">{{ crumb.label }}</span>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Header Content -->
+  <div class="page-header shadow-sm p-4 mb-4 bg-white rounded border-start border-primary border-4">
+    <div class="row align-items-center">
+      <!-- Left Side: Title and Subtitle -->
+      <div class="col-md-8">
+        <div class="d-flex align-items-center">
+          <!-- Back Button -->
+          <button 
+            *ngIf="showBackButton" 
+            class="btn btn-outline-secondary btn-sm me-3" 
+            (click)="onBackClick()">
+            <i class="bx bx-arrow-back"></i>
+          </button>
+
+          <!-- Icon -->
+          <div *ngIf="icon" class="header-icon me-3">
+            <i [class]="icon + ' text-primary'" style="font-size: 2.5rem;"></i>
+          </div>
+
+          <!-- Title & Subtitle -->
+          <div>
+            <h3 class="mb-1 text-primary fw-bold">{{ title }}</h3>
+            <p class="text-muted mb-0" *ngIf="subtitle">{{ subtitle }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side: Action Buttons -->
+      <div class="col-md-4 text-end">
+        <div class="btn-group" role="group" *ngIf="actions.length > 0">
+          <button 
+            *ngFor="let action of actions" 
+            type="button" 
+            [class]="'btn ' + action.cssClass"
+            (click)="onActionClick(action.action)">
+            <i [class]="action.icon + ' me-1'"></i>
+            {{ action.label }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,216 +1,756 @@
-<div class="container mt-4">
-  <div class="card shadow p-4 border-start border-primary border-4">
-    <h4 class="mb-3 text-primary">Add Bank Account</h4>
+<div class="container mt-0">
+  
+  <!-- LIST VIEW -->
+  <div *ngIf="currentView === 'list'">
+    <!-- Page Header -->
+    <app-page-header
+      [title]="'Bank Accounts Management'"
+      [subtitle]="'Manage and track all bank accounts across departments'"
+      [icon]="'bx bx-money'"
+      [breadcrumbs]="breadcrumbs"
+      [actions]="headerActions"
+      (actionClick)="onHeaderAction($event)">
+    </app-page-header>
 
-    <form (ngSubmit)="save()" class="row g-3" #bankForm="ngForm">
-      <div class="col-md-6">
-        <label for="bankName" class="form-label fw-bold">Bank Name <span class="text-danger">*</span></label>
-        <select id="bankName" class="form-select" [(ngModel)]="selected.bankName" name="bankName" required>
-          <option value="">Select Bank</option>
-          <option *ngFor="let bank of banks" [value]="bank">{{ bank }}</option>
-        </select>
-      </div>
-
-      <div class="col-md-6">
-        <label for="accountNumber" class="form-label fw-bold">Account Number <span class="text-danger">*</span></label>
-        <input type="text" id="accountNumber" [(ngModel)]="selected.accountNumber" name="accountNumber" class="form-control" placeholder="Account Number" required>
-      </div>
-
-      <div class="col-md-4">
-        <label for="accountType" class="form-label">Account Type <span class="text-danger">*</span></label>
-        <select id="accountType" class="form-select" [(ngModel)]="selected.accountType" name="accountType" required>
-          <option value="">Select Type</option>
-          <option *ngFor="let type of accountTypes" [value]="type">{{ type }}</option>
-        </select>
-      </div>
-
-      <div class="col-md-4">
-        <label for="accountName" class="form-label">Account Name <span class="text-danger">*</span></label>
-        <input type="text" id="accountName" [(ngModel)]="selected.accountName" name="accountName" class="form-control" placeholder="Account Name" required>
-      </div>
-
-      <div class="col-md-4">
-        <label for="openingBalance" class="form-label">Opening Balance</label>
-        <input type="number" id="openingBalance" [(ngModel)]="selected.openingBalance" name="openingBalance" class="form-control" placeholder="0.00">
-      </div>
-
-      <div class="col-md-6">
-        <label for="department" class="form-label">Department <span class="text-danger">*</span></label>
-        <select id="department" class="form-select" [(ngModel)]="selected.department" name="department" (change)="onDepartmentChange()" required>
-          <option value="">Select Department</option>
-          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
-        </select>
-      </div>
-
-      <div class="col-md-6">
-        <label for="departmentUnit" class="form-label">Department Unit <span class="text-danger">*</span></label>
-        <select id="departmentUnit" class="form-select" [(ngModel)]="selected.departmentUnit" name="departmentUnit" required>
-          <option value="">Select Unit</option>
-          <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
-        </select>
-      </div>
-
-      <div class="col-md-6">
-        <label for="officerInCharge" class="form-label">Officer In Charge</label>
-        <input type="text" id="officerInCharge" [(ngModel)]="selected.officerInCharge" name="officerInCharge" class="form-control" placeholder="Officer In Charge">
-      </div>
-
-      <div class="col-md-6">
-        <label for="signatories" class="form-label">Signatories</label>
-        <input type="text" id="signatories" [(ngModel)]="selected.signatories" name="signatories" class="form-control" placeholder="Signatories">
-      </div>
-
-      <div class="col-md-12">
-        <label for="remarks" class="form-label">Remarks</label>
-        <textarea id="remarks" [(ngModel)]="selected.remarks" name="remarks" class="form-control" placeholder="Remarks" rows="3"></textarea>
-      </div>
-
-      <div class="col-md-12 text-end">
-        <button type="submit" class="btn btn-primary me-2" [disabled]="!bankForm.valid">
-          <i class="fa fa-save me-1"></i> Create
-        </button>
-        <button type="button" class="btn btn-secondary" (click)="resetForm()">
-          <i class="fa fa-times me-1"></i> Clear
-        </button>
-      </div>
-    </form>
-  </div>
-
-  <div class="card mt-4 shadow p-3 border-start border-warning border-4" *ngIf="isAdmin && pendingAccounts.length > 0">
-    <h5 class="text-warning">
-      <i class="bx bx-time-five me-2"></i>Pending Approvals ({{ pendingAccounts.length }})
-    </h5>
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover table-striped text-center align-middle">
-        <thead class="table-warning">
-          <tr>
-            <th>ID</th>
-            <th>Bank</th>
-            <th>Account No</th>
-            <th>Type</th>
-            <th>Department</th>
-            <th>Requested By</th>
-            <th>Requested At</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of pendingAccounts">
-            <td>{{ item.id }}</td>
-            <td>{{ item.bankName }}</td>
-            <td>{{ item.accountNumber }}</td>
-            <td>{{ item.accountType }}</td>
-            <td>{{ item.department }}</td>
-            <td>{{ item.requestedBy }}</td>
-            <td>{{ item.requestedAt | date: 'short' }}</td>
-            <td>
-              <button class="btn btn-sm btn-success me-1" (click)="approveAccount(item.id!)">
-                <i class="bx bx-check"></i> Approve
+    <!-- Search Bar -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body p-3">
+        <div class="row g-3">
+          <div class="col-md-8">
+            <div class="input-group">
+              <span class="input-group-text bg-primary text-white">
+                <i class="bx bx-search"></i>
+              </span>
+              <input 
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="searchTerm" 
+                (ngModelChange)="applySearch()"
+                placeholder="Search by bank name, account number, department, account name...">
+              <button 
+                class="btn btn-outline-secondary" 
+                type="button"
+                (click)="clearSearch()"
+                *ngIf="searchTerm">
+                <i class="bx bx-x"></i> Clear
               </button>
-              <button class="btn btn-sm btn-danger" (click)="rejectAccount(item.id!)">
-                <i class="bx bx-x"></i> Reject
+              <button 
+                class="btn btn-outline-primary" 
+                type="button"
+                (click)="toggleAdvancedSearch()">
+                <i class="bx bx-filter-alt"></i> Advanced
               </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex gap-2">
+              <div class="flex-grow-1">
+                <select class="form-select" [(ngModel)]="searchType" (change)="applySearch()">
+                  <option value="all">Search All Sections</option>
+                  <option value="pending" *ngIf="isAdmin">Pending Approvals</option>
+                  <option value="approved">Approved Accounts</option>
+                  <option value="rejected">Rejected Accounts</option>
+                </select>
+              </div>
+             <button 
+              class="btn btn-outline-info" 
+              type="button"
+              (click)="refreshData()"
+              title="Refresh">
+              <i class="bi bi-arrow-repeat"></i>
+            </button>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Advanced Search Options -->
+        <div class="row g-3 mt-3" *ngIf="showAdvancedSearch">
+          <div class="col-md-3">
+            <label class="form-label small fw-bold">Bank Name</label>
+            <select class="form-select form-select-sm" [(ngModel)]="searchFilters.bankName" (change)="applySearch()">
+              <option value="">All Banks</option>
+              <option *ngFor="let bank of banks" [value]="bank">{{ bank }}</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-bold">Department</label>
+            <select class="form-select form-select-sm" [(ngModel)]="searchFilters.department" (change)="applySearch()">
+              <option value="">All Departments</option>
+              <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-bold">Account Type</label>
+            <select class="form-select form-select-sm" [(ngModel)]="searchFilters.accountType" (change)="applySearch()">
+              <option value="">All Types</option>
+              <option *ngFor="let type of accountTypes" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-bold">Status</label>
+            <select class="form-select form-select-sm" [(ngModel)]="searchFilters.status" (change)="applySearch()">
+              <option value="">All Statuses</option>
+              <option value="Open">Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-bold">Date Range</label>
+            <div class="input-group input-group-sm">
+              <input 
+                type="date" 
+                class="form-control" 
+                [(ngModel)]="searchFilters.startDate" 
+                (change)="applySearch()">
+              <span class="input-group-text">to</span>
+              <input 
+                type="date" 
+                class="form-control" 
+                [(ngModel)]="searchFilters.endDate" 
+                (change)="applySearch()">
+            </div>
+          </div>
+          <div class="col-md-6 d-flex align-items-end">
+            <button class="btn btn-sm btn-outline-danger me-2" (click)="resetFilters()">
+              <i class="bx bx-reset"></i> Reset Filters
+            </button>
+            <span class="small text-muted ms-2">
+              Showing {{ getFilteredTotal() }} filtered results
+            </span>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="row g-2 mt-3" *ngIf="!showAdvancedSearch">
+          <div class="col-auto">
+            <span class="badge bg-warning">
+              <i class="bx bx-time-five me-1"></i> Pending: {{ pendingTotalItems }}
+            </span>
+          </div>
+          <div class="col-auto">
+            <span class="badge bg-success">
+              <i class="bx bx-check-circle me-1"></i> Approved: {{ approvedTotalItems }}
+            </span>
+          </div>
+          <div class="col-auto">
+            <span class="badge bg-danger">
+              <i class="bx bx-x-circle me-1"></i> Rejected: {{ rejectedTotalItems }}
+            </span>
+          </div>
+          <div class="col-auto ms-auto">
+            <span class="small text-muted">
+              Total: {{ getTotalAccounts() }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Approvals -->
+    <div class="card shadow border-start border-warning border-4" 
+         *ngIf="isAdmin && (pendingTotalItems > 0 || searchTerm || showAdvancedSearch)">
+      <div class="card-header bg-transparent border-0">
+        <h5 class="text-warning mb-0">
+          <i class="bx bx-time-five me-2"></i>
+          Pending Approvals 
+          <span class="badge bg-warning ms-2">{{ pendingTotalItems }}</span>
+          <span class="small text-muted ms-2" *ngIf="searchTerm || showAdvancedSearch">
+            (Filtered: {{ getFilteredPendingCount() }})
+          </span>
+        </h5>
+      </div>
+      <div class="card-body">
+        <div *ngIf="getFilteredPendingCount() === 0 && (searchTerm || showAdvancedSearch)" class="text-center py-4">
+          <i class="bx bx-search-alt text-muted mb-3" style="font-size: 3rem;"></i>
+          <p class="text-muted">No pending accounts match your search criteria.</p>
+          <button class="btn btn-sm btn-outline-warning" (click)="clearSearch()">
+            Clear Search
+          </button>
+        </div>
+        
+        <div class="table-responsive" *ngIf="getFilteredPendingCount() > 0">
+          <table class="table table-bordered table-hover table-striped text-center align-middle">
+            <thead class="table-warning">
+              <tr>
+                <th>ID</th>
+                <th>Bank</th>
+                <th>Account No</th>
+                <th>Type</th>
+                <th>Department</th>
+                <th>Requested By</th>
+                <th>Requested At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of getPaginatedPendingAccounts()">
+                <td>{{ item.id }}</td>
+                <td>
+                  <i class="bx bx-bank me-1"></i>
+                  {{ item.bankName }}
+                </td>
+                <td><strong>{{ item.accountNumber }}</strong></td>
+                <td>
+                  <span class="badge bg-light text-dark">{{ item.accountType }}</span>
+                </td>
+                <td>{{ item.department }}</td>
+                <td>
+                  <span class="badge bg-info">{{ item.requestedBy }}</span>
+                </td>
+                <td>{{ item.requestedAt | date: 'short' }}</td>
+                <td>
+                  <button class="btn btn-sm btn-success me-1" (click)="approveAccount(item.id!)" title="Approve">
+                    <i class="bx bx-check"></i> Approve
+                  </button>
+                  <button class="btn btn-sm btn-danger" (click)="rejectAccount(item.id!)" title="Reject">
+                    <i class="bx bx-x"></i> Reject
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Controls for Pending -->
+        <div class="d-flex justify-content-between align-items-center mt-3" 
+             *ngIf="getFilteredPendingCount() > 0 && paginatedPendingAccounts.length > 0">
+          <div class="d-flex align-items-center">
+            <label class="me-2 mb-0">Items per page:</label>
+            <select class="form-select form-select-sm" style="width: auto;" 
+                    [(ngModel)]="pendingPageSize" 
+                    (change)="onPendingPageSizeChange()">
+              <option *ngFor="let size of pendingPageSizeOptions" [value]="size">{{ size }}</option>
+            </select>
+            <span class="ms-3 text-muted">
+              Showing {{ (pendingCurrentPage - 1) * pendingPageSize + 1 }} 
+              to {{ Math.min(pendingCurrentPage * pendingPageSize, getFilteredPendingCount()) }} 
+              of {{ getFilteredPendingCount() }} entries
+            </span>
+          </div>
+
+          <nav aria-label="Pending pagination">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" [class.disabled]="pendingCurrentPage === 1">
+                <a class="page-link" (click)="onPendingPageChange(1)" href="javascript:void(0)">
+                  <i class="bx bx-chevrons-left"></i>
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="pendingCurrentPage === 1">
+                <a class="page-link" (click)="onPendingPageChange(pendingCurrentPage - 1)" href="javascript:void(0)">
+                  <i class="bx bx-chevron-left"></i>
+                </a>
+              </li>
+              
+              <li class="page-item" *ngFor="let page of getPageNumbers(getPendingTotalPages())" 
+                  [class.active]="page === pendingCurrentPage">
+                <a class="page-link" (click)="onPendingPageChange(page)" href="javascript:void(0)">
+                  {{ page }}
+                </a>
+              </li>
+
+              <li class="page-item" [class.disabled]="pendingCurrentPage === getPendingTotalPages()">
+                <a class="page-link" (click)="onPendingPageChange(pendingCurrentPage + 1)" href="javascript:void(0)">
+                  <i class="bx bx-chevron-right"></i>
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="pendingCurrentPage === getPendingTotalPages()">
+                <a class="page-link" (click)="onPendingPageChange(getPendingTotalPages())" href="javascript:void(0)">
+                  <i class="bx bx-chevrons-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- Approved Accounts -->
+    <div id="approved-table" class="card mt-4 shadow border-start border-success border-4">
+      <div class="card-header bg-transparent border-0">
+        <div class="d-flex justify-content-between align-items-center no-print">
+          <h5 class="text-success mb-0">
+            <i class="bx bx-check-circle me-2"></i>
+            Approved Bank Accounts 
+            <span class="badge bg-success ms-2">{{ approvedTotalItems }}</span>
+            <span class="small text-muted ms-2" *ngIf="searchTerm || showAdvancedSearch">
+              (Filtered: {{ getFilteredApprovedCount() }})
+            </span>
+          </h5>
+          <div>
+            <button class="btn btn-outline-success btn-sm me-2" (click)="exportToExcel()" title="Export to Excel">
+              <i class="fa fa-file-excel"></i> Excel
+            </button>
+            <button class="btn btn-outline-danger btn-sm me-2" (click)="exportToPDF()" title="Export to PDF">
+              <i class="fa fa-file-pdf"></i> PDF
+            </button>
+            <button class="btn btn-outline-dark btn-sm" (click)="printTable()" title="Print">
+              <i class="fa fa-print"></i> Print
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div *ngIf="getFilteredApprovedCount() === 0 && (searchTerm || showAdvancedSearch)" class="text-center py-4">
+          <i class="bx bx-search-alt text-muted mb-3" style="font-size: 3rem;"></i>
+          <p class="text-muted">No approved accounts match your search criteria.</p>
+          <button class="btn btn-sm btn-outline-success" (click)="clearSearch()">
+            Clear Search
+          </button>
+        </div>
+
+        <div class="table-responsive" *ngIf="getFilteredApprovedCount() > 0">
+          <table class="table table-bordered table-hover table-striped text-center align-middle">
+            <thead class="table-success">
+              <tr>
+                <th>ID</th>
+                <th>Bank</th>
+                <th>Account No</th>
+                <th>Type</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Unit</th>
+                <th>Approved By</th>
+                <th class="no-print">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of getPaginatedApprovedAccounts()">
+                <td>{{ item.id }}</td>
+                <td>
+                  <i class="bx bx-bank me-1"></i>
+                  {{ item.bankName }}
+                </td>
+                <td><strong>{{ item.accountNumber }}</strong></td>
+                <td>
+                  <span class="badge bg-light text-dark">{{ item.accountType }}</span>
+                </td>
+                <td>{{ item.accountName }}</td>
+                <td>
+                  <span class="badge bg-secondary">{{ item.department }}</span>
+                </td>
+                <td>{{ item.departmentUnit }}</td>
+                <td>
+                  <span class="badge bg-info">{{ item.approvedBy }}</span>
+                </td>
+                <td class="no-print">
+                  <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary" (click)="viewAccountDetails(item)" title="View Details">
+                      <i class="bx bx-show"></i>
+                    </button>
+                    <button class="btn btn-outline-danger" (click)="delete(item.id)" *ngIf="isAdmin" title="Delete">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Controls for Approved -->
+        <div class="d-flex justify-content-between align-items-center mt-3 no-print" 
+             *ngIf="getFilteredApprovedCount() > 0 && paginatedApprovedAccounts.length > 0">
+          <div class="d-flex align-items-center">
+            <label class="me-2 mb-0">Items per page:</label>
+            <select class="form-select form-select-sm" style="width: auto;" 
+                    [(ngModel)]="approvedPageSize" 
+                    (change)="onApprovedPageSizeChange()">
+              <option *ngFor="let size of approvedPageSizeOptions" [value]="size">{{ size }}</option>
+            </select>
+            <span class="ms-3 text-muted">
+              Showing {{ (approvedCurrentPage - 1) * approvedPageSize + 1 }} 
+              to {{ Math.min(approvedCurrentPage * approvedPageSize, getFilteredApprovedCount()) }} 
+              of {{ getFilteredApprovedCount() }} entries
+            </span>
+          </div>
+
+          <nav aria-label="Approved pagination">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" [class.disabled]="approvedCurrentPage === 1">
+                <a class="page-link" (click)="onApprovedPageChange(1)" href="javascript:void(0)">
+                  <i class="bx bx-chevrons-left"></i>
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="approvedCurrentPage === 1">
+                <a class="page-link" (click)="onApprovedPageChange(approvedCurrentPage - 1)" href="javascript:void(0)">
+                  <i class="bx bx-chevron-left"></i>
+                </a>
+              </li>
+              
+              <li class="page-item" *ngFor="let page of getPageNumbers(getApprovedTotalPages())" 
+                  [class.active]="page === approvedCurrentPage">
+                <a class="page-link" (click)="onApprovedPageChange(page)" href="javascript:void(0)">
+                  {{ page }}
+                </a>
+              </li>
+
+              <li class="page-item" [class.disabled]="approvedCurrentPage === getApprovedTotalPages()">
+                <a class="page-link" (click)="onApprovedPageChange(approvedCurrentPage + 1)" href="javascript:void(0)">
+                  <i class="bx bx-chevron-right"></i>
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="approvedCurrentPage === getApprovedTotalPages()">
+                <a class="page-link" (click)="onApprovedPageChange(getApprovedTotalPages())" href="javascript:void(0)">
+                  <i class="bx bx-chevrons-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rejected Accounts -->
+    <div id="rejected-table" class="card mt-4 shadow border-start border-danger border-4">
+      <div class="card-header bg-transparent border-0">
+        <h5 class="text-danger mb-0">
+          <i class="bx bx-x-circle me-2"></i>
+          Rejected Bank Accounts 
+          <span class="badge bg-danger ms-2">{{ rejectedTotalItems }}</span>
+          <span class="small text-muted ms-2" *ngIf="searchTerm || showAdvancedSearch">
+            (Filtered: {{ getFilteredRejectedCount() }})
+          </span>
+        </h5>
+      </div>
+
+      <div class="card-body">
+        <div *ngIf="getFilteredRejectedCount() === 0 && (searchTerm || showAdvancedSearch)" class="text-center py-4">
+          <i class="bx bx-search-alt text-muted mb-3" style="font-size: 3rem;"></i>
+          <p class="text-muted">No rejected accounts match your search criteria.</p>
+          <button class="btn btn-sm btn-outline-danger" (click)="clearSearch()">
+            Clear Search
+          </button>
+        </div>
+
+        <div class="table-responsive" *ngIf="getFilteredRejectedCount() > 0">
+          <table class="table table-bordered table-hover table-striped text-center align-middle">
+            <thead class="table-danger">
+              <tr>
+                <th>ID</th>
+                <th>Bank</th>
+                <th>Account No</th>
+                <th>Type</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Unit</th>
+                <th>Rejected By</th>
+                <th>Rejection Reason</th>
+                <th class="no-print">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of getPaginatedRejectedAccounts()">
+                <td>{{ item.id }}</td>
+                <td>
+                  <i class="bx bx-bank me-1"></i>
+                  {{ item.bankName }}
+                </td>
+                <td><strong>{{ item.accountNumber }}</strong></td>
+                <td>
+                  <span class="badge bg-light text-dark">{{ item.accountType }}</span>
+                </td>
+                <td>{{ item.accountName }}</td>
+                <td>
+                  <span class="badge bg-secondary">{{ item.department }}</span>
+                </td>
+                <td>{{ item.departmentUnit }}</td>
+                <td>
+                  <span class="badge bg-info">{{ item.approvedBy }}</span>
+                </td>
+                <td>
+                  <span class="text-danger small" title="{{ item.approvalRemarks }}">
+                    {{ item.approvalRemarks }}
+                  </span>
+                </td>
+                <td class="no-print">
+                  <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary" (click)="viewAccountDetails(item)" title="View Details">
+                      <i class="bx bx-show"></i>
+                    </button>
+                    <button class="btn btn-outline-danger" (click)="delete(item.id)" *ngIf="isAdmin" title="Delete">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+
+        <!-- Pagination Controls for Rejected -->
+        <div class="d-flex justify-content-between align-items-center mt-3 no-print" 
+             *ngIf="getFilteredRejectedCount() > 0 && paginatedRejectedAccounts.length > 0">
+          <div class="d-flex align-items-center">
+            <label class="me-2 mb-0">Items per page:</label>
+            <select class="form-select form-select-sm" style="width: auto;" 
+                    [(ngModel)]="rejectedPageSize" 
+                    (change)="onRejectedPageSizeChange()">
+              <option *ngFor="let size of rejectedPageSizeOptions" [value]="size">{{ size }}</option>
+            </select>
+            <span class="ms-3 text-muted">
+              Showing {{ (rejectedCurrentPage - 1) * rejectedPageSize + 1 }} 
+              to {{ Math.min(rejectedCurrentPage * rejectedPageSize, getFilteredRejectedCount()) }} 
+              of {{ getFilteredRejectedCount() }} entries
+            </span>
+          </div>
+
+          <nav aria-label="Rejected pagination">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" [class.disabled]="rejectedCurrentPage === 1">
+                <a class="page-link" (click)="onRejectedPageChange(1)" href="javascript:void(0)">
+                  <i class="bx bx-chevrons-left"></i>
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="rejectedCurrentPage === 1">
+                <a class="page-link" (click)="onRejectedPageChange(rejectedCurrentPage - 1)" href="javascript:void(0)">
+                  <i class="bx bx-chevron-left"></i>
+                </a>
+              </li>
+              
+              <li class="page-item" *ngFor="let page of getPageNumbers(getRejectedTotalPages())" 
+                  [class.active]="page === rejectedCurrentPage">
+                <a class="page-link" (click)="onRejectedPageChange(page)" href="javascript:void(0)">
+                  {{ page }}
+                </a>
+              </li>
+
+              <li class="page-item" [class.disabled]="rejectedCurrentPage === getRejectedTotalPages()">
+                <a class="page-link" (click)="onRejectedPageChange(rejectedCurrentPage + 1)" href="javascript:void(0)">
+                  <i class="bx bx-chevron-right"></i>
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="rejectedCurrentPage === getRejectedTotalPages()">
+                <a class="page-link" (click)="onRejectedPageChange(getRejectedTotalPages())" href="javascript:void(0)">
+                  <i class="bx bx-chevrons-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Results Message -->
+    <div class="card mt-4 text-center py-5" *ngIf="!searchTerm && !showAdvancedSearch && getTotalAccounts() === 0">
+      <i class="bx bx-wallet text-muted mb-3" style="font-size: 4rem;"></i>
+      <h4 class="text-muted">No Bank Accounts Found</h4>
+      <p class="text-muted">Start by adding your first bank account.</p>
+      <button class="btn btn-primary" (click)="showForm()">
+        <i class="bx bx-plus-circle me-2"></i> Add New Account
+      </button>
     </div>
   </div>
 
-  <div id="approved-table" class="card mt-4 shadow p-3 border-start border-success border-4">
-    <div class="d-flex justify-content-between align-items-center mb-3 no-print">
-      <h5 class="text-success">
-        <i class="bx bx-check-circle me-2"></i>Approved Bank Accounts ({{ approvedAccounts.length }})
-      </h5>
-      <div>
-        <button class="btn btn-outline-success btn-sm me-2" (click)="exportToExcel()">
-          <i class="fa fa-file-excel"></i> Excel
-        </button>
-        <button class="btn btn-outline-danger btn-sm me-2" (click)="exportToPDF()">
-          <i class="fa fa-file-pdf"></i> PDF
-        </button>
-        <button class="btn btn-outline-dark btn-sm" (click)="printTable()">
-          <i class="fa fa-print"></i> Print
-        </button>
+  <!-- FORM VIEW -->
+  <div *ngIf="currentView === 'form'">
+    <!-- Page Header for Form -->
+    <app-page-header
+      [title]="isEdit ? 'Edit Bank Account' : 'Add New Bank Account'"
+      [subtitle]="isEdit ? 'Update bank account details' : 'Complete the form below to create a new bank account'"
+      [icon]="isEdit ? 'bx bx-edit' : 'bx bx-plus-circle'"
+      [breadcrumbs]="breadcrumbs"
+      [actions]="formHeaderActions"
+      [showBackButton]="true"
+      (actionClick)="onHeaderAction($event)"
+      (backClick)="showList()">
+    </app-page-header>
+
+    <!-- Form Card -->
+    <div class="card shadow p-4 border-start border-primary border-4">
+      <form (ngSubmit)="save()" class="row g-3" #bankForm="ngForm">
+        <div class="col-md-6">
+          <label for="bankName" class="form-label fw-bold">Bank Name <span class="text-danger">*</span></label>
+          <select id="bankName" class="form-select" [(ngModel)]="selected.bankName" name="bankName" required>
+            <option value="">Select Bank</option>
+            <option *ngFor="let bank of banks" [value]="bank">{{ bank }}</option>
+          </select>
+          <div class="form-text">Select the bank where the account is held</div>
+        </div>
+
+        <div class="col-md-6">
+          <label for="accountNumber" class="form-label fw-bold">Account Number <span class="text-danger">*</span></label>
+          <input type="text" id="accountNumber" [(ngModel)]="selected.accountNumber" name="accountNumber" 
+                 class="form-control" placeholder="Account Number" required>
+          <div class="form-text">Enter the complete account number</div>
+        </div>
+
+        <div class="col-md-4">
+          <label for="accountType" class="form-label">Account Type <span class="text-danger">*</span></label>
+          <select id="accountType" class="form-select" [(ngModel)]="selected.accountType" name="accountType" required>
+            <option value="">Select Type</option>
+            <option *ngFor="let type of accountTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label for="accountName" class="form-label">Account Name <span class="text-danger">*</span></label>
+          <input type="text" id="accountName" [(ngModel)]="selected.accountName" name="accountName" 
+                 class="form-control" placeholder="Account Name" required>
+        </div>
+
+        <div class="col-md-4">
+          <label for="openingBalance" class="form-label">Opening Balance</label>
+          <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input type="number" id="openingBalance" [(ngModel)]="selected.openingBalance" 
+                   name="openingBalance" class="form-control" placeholder="0.00" step="0.01">
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <label for="department" class="form-label">Department <span class="text-danger">*</span></label>
+          <select id="department" class="form-select" [(ngModel)]="selected.department" 
+                  name="department" (change)="onDepartmentChange()" required>
+            <option value="">Select Department</option>
+            <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label for="departmentUnit" class="form-label">Department Unit <span class="text-danger">*</span></label>
+          <select id="departmentUnit" class="form-select" [(ngModel)]="selected.departmentUnit" 
+                  name="departmentUnit" required>
+            <option value="">Select Unit</option>
+            <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label for="officerInCharge" class="form-label">Officer In Charge</label>
+          <input type="text" id="officerInCharge" [(ngModel)]="selected.officerInCharge" 
+                 name="officerInCharge" class="form-control" placeholder="Officer In Charge">
+          <div class="form-text">Name of the officer responsible for this account</div>
+        </div>
+
+        <div class="col-md-6">
+          <label for="signatories" class="form-label">Signatories</label>
+          <input type="text" id="signatories" [(ngModel)]="selected.signatories" 
+                 name="signatories" class="form-control" placeholder="Signatories">
+          <div class="form-text">Names of authorized signatories (comma separated)</div>
+        </div>
+
+        <div class="col-md-12">
+          <label for="remarks" class="form-label">Remarks</label>
+          <textarea id="remarks" [(ngModel)]="selected.remarks" name="remarks" 
+                    class="form-control" placeholder="Remarks" rows="3"></textarea>
+          <div class="form-text">Additional notes or comments about this account</div>
+        </div>
+
+        <div class="col-md-12">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="confirmDetails" 
+                   [(ngModel)]="confirmDetails" name="confirmDetails" required>
+            <label class="form-check-label" for="confirmDetails">
+              I confirm that all the information provided is accurate and complete
+            </label>
+          </div>
+        </div>
+
+        <div class="col-md-12 text-end">
+          <button type="submit" class="btn btn-primary me-2" [disabled]="!bankForm.valid || !confirmDetails">
+            <i class="fa fa-save me-1"></i> {{ isEdit ? 'Update' : 'Create' }} Account
+          </button>
+          <button type="button" class="btn btn-secondary me-2" (click)="resetForm()">
+            <i class="fa fa-times me-1"></i> Clear
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="showList()">
+            <i class="fa fa-arrow-left me-1"></i> Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Account Details Modal -->
+  <div class="modal fade" id="accountDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">
+            <i class="bx bx-wallet me-2"></i>Bank Account Details
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" *ngIf="selectedAccount">
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <div class="card bg-light">
+                <div class="card-body">
+                  <h6 class="card-title text-muted">Account Info</h6>
+                  <p><strong>Account No:</strong> {{ selectedAccount.accountNumber }}</p>
+                  <p><strong>Type:</strong> {{ selectedAccount.accountType }}</p>
+                  <p><strong>Status:</strong> 
+                    <span class="badge" [ngClass]="getStatusBadgeClass(selectedAccount.status)">
+                      {{ selectedAccount.status }}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-8 mb-3">
+              <div class="card bg-light">
+                <div class="card-body">
+                  <h6 class="card-title text-muted">Bank Details</h6>
+                  <p><strong>Bank:</strong> {{ selectedAccount.bankName }}</p>
+                  <p><strong>Account Name:</strong> {{ selectedAccount.accountName }}</p>
+                  <p><strong>Opening Balance:</strong> ${{ selectedAccount.openingBalance | number:'1.2-2' }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="card bg-light">
+                <div class="card-body">
+                  <h6 class="card-title text-muted">Department</h6>
+                  <p><strong>Department:</strong> {{ selectedAccount.department }}</p>
+                  <p><strong>Unit:</strong> {{ selectedAccount.departmentUnit }}</p>
+                  <p><strong>Officer In Charge:</strong> {{ selectedAccount.officerInCharge || 'Not specified' }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="card bg-light">
+                <div class="card-body">
+                  <h6 class="card-title text-muted">Approval Info</h6>
+                  <p><strong>Requested By:</strong> {{ selectedAccount.requestedBy }}</p>
+                  <p><strong>Requested At:</strong> {{ selectedAccount.requestedAt | date:'medium' }}</p>
+                  <p><strong>Approved/Rejected By:</strong> {{ selectedAccount.approvedBy || 'Not available' }}</p>
+                  <p *ngIf="selectedAccount.approvalRemarks">
+                    <strong>Remarks:</strong> {{ selectedAccount.approvalRemarks }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 mb-3" *ngIf="selectedAccount.signatories">
+              <div class="card bg-light">
+                <div class="card-body">
+                  <h6 class="card-title text-muted">Signatories</h6>
+                  <p>{{ selectedAccount.signatories }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 mb-3" *ngIf="selectedAccount.remarks">
+              <div class="card bg-light">
+                <div class="card-body">
+                  <h6 class="card-title text-muted">Remarks</h6>
+                  <p>{{ selectedAccount.remarks }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" *ngIf="selectedAccount?.status === 'Open' && isAdmin" 
+                  (click)="approveAccount(selectedAccount.id!)">
+            <i class="bx bx-check me-1"></i> Approve
+          </button>
+        </div>
       </div>
     </div>
-
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover table-striped text-center align-middle">
-        <thead class="table-success">
-          <tr>
-            <th>ID</th>
-            <th>Bank</th>
-            <th>Account No</th>
-            <th>Type</th>
-            <th>Name</th>
-            <th>Department</th>
-            <th>Unit</th>
-            <th>Approved By</th>
-            <th class="no-print">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of approvedAccounts">
-            <td>{{ item.id }}</td>
-            <td>{{ item.bankName }}</td>
-            <td>{{ item.accountNumber }}</td>
-            <td>{{ item.accountType }}</td>
-            <td>{{ item.accountName }}</td>
-            <td>{{ item.department }}</td>
-            <td>{{ item.departmentUnit }}</td>
-            <td>{{ item.approvedBy }}</td>
-            <td class="no-print">
-              <button class="btn btn-sm btn-danger" (click)="delete(item.id)" *ngIf="isAdmin">
-                <i class="fa fa-trash"></i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
   </div>
 
-  <div id="rejected-table" class="card mt-4 shadow p-3 border-start border-danger border-4">
-    <h5 class="text-danger">
-      <i class="bx bx-x-circle me-2"></i>Rejected Bank Accounts ({{ rejectedAccounts.length }})
-    </h5>
-
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover table-striped text-center align-middle">
-        <thead class="table-danger">
-          <tr>
-            <th>ID</th>
-            <th>Bank</th>
-            <th>Account No</th>
-            <th>Type</th>
-            <th>Name</th>
-            <th>Department</th>
-            <th>Unit</th>
-            <th>Rejected By</th>
-            <th>Rejection Reason</th>
-            <th class="no-print">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of rejectedAccounts">
-            <td>{{ item.id }}</td>
-            <td>{{ item.bankName }}</td>
-            <td>{{ item.accountNumber }}</td>
-            <td>{{ item.accountType }}</td>
-            <td>{{ item.accountName }}</td>
-            <td>{{ item.department }}</td>
-            <td>{{ item.departmentUnit }}</td>
-            <td>{{ item.approvedBy }}</td>
-            <td>{{ item.approvalRemarks }}</td>
-            <td class="no-print">
-              <button class="btn btn-sm btn-danger" (click)="delete(item.id)" *ngIf="isAdmin">
-                <i class="fa fa-trash"></i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 </div>
