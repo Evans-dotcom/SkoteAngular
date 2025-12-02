@@ -1,8 +1,7 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { emailSentBarChart, monthlyEarningChart } from './data';
 import { ChartType } from './dashboard.model';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventService } from '../../../core/services/event.service';
 import { ConfigService } from '../../../core/services/config.service';
 import { AuthenticationService } from '../../../core/services/auth.service';
@@ -10,8 +9,8 @@ import { User } from '../../../core/models/auth.models';
 import Swal from 'sweetalert2';
 import { Modal } from 'bootstrap';
 import { BankAccount, BankAccountService } from '../../ecommerce/bank-account/bankaccount.service';
-import { interval, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { interval, Subscription, forkJoin, of } from 'rxjs';
+import { switchMap, catchError } from 'rxjs/operators';
 import { EmailNotificationService } from '../email-notification/email-notification.service';
 
 @Component({
@@ -35,22 +34,22 @@ export class DefaultComponent implements OnInit, OnDestroy {
   adminStats = {
     totalUsers: 1235,
     totalAssets: 5420,
-    bankAccounts: 852,
-    totalBalance: 1200000
+    bankAccounts: 0,
+    totalBalance: 0
   };
 
   managerStats = {
     departmentAssets: 245,
     assignedUsers: 45,
-    pendingRequests: 12,
+    pendingRequests: 0,
     monthlyBudget: 250000
   };
 
   userStats = {
-    myBankAccounts: 5,
+    myBankAccounts: 0,
     myAssets: 12,
-    totalBalance: 45890,
-    pendingRequests: 2
+    totalBalance: 0,
+    pendingRequests: 0
   };
 
   recentActivities = [
@@ -65,13 +64,13 @@ export class DefaultComponent implements OnInit, OnDestroy {
     { account: 'Bank of America - 9012', type: 'Transfer', amount: 1500, date: '2024-01-13', status: 'Pending' }
   ];
 
-  // Categorized bank accounts
+  // Bank accounts data
   allBankAccounts: BankAccount[] = [];
   recentBankAccounts: BankAccount[] = [];
   selectedBankAccount: BankAccount | null = null;
   accountDetailsModal: Modal | null = null;
 
-  // Bank account counts - now as properties instead of getters
+  // Bank account counts
   pendingCount: number = 0;
   approvedCount: number = 0;
   rejectedCount: number = 0;
@@ -79,11 +78,9 @@ export class DefaultComponent implements OnInit, OnDestroy {
 
   unreadNotificationCount: number = 0;
   notificationSubscription: Subscription | null = null;
-
-  @ViewChild('content') content;
+  dataRefreshSubscription: Subscription | null = null;
 
   constructor(
-    private modalService: NgbModal,
     private configService: ConfigService,
     private eventService: EventService,
     public authService: AuthenticationService,
@@ -112,17 +109,23 @@ export class DefaultComponent implements OnInit, OnDestroy {
     }
 
     this.fetchData();
-
-    // Load all bank accounts
-    this.loadAllBankAccounts();
-
+    this.loadBankAccounts();
     this.loadNotificationCount();
     this.startNotificationRefresh();
+    this.startDataRefresh();
+    
+    // Load user transactions if user is logged in
+    if (this.isUser && this.currentUser?.email) {
+      this.loadUserTransactions();
+    }
   }
 
   ngOnDestroy() {
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
+    }
+    if (this.dataRefreshSubscription) {
+      this.dataRefreshSubscription.unsubscribe();
     }
   }
 
@@ -135,41 +138,175 @@ export class DefaultComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadAllBankAccounts() {
+  /**
+   * Load bank accounts based on user role
+   */
+  loadBankAccounts() {
+    console.log('Loading bank accounts data...');
+    
+    if (this.isAdmin) {
+      this.loadAllBankAccountsForAdmin();
+    } else {
+      this.loadUserBankAccounts();
+    }
+  }
+
+  /**
+   * Load all bank accounts for admin users
+   */
+  private loadAllBankAccountsForAdmin() {
+    const pendingRequest = this.bankAccountService.getPending().pipe(
+      catchError(error => {
+        console.error('Error loading pending accounts:', error);
+        return of([]);
+      })
+    );
+    
+    const approvedRequest = this.bankAccountService.getApproved().pipe(
+      catchError(error => {
+        console.error('Error loading approved accounts:', error);
+        return of([]);
+      })
+    );
+    
+    const rejectedRequest = this.bankAccountService.getRejected().pipe(
+      catchError(error => {
+        console.error('Error loading rejected accounts:', error);
+        return of([]);
+      })
+    );
+
+    forkJoin([pendingRequest, approvedRequest, rejectedRequest])
+      .subscribe({
+        next: ([pendingData, approvedData, rejectedData]) => {
+          console.log('Bank accounts loaded:', {
+            pending: pendingData.length,
+            approved: approvedData.length,
+            rejected: rejectedData.length
+          });
+
+          // Combine all accounts
+          this.allBankAccounts = [...pendingData, ...approvedData, ...rejectedData];
+          
+          // Update counts
+          this.pendingCount = pendingData.length;
+          this.approvedCount = approvedData.length;
+          this.rejectedCount = rejectedData.length;
+          this.totalCount = this.allBankAccounts.length;
+
+          // Update stats
+          this.managerStats.pendingRequests = this.pendingCount;
+          this.adminStats.bankAccounts = this.totalCount;
+          this.adminStats.totalBalance = this.calculateTotalBalance();
+
+          // Get recent bank accounts (top 10)
+          this.recentBankAccounts = this.allBankAccounts
+            .sort((a, b) => {
+              const dateA = new Date(a.requestedAt || '');
+              const dateB = new Date(b.requestedAt || '');
+              return dateB.getTime() - dateA.getTime();
+            })
+            .slice(0, 10);
+
+          console.log('Recent bank accounts:', this.recentBankAccounts);
+        },
+        error: (error) => {
+          console.error('Error loading bank accounts data:', error);
+          this.resetCounts();
+        }
+      });
+  }
+
+  /**
+   * Load bank accounts for regular users (non-admin)
+   */
+  private loadUserBankAccounts() {
+    const userEmail = this.currentUser?.email;
+    if (!userEmail) {
+      this.allBankAccounts = [];
+      this.recentBankAccounts = [];
+      return;
+    }
+
     this.bankAccountService.getAll().subscribe({
       next: (data) => {
-        this.allBankAccounts = data;
+        // Filter accounts for the current user
+        this.allBankAccounts = data.filter(account => 
+          account.requestedBy === userEmail
+        );
         
-        // Calculate counts
-        this.updateBankAccountCounts();
+        this.updateUserStats();
         
-        // Sort by ID descending (most recent first) and take top 10 for display
-        this.recentBankAccounts = data
-          .sort((a, b) => (b.id || 0) - (a.id || 0))
+        this.recentBankAccounts = this.allBankAccounts
+          .sort((a, b) => {
+            const dateA = new Date(a.requestedAt || '');
+            const dateB = new Date(b.requestedAt || '');
+            return dateB.getTime() - dateA.getTime();
+          })
           .slice(0, 10);
-
-        console.log('Bank Accounts Loaded:', {
-          total: this.totalCount,
-          pending: this.pendingCount,
-          approved: this.approvedCount,
-          rejected: this.rejectedCount
-        });
       },
       error: (error) => {
-        console.error('Error loading bank accounts:', error);
-        // Reset counts on error
-        this.pendingCount = 0;
-        this.approvedCount = 0;
-        this.rejectedCount = 0;
-        this.totalCount = 0;
+        console.error('Error loading user bank accounts:', error);
+        this.allBankAccounts = [];
+        this.recentBankAccounts = [];
+        this.resetCounts();
       }
     });
   }
 
   /**
-   * Calculate and update bank account counts based on status
+   * Load user transactions - can be connected to a real API later
    */
-  private updateBankAccountCounts() {
+  private loadUserTransactions() {
+    // For now, use mock data. Replace with real API call when available
+    console.log('Loading user transactions...');
+    
+    // Example of how this could work with a real service:
+    // this.transactionService.getUserTransactions(this.currentUser.email).subscribe({
+    //   next: (data) => {
+    //     this.userTransactions = data;
+    //   },
+    //   error: (error) => {
+    //     console.error('Error loading transactions:', error);
+    //   }
+    // });
+    
+    // For demo purposes, we'll update the mock data with user's actual bank accounts
+    if (this.allBankAccounts.length > 0) {
+      // Create transactions based on user's bank accounts
+      this.userTransactions = this.allBankAccounts.slice(0, 3).map(account => ({
+        account: `${account.bankName} - ${account.accountNumber}`,
+        type: this.getRandomTransactionType(),
+        amount: Math.floor(Math.random() * 10000) + 1000,
+        date: this.getRandomDate(),
+        status: Math.random() > 0.3 ? 'Completed' : 'Pending'
+      }));
+    }
+  }
+
+  /**
+   * Helper method to get random transaction type
+   */
+  private getRandomTransactionType(): string {
+    const types = ['Deposit', 'Withdrawal', 'Transfer', 'Payment', 'Fee'];
+    return types[Math.floor(Math.random() * types.length)];
+  }
+
+  /**
+   * Helper method to get random recent date
+   */
+  private getRandomDate(): string {
+    const today = new Date();
+    const daysAgo = Math.floor(Math.random() * 30);
+    const date = new Date(today);
+    date.setDate(date.getDate() - daysAgo);
+    return date.toISOString().split('T')[0];
+  }
+
+  /**
+   * Update user-specific stats
+   */
+  private updateUserStats() {
     this.pendingCount = this.allBankAccounts.filter(a => 
       a.status === 'Open' || a.status === 'Pending'
     ).length;
@@ -183,29 +320,89 @@ export class DefaultComponent implements OnInit, OnDestroy {
     ).length;
     
     this.totalCount = this.allBankAccounts.length;
+
+    // Update user stats
+    this.userStats.myBankAccounts = this.totalCount;
+    this.userStats.pendingRequests = this.pendingCount;
+    this.userStats.totalBalance = this.calculateUserTotalBalance();
+  }
+
+  /**
+   * Calculate total balance from all approved accounts
+   */
+  private calculateTotalBalance(): number {
+    if (!this.allBankAccounts.length) return 0;
+    
+    return this.allBankAccounts
+      .filter(account => account.status === 'Approved')
+      .reduce((total, account) => {
+        const balance = parseFloat(account.openingBalance?.toString() || '0');
+        return total + (isNaN(balance) ? 0 : balance);
+      }, 0);
+  }
+
+  /**
+   * Calculate total balance for the current user
+   */
+  private calculateUserTotalBalance(): number {
+    if (!this.allBankAccounts.length) return 0;
+    
+    return this.allBankAccounts
+      .filter(account => account.status === 'Approved')
+      .reduce((total, account) => {
+        const balance = parseFloat(account.openingBalance?.toString() || '0');
+        return total + (isNaN(balance) ? 0 : balance);
+      }, 0);
+  }
+
+  /**
+   * Reset all counts to zero
+   */
+  private resetCounts() {
+    this.pendingCount = 0;
+    this.approvedCount = 0;
+    this.rejectedCount = 0;
+    this.totalCount = 0;
+    this.recentBankAccounts = [];
   }
 
   loadNotificationCount() {
     this.emailNotificationService.getUnreadCount().subscribe({
       next: (data: any) => {
-        this.unreadNotificationCount = data.count;
+        this.unreadNotificationCount = data.count || 0;
       },
       error: (error) => {
         console.error('Error loading notification count:', error);
+        this.unreadNotificationCount = 0;
       }
     });
   }
 
   startNotificationRefresh() {
-    this.notificationSubscription = interval(30000)
+    this.notificationSubscription = interval(30000) // Refresh every 30 seconds
       .pipe(
         switchMap(() => this.emailNotificationService.getUnreadCount())
       )
       .subscribe({
         next: (data: any) => {
-          this.unreadNotificationCount = data.count;
+          this.unreadNotificationCount = data.count || 0;
         },
         error: (error) => console.error('Error refreshing notification count:', error)
+      });
+  }
+
+  startDataRefresh() {
+    this.dataRefreshSubscription = interval(60000) // Refresh data every minute
+      .subscribe({
+        next: () => {
+          console.log('Refreshing dashboard data...');
+          this.loadBankAccounts();
+          this.loadNotificationCount();
+          if (this.isUser) {
+            this.loadUserTransactions();
+          }
+        },
+        error: (error) => console.error('Error in data refresh:', error)
       });
   }
 
@@ -259,11 +456,9 @@ export class DefaultComponent implements OnInit, OnDestroy {
               timer: 3000,
               showConfirmButton: false
             });
-            this.loadAllBankAccounts();
+            this.loadBankAccounts();
             this.loadNotificationCount();
-            if (this.accountDetailsModal) {
-              this.accountDetailsModal.hide();
-            }
+            this.hideAccountDetailsModal();
           },
           error: (error) => {
             Swal.close();
@@ -321,11 +516,9 @@ export class DefaultComponent implements OnInit, OnDestroy {
               timer: 3000,
               showConfirmButton: false
             });
-            this.loadAllBankAccounts();
+            this.loadBankAccounts();
             this.loadNotificationCount();
-            if (this.accountDetailsModal) {
-              this.accountDetailsModal.hide();
-            }
+            this.hideAccountDetailsModal();
           },
           error: (error) => {
             Swal.close();
@@ -338,6 +531,16 @@ export class DefaultComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  /**
+   * Hide the account details modal
+   */
+  private hideAccountDetailsModal() {
+    if (this.accountDetailsModal) {
+      this.accountDetailsModal.hide();
+      this.selectedBankAccount = null;
+    }
   }
 
   deleteBankAccount(id?: number) {
@@ -371,7 +574,7 @@ export class DefaultComponent implements OnInit, OnDestroy {
               timer: 2000,
               showConfirmButton: false
             });
-            this.loadAllBankAccounts();
+            this.loadBankAccounts();
           },
           error: (error) => {
             Swal.close();
@@ -386,12 +589,30 @@ export class DefaultComponent implements OnInit, OnDestroy {
     });
   }
 
-  navigateToBankList() {
-    this.router.navigate(['/ecommerce/banklist']);
+  /**
+   * Refresh dashboard data
+   */
+  refreshDashboard() {
+    this.loadBankAccounts();
+    this.loadNotificationCount();
+    if (this.isUser) {
+      this.loadUserTransactions();
+    }
+    
+    Swal.fire({
+      icon: 'success',
+      title: 'Refreshed',
+      text: 'Dashboard data has been updated.',
+      timer: 1500,
+      showConfirmButton: false
+    });
   }
 
-  openModal() {
-    this.modalService.open(this.content, { centered: true });
+  /**
+   * Load all bank accounts (for the refresh button)
+   */
+  loadAllBankAccounts() {
+    this.loadBankAccounts();
   }
 
   weeklyreport() {
@@ -411,16 +632,25 @@ export class DefaultComponent implements OnInit, OnDestroy {
   }
 
   getStatusBadgeClass(status?: string): string {
-    switch (status) {
-      case 'Approved':
+    if (!status) return 'bg-secondary';
+    
+    switch (status.toLowerCase()) {
+      case 'approved':
         return 'bg-success';
-      case 'Rejected':
+      case 'rejected':
         return 'bg-danger';
-      case 'Open':
-      case 'Pending':
+      case 'open':
+      case 'pending':
         return 'bg-warning';
       default:
         return 'bg-secondary';
     }
+  }
+
+  /**
+   * Navigate to bank list page
+   */
+  navigateToBankList() {
+    this.router.navigate(['/ecommerce/banklist']);
   }
 }

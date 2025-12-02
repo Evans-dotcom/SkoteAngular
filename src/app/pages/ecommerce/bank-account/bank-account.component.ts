@@ -184,20 +184,39 @@ export class BankAccountComponent implements OnInit {
   }
 
   private filterAccounts() {
-    // Filter pending accounts
+    // Always filter all accounts first
     this.filteredPendingAccounts = this.pendingAccounts.filter(account => 
       this.matchesSearch(account) && this.matchesFilters(account)
     );
 
-    // Filter approved accounts
     this.filteredApprovedAccounts = this.approvedAccounts.filter(account => 
       this.matchesSearch(account) && this.matchesFilters(account)
     );
 
-    // Filter rejected accounts
     this.filteredRejectedAccounts = this.rejectedAccounts.filter(account => 
       this.matchesSearch(account) && this.matchesFilters(account)
     );
+
+    // If a specific search type is selected, show only that type
+    if (this.searchType !== 'all') {
+      switch (this.searchType) {
+        case 'pending':
+          // Keep only pending accounts, clear others
+          this.filteredApprovedAccounts = [];
+          this.filteredRejectedAccounts = [];
+          break;
+        case 'approved':
+          // Keep only approved accounts, clear others
+          this.filteredPendingAccounts = [];
+          this.filteredRejectedAccounts = [];
+          break;
+        case 'rejected':
+          // Keep only rejected accounts, clear others
+          this.filteredPendingAccounts = [];
+          this.filteredApprovedAccounts = [];
+          break;
+      }
+    }
   }
 
   private matchesSearch(account: BankAccount): boolean {
@@ -356,6 +375,9 @@ export class BankAccountComponent implements OnInit {
   }
 
   getFilteredTotal(): number {
+    if (this.searchType === 'pending') return this.getFilteredPendingCount();
+    if (this.searchType === 'approved') return this.getFilteredApprovedCount();
+    if (this.searchType === 'rejected') return this.getFilteredRejectedCount();
     return this.getFilteredApprovedCount() + this.getFilteredRejectedCount() + this.getFilteredPendingCount();
   }
 
@@ -390,7 +412,7 @@ export class BankAccountComponent implements OnInit {
       next: (data) => {
         this.approvedAccounts = data;
         this.approvedTotalItems = data.length;
-        this.filteredApprovedAccounts = [...data];
+        this.applySearch(); // Apply search after loading
       },
       error: (error) => console.error('Error loading approved accounts:', error)
     });
@@ -399,7 +421,7 @@ export class BankAccountComponent implements OnInit {
       next: (data) => {
         this.rejectedAccounts = data;
         this.rejectedTotalItems = data.length;
-        this.filteredRejectedAccounts = [...data];
+        this.applySearch(); // Apply search after loading
       },
       error: (error) => console.error('Error loading rejected accounts:', error)
     });
@@ -409,7 +431,7 @@ export class BankAccountComponent implements OnInit {
         next: (data) => {
           this.pendingAccounts = data;
           this.pendingTotalItems = data.length;
-          this.filteredPendingAccounts = [...data];
+          this.applySearch(); // Apply search after loading
         },
         error: (error) => console.error('Error loading pending accounts:', error)
       });
